@@ -1,0 +1,32 @@
+{
+  "name": "@remol/demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "mol wire react bindings",
+  "exports": {
+    ".": "./-/index.js",
+    "./*": "./-/*.js"
+  },
+  "author": "Stefan Zerkalica <zerkalica@gmail.com>",
+  "repository": "https://github.com/zerkalica/remol",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf - *.log",
+    "build": "mkdir -p - && cp ./index.html ./-/ && esbuild --sourcemap --bundle ./bundle.tsx --outfile=./-/bundle.js",
+    "dev": "npm run build -- --servedir=-"
+  },
+  "dependencies": {
+    "@remol/core": "^1.0.0",
+    "@remol/react": "^1.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@remol/boot": "^1.0.0",
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^17.0.11"
+  },
+  "peerDependencies": {
+    "react": "*"
+  }
+}
