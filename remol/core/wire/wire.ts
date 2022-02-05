@@ -1,4 +1,4 @@
-import { $mol_wire_pub_sub as pub_sub } from 'mol_wire_lib'
+import { $mol_after_frame, $mol_wire_pub, $mol_wire_cursor, $mol_wire_pub_sub as pub_sub } from 'mol_wire_lib'
 
 export interface RemolWireHost<E> {
   node(): E | null
@@ -8,6 +8,32 @@ export interface RemolWireHost<E> {
 export class RemolWire<E> extends pub_sub {
   constructor(protected host: RemolWireHost<E>) {
     super()
+  }
+
+  update() {
+    this.frame = undefined
+
+    if (this.cursor === $mol_wire_cursor.fresh) return
+    if (this.cursor === $mol_wire_cursor.final) return
+
+    check: if (this.cursor === $mol_wire_cursor.doubt) {
+      for (let i = this.pub_from; i < this.sub_from; i += 2) {
+        ;(this[i] as $mol_wire_pub)?.up()
+        if (this.cursor !== $mol_wire_cursor.doubt) break check
+      }
+
+      this.cursor = $mol_wire_cursor.fresh
+      return
+    }
+
+    this.host.update()
+  }
+
+  frame = undefined as undefined | $mol_after_frame
+
+  scheduleUpdate() {
+    if (this.frame) return
+    this.frame = new $mol_after_frame(this.update.bind(this))
   }
 
   up() {
@@ -28,7 +54,7 @@ export class RemolWire<E> extends pub_sub {
 
   affect(quant: number) {
     if (super.affect(quant)) {
-      this.host.update()
+      this.scheduleUpdate()
       return true
     }
     return false
