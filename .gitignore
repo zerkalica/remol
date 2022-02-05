@@ -1,8 +1,0 @@
-node_modules
--
-package-lock.json
-*.lock
-*.tsbuildinfo
-.cache
-.rpt2_cache*
-*.log
