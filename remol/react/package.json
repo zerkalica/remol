@@ -23,14 +23,22 @@
     "dev": "tsc-watch --build --noClear --onSuccess 'jest --passWithNoTests'"
   },
   "dependencies": {
-    "react": "^17.0.2",
-    "@remol/core": "^1.0.0"
   },
   "devDependencies": {
+    "@remol/core": "^1.0.0",
     "@remol/boot": "^1.0.0",
     "@types/react": "^17.0.39"
   },
   "peerDependencies": {
-    "react": "*"
+    "@remol/core": "^1.0.0",
+    "react": "^16 || ^17 || ^18 || ^18.0.0-rc.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+        "optional": true
+    },
+    "react-native": {
+        "optional": true
+    }
   }
 }

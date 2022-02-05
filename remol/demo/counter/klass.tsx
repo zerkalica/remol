@@ -16,7 +16,7 @@ export class RemolDemoCounterKlass extends Remol<{ id: string }> {
     this.value(this.value() + 1)
   }
 
-  sub(p = this.props2) {
+  sub(p = this.props) {
     return (
       <div id={p.id}>
         <h3>RemolDemoCounterKlass</h3>

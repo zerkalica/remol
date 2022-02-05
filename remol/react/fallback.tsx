@@ -7,9 +7,9 @@ export function RemolFallback({
   children,
   minWidth,
   minHeight,
-  resetErrorBoundary,
+  reset,
 }: {
-  resetErrorBoundary?(): void
+  reset?(): void
   id?: string
   error?: Error
   klass?: string
@@ -20,7 +20,7 @@ export function RemolFallback({
   return (
     <div
       id={id}
-      onClick={resetErrorBoundary}
+      onClick={reset}
       style={{ minWidth, minHeight }}
       className={`remol_fallback ${klass}`}
       data-status={error ? 'error' : 'loading'}

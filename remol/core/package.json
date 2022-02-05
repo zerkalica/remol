@@ -23,7 +23,7 @@
     "dev": "tsc-watch --build --noClear --onSuccess 'jest --passWithNoTests'"
   },
   "dependencies": {
-    "mol_wire_lib": "^1.0.12"
+    "mol_wire_lib": "^1.0.22"
   },
   "devDependencies": {
     "@remol/boot": "^1.0.0"

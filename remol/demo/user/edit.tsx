@@ -35,7 +35,7 @@ export class RemolDemoUserEdit extends Remol<{
 
   errorCount = 0
 
-  sub(p = this.props2) {
+  sub(p = this.props) {
     if (this.errorCount > 0 && this.errorCount % 3 === 0) {
       const str = 'fake error ' + this.errorCount
       this.errorCount++
@@ -56,14 +56,25 @@ export class RemolDemoUserEdit extends Remol<{
         </button>
         <p>Click 3 times to generate error</p>
         <div>
-          Original: {this.userSelected().first_name}{' '}
+          Original: {this.userSelected().first_name}
           {this.userSelected().first_name === this.userEditableName() ? '' : ' [changed]'}
         </div>
-        <input value={this.userEditableName()} onChange={e => this.userEditableName(e.target.value)} />
+        <input
+          value={this.userEditableName()}
+          onChange={Remol.inputEventFix(e => {
+            this.userEditableName(e.target.value)
+          })}
+        />
         <button type="button" onClick={() => this.userSave()}>
           Save
         </button>
+        <Inner c={this.errorCount === 2}/>
       </div>
     )
   }
+}
+
+function Inner(p: {c: boolean}) {
+  if (p.c) throw new Error('Inner error')
+  return <div>inner</div>
 }
