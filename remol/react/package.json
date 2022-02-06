@@ -16,17 +16,15 @@
     "url": "https://github.com/zerkalica/remol/issues?q=react"
   },
   "homepage": "https://github.com/zerkalica/remol/tree/master/react#readme",
-  "license": "MIT",
+  "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
     "build": "tsc --build && jest --passWithNoTests",
     "dev": "tsc-watch --build --noClear --onSuccess 'jest --passWithNoTests'"
   },
-  "dependencies": {
-  },
   "devDependencies": {
-    "@remol/core": "^1.0.0",
     "@remol/boot": "^1.0.0",
+    "@remol/core": "^1.0.0",
     "@types/react": "^17.0.39"
   },
   "peerDependencies": {
@@ -35,10 +33,11 @@
   },
   "peerDependenciesMeta": {
     "react-dom": {
-        "optional": true
+      "optional": true
     },
     "react-native": {
-        "optional": true
+      "optional": true
     }
-  }
+  },
+  "gitHead": "c4f32eb5975839b1a20f89c626ed57903c35cb29"
 }

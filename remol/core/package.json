@@ -16,7 +16,7 @@
     "url": "https://github.com/zerkalica/remol/issues?q=core"
   },
   "homepage": "https://github.com/zerkalica/remol/tree/master/core#readme",
-  "license": "MIT",
+  "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
     "build": "tsc --build && jest --passWithNoTests",
@@ -27,5 +27,6 @@
   },
   "devDependencies": {
     "@remol/boot": "^1.0.0"
-  }
+  },
+  "gitHead": "c4f32eb5975839b1a20f89c626ed57903c35cb29"
 }

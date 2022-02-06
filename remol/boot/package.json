@@ -17,7 +17,7 @@
     "url": "https://github.com/zerkalica/remol/issues?q=boot"
   },
   "homepage": "https://github.com/zerkalica/remol/boot/tree/master/#readme",
-  "license": "MIT",
+  "license": "ISC",
   "scripts": {
     "clean": "rm - -rf *.log",
     "build": "tsc --build && jest --passWithNoTests",
@@ -25,9 +25,10 @@
   },
   "dependencies": {
     "@types/jest": "^27.0.1",
-    "jest": "^27.0.6",
-    "tsc-watch": "^4.6.0",
     "esbuild": "^0.14.18",
-    "esbuild-jest": "^0.5.0"
-  }
+    "esbuild-jest": "^0.5.0",
+    "jest": "^27.0.6",
+    "tsc-watch": "^4.6.0"
+  },
+  "gitHead": "c4f32eb5975839b1a20f89c626ed57903c35cb29"
 }
