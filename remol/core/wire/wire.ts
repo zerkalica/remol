@@ -1,4 +1,4 @@
-import { $mol_wire_pub, $mol_wire_cursor, $mol_wire_pub_sub } from 'mol_wire_lib'
+import { $mol_wire_cursor, $mol_wire_pub, $mol_wire_pub_sub } from 'mol_wire_lib'
 
 export interface RemolWireHost<E> {
   node(): E | null
@@ -53,7 +53,7 @@ export class RemolWire<E> extends $mol_wire_pub_sub {
   }
 
   affect(quant: number) {
-    if (! super.affect(quant)) return false
+    if (!super.affect(quant)) return false
 
     if (this.frame === undefined) this.frame = this.schedule()
 

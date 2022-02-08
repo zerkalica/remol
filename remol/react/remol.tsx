@@ -1,7 +1,7 @@
 import React from 'react'
 
 import {
-  compareDeep,
+  remolCompareDeep,
   remolComponentCopy,
   RemolError,
   remolFailHidden,
@@ -120,7 +120,7 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
   shouldComponentUpdate(next: Props, state: { error?: Error }, ctx: React.ContextType<typeof RemolContextReact>) {
     if (this.state?.error !== state.error) return true
     if (ctx !== this.context) return true
-    if (!compareDeep(this.props2, next)) {
+    if (!remolCompareDeep(this.props2, next)) {
       this.error = undefined
       ;(this as { state: { error?: Error } }).state.error = undefined
       return true

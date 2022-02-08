@@ -12,8 +12,9 @@
   "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
-    "build": "mkdir -p - && cp ./index.html ./-/ && esbuild --sourcemap --bundle ./bundle.tsx --outfile=./-/bundle.js",
-    "dev": "npm run build -- --servedir=-"
+    "bundle": "mkdir -p ./-/public && cp ./index.html ./-/public/ && esbuild --sourcemap --bundle ./browser.tsx --outfile=./-/public/browser.js",
+    "build": "tsc --build && jest && npm run bundle",
+    "dev": "npm run bundle -- --servedir=-/public"
   },
   "dependencies": {
     "@remol/core": "^1.0.0",

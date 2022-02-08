@@ -1,13 +1,10 @@
 {
   "name": "@remol/boot",
   "version": "1.0.0",
-  "main": "-/index.js",
-  "typings": "-/index.d.ts",
-  "exports": {
-    ".": "./-/index.js",
-    "./*": "./-/*.js"
-  },
   "description": "Typescript based projects build scripts",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Stefan Zerkalica <zerkalica@gmail.com>",
   "repository": {
     "type": "git",
@@ -18,17 +15,22 @@
   },
   "homepage": "https://github.com/zerkalica/remol/boot/tree/master/#readme",
   "license": "ISC",
+  "bin": {
+    "remol-boot": "./bin/remol-boot"
+  },
   "scripts": {
-    "clean": "rm - -rf *.log",
+    "clean": "rm -rf - *.log",
     "build": "tsc --build && jest --passWithNoTests",
     "dev": "tsc-watch --build --noClear --onSuccess 'jest --passWithNoTests'"
   },
   "dependencies": {
     "@types/jest": "^27.0.1",
+    "abortcontroller-polyfill": "^1.7.3",
     "esbuild": "^0.14.18",
     "esbuild-jest": "^0.5.0",
     "jest": "^27.0.6",
+    "source-map-support": "^0.5.21",
     "tsc-watch": "^4.6.0"
   },
-  "gitHead": "db118938804399b872571d6b6946575669b6f9e2"
+  "gitHead": "975a407fa809cdc1f288da2ba3de8603b754f302"
 }

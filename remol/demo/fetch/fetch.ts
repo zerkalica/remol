@@ -1,4 +1,4 @@
-import { sync, action } from '@remol/core'
+import { action, remolSync } from '@remol/core'
 
 export class RemolDemoFetch {
   static request(input: RequestInfo, init: RequestInit = {}) {
@@ -20,8 +20,8 @@ export class RemolDemoFetch {
 
   @action
   static response(input: RequestInfo, init?: RequestInit) {
-    const response = sync(this).request(input, init)
-    if (Math.floor(response.status / 100) === 2) return sync(response)
+    const response = remolSync(this).request(input, init)
+    if (Math.floor(response.status / 100) === 2) return remolSync(response)
 
     throw new Error(response.statusText || `HTTP Error ${response.status}`)
   }

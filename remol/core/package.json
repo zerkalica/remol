@@ -2,15 +2,28 @@
   "name": "@remol/core",
   "version": "1.0.0",
   "description": "mol wire bindings",
-  "main": "./-/index.js",
-  "exportsx": {
+  "-typings": "./-/index.d.ts",
+  "-module": "./-/index.js",
+  "exports": {
     ".": "./-/index.js",
     "./*": "./-/*.js"
+  },
+  "files": [
+    "*.map",
+    "*.js",
+    "*.md",
+    "package.json",
+    "LICENSE",
+    "types",
+    "-"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "author": "Stefan Zerkalica <zerkalica@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zerkalica/remol.git"
+    "url": "git+https://github.com/zerkalica/remol.git"
   },
   "bugs": {
     "url": "https://github.com/zerkalica/remol/issues?q=core"
@@ -19,8 +32,8 @@
   "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
-    "build": "tsc --build && jest --passWithNoTests",
-    "dev": "tsc-watch --build --noClear --onSuccess 'jest --passWithNoTests'"
+    "build": "tsc --build && jest",
+    "dev": "tsc-watch --build --noClear --onSuccess jest"
   },
   "dependencies": {
     "mol_wire_lib": "^1.0.22"
@@ -28,5 +41,5 @@
   "devDependencies": {
     "@remol/boot": "^1.0.0"
   },
-  "gitHead": "db118938804399b872571d6b6946575669b6f9e2"
+  "types": "./-/index.d.ts"
 }

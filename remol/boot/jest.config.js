@@ -1,5 +1,1 @@
-module.exports = {
-  transform: {
-    "^.+\\.tsx?$": "esbuild-jest",
-  }
-}
+module.exports = require('./jestConfig')(__dirname)

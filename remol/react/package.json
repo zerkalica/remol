@@ -2,10 +2,12 @@
   "name": "@remol/react",
   "version": "1.0.0",
   "description": "mol wire react bindings",
-  "main": "./-/index.js",
-  "exportsx": {
+  "exports": {
     ".": "./-/index.js",
     "./*": "./-/*.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "author": "Stefan Zerkalica <zerkalica@gmail.com>",
   "repository": {
@@ -39,5 +41,5 @@
       "optional": true
     }
   },
-  "gitHead": "db118938804399b872571d6b6946575669b6f9e2"
+  "gitHead": "975a407fa809cdc1f288da2ba3de8603b754f302"
 }

@@ -1,4 +1,1 @@
-module.exports = {
-  ...require('@remol/boot/jest.config'),
-  roots: [ '-' ],
-}
+module.exports = require('@remol/boot/jestConfig')(__dirname)
