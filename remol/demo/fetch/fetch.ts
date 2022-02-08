@@ -3,7 +3,6 @@ import { action, remolSync } from '@remol/core'
 export class RemolDemoFetch {
   static request(input: RequestInfo, init: RequestInit = {}) {
     let ctl: undefined | AbortController = new AbortController()
-
     const promise = fetch(input, {
       ...init,
       signal: ctl.signal,

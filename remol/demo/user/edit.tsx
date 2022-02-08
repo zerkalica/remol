@@ -1,13 +1,15 @@
 import React from 'react'
-import { Remol } from '@remol/react'
-import { RemolDemoUserStore } from './store'
+
 import { action, mem } from '@remol/core'
+import { Remol } from '@remol/react'
+
+import { RemolDemoUserStore } from './store'
 
 export class RemolDemoUserEdit extends Remol<{
   id: string
 }> {
   @mem(0) users() {
-    return new RemolDemoUserStore()
+    return new RemolDemoUserStore(this.$)
   }
 
   @mem(0) userSelectedId(next?: number) {
@@ -68,13 +70,13 @@ export class RemolDemoUserEdit extends Remol<{
         <button type="button" onClick={() => this.userSave()}>
           Save
         </button>
-        <Inner c={this.errorCount === 2}/>
+        <Inner c={this.errorCount === 2} />
       </div>
     )
   }
 }
 
-function Inner(p: {c: boolean}) {
+function Inner(p: { c: boolean }) {
   if (p.c) throw new Error('Inner error')
   return <div>inner</div>
 }
