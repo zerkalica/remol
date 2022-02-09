@@ -36,7 +36,8 @@
     "dev": "tsc-watch --build --noClear --onSuccess jest"
   },
   "dependencies": {
-    "mol_wire_lib": "^1.0.22"
+    "mol_wire_lib": "^1.0.22",
+    "autobind-decorator": "^2.4.0"
   },
   "devDependencies": {
     "@remol/boot": "^1.0.0"

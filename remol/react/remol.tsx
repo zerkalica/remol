@@ -5,7 +5,7 @@ import { remolCompareDeep, remolComponentCopy, RemolContext, RemolError, remolFa
 import { RemolFallback } from './fallback'
 
 const RemolContextReact = React.createContext(RemolContext.instance)
-RemolContextReact.displayName = 'RemolReactContext'
+RemolContextReact.displayName = 'RemolContextReact'
 
 /**
  * @example
@@ -24,7 +24,7 @@ RemolContextReact.displayName = 'RemolReactContext'
   }
 
   const App = Remol.fc(function App(props: { id: string }) {
-    const $ = Remol.$
+    const $ = Remol.use$()
     const inner$ = Remol.mem0(() => {
       const logger = new Logger
       logger.id = () => props.id
@@ -33,7 +33,7 @@ RemolContextReact.displayName = 'RemolReactContext'
         .set(Logger.instance, logger)
     })
 
-    return <Remol.Provide value={inner$()}>{children}</Remol.Provide>
+    return <Remol.Provide$ value={inner$()}>{children}</Remol.Provide$>
   })
  * ```
  */
@@ -43,8 +43,8 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     this.state = { error: undefined }
   }
 
-  static get $() {
-    return this.current!.context
+  static use$() {
+    return this.current?.context ?? React.useContext(RemolContextReact)
   }
 
   static fc<Props>(Origin: React.FC<Props>) {
@@ -58,7 +58,7 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     ) as new (p: Readonly<Props>) => Remol<Props>
   }
 
-  static Provider = RemolContextReact.Provider
+  static Provide$ = RemolContextReact.Provider
 
   static fallback(fallback: Remol['fallback']) {
     this.current!.fallback = fallback
@@ -179,7 +179,9 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
       this.cursor = 0
       ;(this as { props: Props }).props = this.props2
 
-      return (this.lastEl = this.sub())
+      this.lastEl = this.sub()
+      if (this.context === this.$) return this.lastEl
+      return <RemolContextReact.Provider value={this.$} children={this.lastEl} />
     } catch (orig) {
       if (orig instanceof Promise) return remolFail(orig)
       this.error = RemolError.normalize(orig)
@@ -215,12 +217,10 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
       })
     }
 
-    const children = (
+    return (
       <React.Suspense fallback={<this.FallbackView children={this.lastEl} />}>
         <this.ChildrenView />
       </React.Suspense>
     )
-
-    return this.context === this.$ ? children : <Remol.Provider value={this.$} children={children} />
   }
 }

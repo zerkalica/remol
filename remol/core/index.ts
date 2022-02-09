@@ -1,12 +1,12 @@
 export {
   $mol_fail_hidden as remolFail,
   $mol_wire_mem as mem,
-  $mol_wire_method as action,
   $mol_wire_field as field,
   $mol_wire_sync as remolSync,
   $mol_wire_async as remolAsync,
   $mol_compare_deep as remolCompareDeep,
 } from 'mol_wire_lib'
+export { remolAction as action } from './action/action'
 export { RemolContext, RemolContextKey, RemolContextUpdater } from './context/context'
 export { RemolError } from './error/error'
 export { remolFuncName } from './func/name'
