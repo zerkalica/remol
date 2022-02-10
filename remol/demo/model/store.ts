@@ -64,25 +64,24 @@ export class RemolModelStore<Model extends RemolModel> {
   @action queueGet() {
     const ids = this.queueIds()
     const body = JSON.stringify(ids)
-    const res = this.fetcher.response(this.api(), { method: 'GET', body }).json() as Record<string, ReturnType<Model['dto']>>
-    this.queueIds(this.queueIds().filter(id => Boolean(res[id])))
+    const res = this.fetcher.batch<ReturnType<Model['dto']>>(this.api(), { method: 'GET', body })
+    this.queueIds([])
+
     return res
   }
 
   @action queuePatch() {
     const patches = this.queueDto()
     const body = JSON.stringify(patches)
-    const res = this.fetcher.response(this.api(), { method: 'PATCH', body }).json() as Record<string, ReturnType<Model['dto']>>
-    for (const id of Object.keys(res)) {
-      delete patches[id]
-    }
+    const res = this.fetcher.batch<ReturnType<Model['dto']>>(this.api(), { method: 'PATCH', body })
+    this.queueDto({})
 
     return res
   }
 
   @mem(1) dto(id: string, patch?: null | Partial<ReturnType<Model['dto']>>) {
     if (patch === undefined) this.queueIds().push(id)
-    else Object.assign(this.queueDto(), { [id]: patch })
+    else this.queueDto()[id] = patch
 
     remolWaitTimeout(200)
 

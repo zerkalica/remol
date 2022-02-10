@@ -6,7 +6,7 @@ declare var crypto: {
   randomUUID(): string
 }
 
-export class RemolModel<DTO = unknown> extends Object {
+export class RemolModel<DTO extends Object = Object> extends Object {
   constructor(protected $ = RemolContext.instance) {
     super()
   }
