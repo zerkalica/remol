@@ -60,7 +60,7 @@ export class RemolDemoTodoStore extends RemolModelStore<RemolDemoTodo> {
   }
 
   filter(next?: TODO_FILTER) {
-    return (this.location.value('todo_filter', next) as TODO_FILTER) ?? TODO_FILTER.ALL
+    return this.location.value<TODO_FILTER>('todo_filter', next) ?? TODO_FILTER.ALL
   }
 
   @field get filteredTodos() {
@@ -80,21 +80,21 @@ export class RemolDemoTodoStore extends RemolModelStore<RemolDemoTodo> {
   toggleAll() {
     const checked = !!this.items().find(todo => !todo.checked())
     for (const todo of this.items()) {
-      this.patch(todo.id(), { checked })
+      this.dto(todo.id(), { checked })
     }
   }
 
   @action
   completeAll() {
     for (const todo of this.items()) {
-      if (!todo.checked()) this.patch(todo.id(), { checked: true })
+      if (!todo.checked()) this.dto(todo.id(), { checked: true })
     }
   }
 
   @action
   clearCompleted() {
     for (const todo of this.items()) {
-      if (todo.checked()) this.patch(todo.id(), null)
+      if (todo.checked()) this.dto(todo.id(), null)
     }
   }
 }

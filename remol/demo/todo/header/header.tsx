@@ -21,13 +21,13 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
   }
 
   @action
-  setTitle({ target }: React.ChangeEvent<HTMLInputElement>) {
-    this.title(target.value)
+  setTitle(e: React.ChangeEvent<HTMLInputElement>) {
+    this.title(e.target.value)
   }
 
   @action
-  submit({ key }: React.KeyboardEvent<HTMLInputElement>) {
-    if (key !== 'enter' || !this.title()) return
+  submit(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'enter' || !this.title()) return
 
     this.store.model().title(this.title())
     this.title('')
@@ -38,7 +38,7 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
       <header id={id} className={remolDemoTodoTheme.header}>
         <input
           id={`${id}-toggleAll`}
-          disabled={this.store.patching()?.running}
+          disabled={this.store.pending}
           type="checkbox"
           onChange={this.store.toggleAll}
           className={remolDemoTodoTheme.toggleAll}

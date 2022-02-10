@@ -1,6 +1,10 @@
-import { action, mem, RemolContext } from '@remol/core'
+import { action, mem, RemolContext, remolFail } from '@remol/core'
 
 import { RemolDemoFetch } from '../fetch/fetch'
+
+declare var crypto: {
+  randomUUID(): string
+}
 
 export class RemolModel<DTO = unknown> extends Object {
   constructor(protected $ = RemolContext.instance) {
@@ -11,10 +15,8 @@ export class RemolModel<DTO = unknown> extends Object {
     return this.$.get(RemolDemoFetch)
   }
 
-  reset() {}
-
   @mem(0) id(next?: string) {
-    return next ?? ''
+    return next ?? (crypto.randomUUID() || remolFail(new Error('Crypto.randomUUID() not supported')))
   }
 
   @mem(1) dto_pick<Field extends keyof DTO>(field: Field, next?: DTO[Field]) {
@@ -29,22 +31,8 @@ export class RemolModel<DTO = unknown> extends Object {
     return next ?? false
   }
 
-  patch(id: string, patch?: null | Partial<DTO>) {}
-
-  @mem(0) dto(next?: Partial<DTO>) {
-    const id = this.id()
-    if (next) this.updating(true)
-    const res = this.fetcher.response(`${this.api()}/${id}`, {
-      method: next === undefined ? 'GET' : 'PUT',
-      body: next ? JSON.stringify({ id, ...next }) : undefined,
-    })
-    this.updating(false)
-
-    const dto = res.json() as DTO
-
-    if (next) this.reset()
-
-    return dto
+  @mem(0) dto(next?: Partial<DTO> | null): DTO {
+    throw new Error('implement')
   }
 
   @mem(0) removing(next?: boolean) {
@@ -52,9 +40,6 @@ export class RemolModel<DTO = unknown> extends Object {
   }
 
   @action remove() {
-    this.removing(true)
-    this.patch(this.id(), null)
-    this.removing(false)
-    this.reset()
+    this.dto(null)
   }
 }

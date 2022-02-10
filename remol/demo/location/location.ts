@@ -53,9 +53,9 @@ export class RemolDemoLocation extends Object {
     this.history.pushState(null, this.ns(), this.paramsToString(params))
   }
 
-  @mem(1) value(key: string, next?: string | number | null) {
+  @mem(1) value<V extends string>(key: string, next?: V | null): V | null {
     const params = this.params()
-    if (next === undefined) return params.get(key)
+    if (next === undefined) return params.get(key) as V | null
 
     next === null ? params.delete(key) : params.set(key, String(next))
 

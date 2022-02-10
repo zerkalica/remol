@@ -73,12 +73,7 @@ export class RemolDemoTodoFooter extends Remol<{ id: string }> {
           ))}
         </ul>
         {store.completedCount !== 0 && (
-          <button
-            id={`${id}-clear`}
-            className={this.css.clearCompleted}
-            disabled={store.patching() instanceof Promise}
-            onClick={store.clearCompleted}
-          >
+          <button id={`${id}-clear`} className={this.css.clearCompleted} disabled={store.pending} onClick={store.clearCompleted}>
             Clear completed
           </button>
         )}
