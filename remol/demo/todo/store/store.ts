@@ -1,34 +1,11 @@
-import { action, field } from '@remol/core'
+import { action, field, mem, RemolContext, remolFail } from '@remol/core'
 
+import { RemolDemoFetch } from '../../fetch/fetch'
 import { RemolDemoLocation } from '../../location/location'
 import { RemolModel } from '../../model/model'
-import { RemolModelStore } from '../../model/store'
+import { RemolDemoTodoDTO, RemolDemoTodoModel } from './model'
 
-type RemolDemoTodoDTO = {
-  id: string
-  title: string
-  checked: boolean
-}
-
-export class RemolDemoTodo extends RemolModel<RemolDemoTodoDTO> {
-  static instance = new RemolDemoTodo()
-  override api() {
-    return '/todo'
-  }
-
-  title(next?: RemolDemoTodoDTO['title']) {
-    return this.dto_pick('title', next)
-  }
-
-  @action
-  toggle() {
-    this.checked(!this.checked())
-  }
-
-  checked(next?: RemolDemoTodoDTO['checked']) {
-    return this.dto_pick('checked', next)
-  }
-}
+import type { RemolDemoTodoStoreMock } from './mock'
 
 export enum TODO_FILTER {
   ALL = 'all',
@@ -36,27 +13,96 @@ export enum TODO_FILTER {
   ACTIVE = 'active',
 }
 
-export class RemolDemoTodoStore extends RemolModelStore<RemolDemoTodo> {
+export class RemolDemoTodoStore extends Object {
+  constructor(protected $ = RemolContext.instance, id = 'RemolDemoTodoStore') {
+    super()
+    this[Symbol.toStringTag] = id
+  }
+
+  [Symbol.toStringTag]: string
+
   static instance = new RemolDemoTodoStore()
 
-  override api() {
-    return '/todos'
+  get fetcher() {
+    return this.$.get(RemolDemoFetch)
   }
 
-  override model() {
-    return new RemolDemoTodo(this.$)
+  @mem(0) reset(next = null) {
+    return Math.random() + new Date().getTime()
   }
 
-  @field get activeTodoCount() {
-    return this.items().reduce((sum, todo) => sum + (todo.checked() ? 0 : 1), 0)
+  @mem(0) list() {
+    this.reset()
+    return this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
   }
 
-  get completedCount() {
-    return this.items().length - this.activeTodoCount
+  @mem(0) prefetched() {
+    const ids = this.list().data.ids
+
+    return this.fetcher.batch<RemolDemoTodoDTO>('/todo?id=' + ids.join(','))
+  }
+
+  @mem(1) dto(id: string, next?: Partial<RemolDemoTodoDTO> | null) {
+    if (next !== undefined) {
+      const updated = this.fetcher.batch<RemolDemoTodoDTO>('/todo', {
+        method: 'PATCH',
+        body: JSON.stringify({ [id]: next }),
+      })[id]
+
+      this.reset()
+
+      return updated
+    }
+
+    return this.prefetched()[id]
+  }
+
+  item(id = RemolModel.createId()) {
+    const todo = new RemolDemoTodoModel(`${this.toString()}.items[${id}]`)
+    todo.id = () => id
+    todo.dto = this.dto.bind(this, id)
+    return todo
+  }
+
+  @mem(0) items() {
+    return this.list().data.ids.map(id => this.item(id))
+  }
+
+  get pending() {
+    return this.status() instanceof Promise
+  }
+
+  get error() {
+    const v = this.status()
+
+    return v instanceof Error ? v : undefined
+  }
+
+  @mem(0) status(next?: unknown) {
+    return next ?? null
+  }
+
+  fetch(url: string, init: RequestInit) {
+    try {
+      const res = this.fetcher.response(url, init).json() as { data: { ids: string[] } }
+      // this.reset()
+      return res
+    } catch (error) {
+      this.status(error)
+      remolFail(error)
+    }
   }
 
   get location() {
     return this.$.get(RemolDemoLocation.instance)
+  }
+
+  get activeTodoCount() {
+    return this.list().data.activeCount
+  }
+
+  get completedCount() {
+    return this.list().data.completedCount
   }
 
   filter(next?: TODO_FILTER) {
@@ -76,25 +122,15 @@ export class RemolDemoTodoStore extends RemolModelStore<RemolDemoTodo> {
     }
   }
 
-  @action
-  toggleAll() {
-    const checked = !!this.items().find(todo => !todo.checked())
-    for (const todo of this.items()) {
-      this.dto(todo.id(), { checked })
-    }
+  @action toggleAll() {
+    return this.fetch('/todos/toggle', { method: 'PATCH' })
   }
 
-  @action
-  completeAll() {
-    for (const todo of this.items()) {
-      if (!todo.checked()) this.dto(todo.id(), { checked: true })
-    }
+  @action completeAll() {
+    return this.fetch('/todos/complete', { method: 'PATCH' })
   }
 
-  @action
-  clearCompleted() {
-    for (const todo of this.items()) {
-      if (todo.checked()) this.dto(todo.id(), null)
-    }
+  @action clearCompleted() {
+    return this.fetch('/todos/complete', { method: 'DELETE' })
   }
 }

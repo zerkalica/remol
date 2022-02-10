@@ -6,9 +6,13 @@ declare var crypto: {
   randomUUID(): string
 }
 
-export class RemolModel<DTO extends Object = Object> extends Object {
+export abstract class RemolModel<DTO extends Object = Object> extends Object {
   constructor(protected $ = RemolContext.instance) {
     super()
+  }
+
+  static createId() {
+    return crypto.randomUUID() || remolFail(new Error('Crypto.randomUUID() not supported, update your browser'))
   }
 
   get fetcher() {
@@ -16,30 +20,38 @@ export class RemolModel<DTO extends Object = Object> extends Object {
   }
 
   @mem(0) id(next?: string) {
-    return next ?? (crypto.randomUUID() || remolFail(new Error('Crypto.randomUUID() not supported')))
+    return next ?? RemolModel.createId()
   }
 
   @mem(1) dto_pick<Field extends keyof DTO>(field: Field, next?: DTO[Field]) {
     return this.dto(next === undefined ? undefined : { ...this.dto(), [field]: next })[field]
   }
 
-  api(): string {
+  dto(next?: Partial<DTO> | null): DTO {
     throw new Error('implement')
   }
 
-  @mem(0) updating(next?: boolean) {
-    return next ?? false
+  get pending() {
+    return this.patching() instanceof Promise
   }
 
-  @mem(0) dto(next?: Partial<DTO> | null): DTO {
-    throw new Error('implement')
+  get error() {
+    const v = this.patching()
+
+    return v instanceof Error ? v : undefined
   }
 
-  @mem(0) removing(next?: boolean) {
-    return next ?? false
+  @mem(0) patching(next?: unknown) {
+    return next ?? null
   }
 
   @action remove() {
-    this.dto(null)
+    try {
+      this.dto(null)
+      this.patching(null)
+    } catch (error) {
+      this.patching(error)
+      remolFail(error)
+    }
   }
 }

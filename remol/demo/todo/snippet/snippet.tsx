@@ -1,152 +1,118 @@
 import * as React from 'react'
 
-import { action, mem, RemolContext } from '@remol/core'
+import { action, mem } from '@remol/core'
 import { Remol } from '@remol/react'
 
-import { RemolDemoTodo } from '../store/store'
+import { RemolDemoTodoModel } from '../store/model'
 import { RemolDemoTodoSnippetTheme } from './theme'
-
-const ESCAPE_KEY = 27
-const ENTER_KEY = 13
-
-class TodoItemEdit extends Object {
-  constructor(protected $ = RemolContext.instance) {
-    super()
-  }
-
-  @mem(0) todoBeingEditedId(next?: string | null) {
-    return next
-  }
-
-  @mem(0) editText(next?: string) {
-    return next ?? ''
-  }
-
-  todo() {
-    return new RemolDemoTodo(this.$)
-  }
-
-  @action
-  beginEdit() {
-    const todo = this.todo()
-
-    if (todo.updating()) return
-    if (this.todoBeingEditedId()) return
-
-    this.todoBeingEditedId(todo.id())
-    this.editText(todo.title())
-  }
-
-  @action
-  setText({ target }: React.KeyboardEvent<HTMLInputElement>) {
-    this.editText = (target as any).value.trim()
-  }
-
-  @action
-  setEditInputRef(el?: HTMLInputElement | null) {
-    el?.focus()
-  }
-
-  @action
-  submit() {
-    if (!this.todoBeingEditedId) return
-
-    const title = this.editText().trim()
-    const todo = this.todo()
-
-    if (title) {
-      if (todo.title() !== title) {
-        todo.title(title)
-        this.editText('')
-      }
-    } else {
-      this.remove()
-    }
-    this.todoBeingEditedId(null)
-  }
-
-  @action
-  submitOrRestore({ which }: React.KeyboardEvent<HTMLInputElement>) {
-    switch (which) {
-      case ESCAPE_KEY:
-        this.editText(this.todo().title())
-        this.todoBeingEditedId(null)
-        break
-
-      case ENTER_KEY:
-        this.submit()
-        break
-
-      default:
-        break
-    }
-  }
-
-  @action
-  toggle() {
-    this.todo().toggle()
-    this.todoBeingEditedId(null)
-  }
-
-  @action
-  remove() {
-    this.todo().remove()
-    this.todoBeingEditedId(null)
-  }
-}
 
 const theme = new RemolDemoTodoSnippetTheme()
 
 export class RemolDemoTodoSnippet extends Remol<{
   id: string
-  todo: RemolDemoTodo
+  todo: RemolDemoTodoModel
 }> {
-  @mem(0) todoItemEdit() {
-    const todo = new TodoItemEdit()
-    todo.todo = () => this.props.todo
-    return todo
+  @action toggle() {
+    this.props.todo.toggle()
   }
 
-  sub({ id, todo } = this.props) {
-    const { css } = theme
-    const todoItemEdit = this.todoItemEdit()
+  @action remove() {
+    this.props.todo.update(null)
+  }
 
-    if (todoItemEdit.todoBeingEditedId() === todo.id()) {
-      return (
-        <li id={id} className={css.editing}>
-          <input
-            id={`${id}-editing`}
-            ref={todoItemEdit.setEditInputRef}
-            className={css.edit}
-            disabled={todo.updating()}
-            value={todoItemEdit.editText()}
-            onBlur={todoItemEdit.submit}
-            onInput={todoItemEdit.setText}
-            onKeyDown={todoItemEdit.submitOrRestore}
-          />
-        </li>
-      )
+  @mem(0) draft(next?: RemolDemoTodoModel | null) {
+    return next ?? null
+  }
+
+  @action beginEdit() {
+    const todo = this.props.todo
+    if (this.draft()) return
+    if (todo.pending) return
+
+    const draft = new RemolDemoTodoModel(`${this.props.id}.beginEdit()`)
+    draft.dto = next => {
+      if (next) return next
+
+      return todo.dto(next)
     }
 
+    this.draft(draft)
+  }
+
+  @action submit() {
+    const todo = this.props.todo
+    const draft = this.draft()
+
+    if (!draft) return
+
+    const title = draft.title().trim()
+
+    if (title) {
+      if (todo.title() !== title) {
+        todo.dto(draft.dto())
+      }
+    } else {
+      this.remove()
+    }
+
+    this.draft(null)
+  }
+
+  @action submitOrRestore({ key }: React.KeyboardEvent<HTMLInputElement>) {
+    if (key === 'Escape') return this.draft(null)
+    if (key === 'Enter') return this.submit()
+  }
+
+  @action setFocusRef(el?: HTMLInputElement | null) {
+    el?.focus()
+  }
+
+  @action setText({ target }: React.KeyboardEvent<HTMLInputElement>) {
+    const title = (target as any).value.trim()
+    this.draft()?.title(title)
+    this.update()
+  }
+
+  Form({ id, todo } = this.props, css = theme.css, draft = this.draft()) {
+    if (!draft) return null
+
+    return (
+      <li id={id} className={css.editing}>
+        <input
+          id={`${id}-editing`}
+          ref={this.setFocusRef}
+          className={css.edit}
+          disabled={todo.pending}
+          value={draft.title()}
+          onBlur={this.submit}
+          onInput={this.setText}
+          onKeyDown={this.submitOrRestore}
+        />
+      </li>
+    )
+  }
+
+  View({ id, todo } = this.props, css = theme.css) {
     return (
       <li id={id} className={css.regular}>
         <input
           id={`${id}-toggle`}
           className={css.toggle}
           type="checkbox"
-          disabled={todo.updating()}
+          disabled={todo.pending}
           checked={todo.checked()}
-          onChange={todoItemEdit.toggle}
+          onChange={this.toggle}
         />
-        <label
-          id={`${id}-beginEdit`}
-          className={theme.label(todo.checked(), todo.updating())}
-          onDoubleClick={todoItemEdit.beginEdit}
-        >
-          {todo.title}
+        <label id={`${id}-beginEdit`} className={theme.label(todo.checked(), todo.pending)} onDoubleClick={this.beginEdit}>
+          {todo.title()}
         </label>
-        <button id={`${id}-destroy`} className={css.destroy} disabled={todo.removing()} onClick={todoItemEdit.remove} />
+        <button id={`${id}-destroy`} className={css.destroy} disabled={todo.pending} onClick={this.remove} />
       </li>
     )
+  }
+
+  sub() {
+    if (this.draft()) return this.Form()
+    else return this.View()
   }
 }

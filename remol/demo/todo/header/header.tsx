@@ -23,13 +23,14 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
   @action
   setTitle(e: React.ChangeEvent<HTMLInputElement>) {
     this.title(e.target.value)
+    this.update()
   }
 
   @action
   submit(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key !== 'enter' || !this.title()) return
 
-    this.store.model().title(this.title())
+    this.store.item().title(this.title())
     this.title('')
   }
 
