@@ -30,7 +30,7 @@ class TodoItemEdit extends Object {
   beginEdit() {
     const todo = this.todo()
 
-    if (todo.updating()) return
+    if (todo.pending) return
     if (this.todoBeingEditedId()) return
 
     this.todoBeingEditedId(todo.id())
@@ -49,7 +49,7 @@ class TodoItemEdit extends Object {
 
   @action
   submit() {
-    if (!this.todoBeingEditedId) return
+    if (!this.todoBeingEditedId()) return
 
     const title = this.editText().trim()
     const todo = this.todo()
@@ -118,7 +118,7 @@ export class RemolDemoTodoSnippet extends Remol<{
             id={`${id}-editing`}
             ref={todoItemEdit.setEditInputRef}
             className={css.edit}
-            disabled={todo.updating()}
+            disabled={todo.pending}
             value={todoItemEdit.editText()}
             onBlur={todoItemEdit.submit}
             onInput={todoItemEdit.setText}
@@ -134,18 +134,18 @@ export class RemolDemoTodoSnippet extends Remol<{
           id={`${id}-toggle`}
           className={css.toggle}
           type="checkbox"
-          disabled={todo.updating()}
+          disabled={todo.pending}
           checked={todo.checked()}
           onChange={todoItemEdit.toggle}
         />
         <label
           id={`${id}-beginEdit`}
-          className={theme.label(todo.checked(), todo.updating())}
+          className={theme.label(todo.checked(), todo.pending)}
           onDoubleClick={todoItemEdit.beginEdit}
         >
-          {todo.title}
+          {todo.title()}
         </label>
-        <button id={`${id}-destroy`} className={css.destroy} disabled={todo.removing()} onClick={todoItemEdit.remove} />
+        <button id={`${id}-destroy`} className={css.destroy} disabled={todo.pending} onClick={todoItemEdit.remove} />
       </li>
     )
   }

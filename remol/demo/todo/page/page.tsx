@@ -4,8 +4,6 @@ import { stylesheet } from 'typestyle'
 import { field } from '@remol/core'
 import { Remol } from '@remol/react'
 
-import { RemolDemoTodoFooter } from '../footer/footer'
-import { RemolDemoTodoHeader } from '../header/header'
 import { RemolDemoTodoList } from '../list/list'
 import { RemolDemoTodoStore } from '../store/store'
 
@@ -29,9 +27,12 @@ export class RemolDemoTodoPage extends Remol<{ id: string }> {
   sub({ id } = this.props) {
     return (
       <div id={id} className={css.todoapp}>
-        <RemolDemoTodoHeader id={`${id}-header`} />
+        {/* {this.store.items().map(todo => (
+          <div key={todo.id()}>{todo.title()}</div>
+        ))} */}
+        {/* <RemolDemoTodoHeader id={`${id}-header`} /> */}
         {this.store.filteredTodos.length ? <RemolDemoTodoList id={`${id}-main`} /> : null}
-        <RemolDemoTodoFooter id={`${id}-footer`} />
+        {/* <RemolDemoTodoFooter id={`${id}-footer`} /> */}
       </div>
     )
   }

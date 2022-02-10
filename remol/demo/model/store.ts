@@ -1,34 +1,32 @@
-import { action, mem, RemolContext, remolFail, remolWaitTimeout } from '@remol/core'
+import { mem, RemolContext } from '@remol/core'
 
 import { RemolDemoFetch } from '../fetch/fetch'
-import { RemolModel } from './model'
 
-export class RemolModelStore<Model extends RemolModel> {
-  constructor(protected $ = RemolContext.instance) {}
+export abstract class RemolModelStore<Model extends { id: () => string; dto: (patch?: {} | null) => {} }> extends Object {
+  constructor(protected $ = RemolContext.instance) {
+    console.log('init store')
+    super()
+  }
 
   get fetcher() {
     return this.$.get(RemolDemoFetch)
   }
 
-  api() {
-    return '/todos'
-  }
+  abstract api(): string
+  abstract apiSelect(): string
+  abstract model(): Model
 
-  @mem(0) reset(next = null) {
+  @mem(0) reset(next?: null) {
     return Math.random() + new Date().getTime()
   }
 
-  @mem(0) ids() {
+  @mem(0) selectedIds() {
     this.reset()
-    return this.fetcher.response(this.api()).json() as readonly string[]
+    return this.fetcher.response(this.apiSelect()).json() as readonly string[]
   }
 
   @mem(0) items() {
-    return this.ids().map(id => this.item(id))
-  }
-
-  model(): Model {
-    throw new Error('implement')
+    return this.selectedIds().map(id => this.item(id))
   }
 
   @mem(1) item(id: string) {
@@ -49,54 +47,22 @@ export class RemolModelStore<Model extends RemolModel> {
     return v instanceof Error ? v : undefined
   }
 
-  @mem(0) patching(next?: null | Promise<unknown> | Error) {
+  @mem(0) patching(next?: unknown) {
     return next ?? null
   }
 
-  @mem(0) queueDto(next?: Record<string, null | undefined | Partial<ReturnType<Model['dto']>>>) {
-    return next ?? {}
+  @mem(0) batchGet() {
+    return this.fetcher.get<ReturnType<Model['dto']>>(this.api())
   }
 
-  @mem(0) queueIds(next?: string[]) {
-    return next ?? []
-  }
-
-  @action queueGet() {
-    const ids = this.queueIds()
-    const body = JSON.stringify(ids)
-    const res = this.fetcher.batch<ReturnType<Model['dto']>>(this.api(), { method: 'GET', body })
-    this.queueIds([])
-
-    return res
-  }
-
-  @action queuePatch() {
-    const patches = this.queueDto()
-    const body = JSON.stringify(patches)
-    const res = this.fetcher.batch<ReturnType<Model['dto']>>(this.api(), { method: 'PATCH', body })
-    this.queueDto({})
-
-    return res
+  @mem(0) batchPatch() {
+    const batch = this.fetcher.patch<Partial<ReturnType<Model['dto']>>>(this.api())
+    batch.reset = this.reset.bind(this)
+    return batch
   }
 
   @mem(1) dto(id: string, patch?: null | Partial<ReturnType<Model['dto']>>) {
-    if (patch === undefined) this.queueIds().push(id)
-    else this.queueDto()[id] = patch
-
-    remolWaitTimeout(200)
-
-    if (patch === undefined) return this.queueGet()[id]
-
-    try {
-      const res = this.queuePatch()[id]
-      this.patching(null)
-      this.reset()
-
-      return res
-    } catch (error) {
-      this.patching(error as Error | Promise<unknown>)
-
-      remolFail(error)
-    }
+    if (patch === undefined) return this.batchGet().request(id)
+    return this.batchPatch().request(id, patch)
   }
 }

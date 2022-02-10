@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { Remol } from '@remol/react'
 import { action, mem } from '@remol/core'
+import { Remol } from '@remol/react'
 
 export class RemolDemoCounterKlass extends Remol<{ id: string }> {
   @mem(0) value(next?: number) {

@@ -4,7 +4,7 @@ import { RemolDemoLocation } from '../../location/location'
 import { RemolModel } from '../../model/model'
 import { RemolModelStore } from '../../model/store'
 
-type RemolDemoTodoDTO = {
+export type RemolDemoTodoDTO = {
   id: string
   title: string
   checked: boolean
@@ -12,16 +12,12 @@ type RemolDemoTodoDTO = {
 
 export class RemolDemoTodo extends RemolModel<RemolDemoTodoDTO> {
   static instance = new RemolDemoTodo()
-  override api() {
-    return '/todo'
-  }
 
   title(next?: RemolDemoTodoDTO['title']) {
     return this.dto_pick('title', next)
   }
 
-  @action
-  toggle() {
+  @action toggle() {
     this.checked(!this.checked())
   }
 
@@ -40,6 +36,10 @@ export class RemolDemoTodoStore extends RemolModelStore<RemolDemoTodo> {
   static instance = new RemolDemoTodoStore()
 
   override api() {
+    return '/todo'
+  }
+
+  override apiSelect() {
     return '/todos'
   }
 

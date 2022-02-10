@@ -1,7 +1,13 @@
 import React from 'react'
 import { createRoot } from 'react-dom'
 
+import { RemolContext } from '@remol/core'
+import { Remol } from '@remol/react'
+
+import { RemolDemoFetch } from './fetch/fetch'
+import { RemolDemoFetchMock } from './fetch/mock'
 import { RemolDemoPage } from './page/page'
+import { RemolDemoTodoStoreMock } from './todo/store/store.mock'
 
 declare module 'react-dom' {
   export function createRoot(el: HTMLElement): {
@@ -12,4 +18,18 @@ declare module 'react-dom' {
 const id = 'remol-demo'
 const el = document.getElementById(id)!
 const root = createRoot(el)
-root.render(<RemolDemoPage id={`${id}-page`} />)
+
+const $ = new RemolContext().set(
+  RemolDemoFetch,
+  class RemolDemoFetchMockApp extends RemolDemoFetchMock {
+    static todos = new RemolDemoTodoStoreMock()
+
+    static data(pathname: string, method: string, body: any) {
+      if (pathname === '/todo' && method === 'GET' && body.id) return this.todos.get(body.id)
+      if (pathname === '/todo' && method === 'PATCH') return this.todos.patch(body)
+      if (pathname === '/todos') return this.todos.list()
+    }
+  }
+)
+
+root.render(<Remol.Provide$ value={$} children={<RemolDemoPage id={`${id}-page`} />} />)
