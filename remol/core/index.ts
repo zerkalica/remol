@@ -12,6 +12,7 @@ export {
 export const remolWaitTimeout = $.$mol_wait_timeout.bind($)
 export const remolWaitTimeoutAsync = $.$mol_wait_timeout_async.bind($)
 
+export { remolEventFactory } from './event/factory'
 export { remolAction as action } from './action/action'
 export { RemolContext, RemolContextKey, RemolContextUpdater } from './context/context'
 export { RemolError } from './error/error'

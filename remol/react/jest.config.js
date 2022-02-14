@@ -1,1 +1,1 @@
-module.exports = require('@remol/boot/jestConfig')(__dirname)
+module.exports = require('@remol/boot/jestConfig').jestConfig(__dirname)

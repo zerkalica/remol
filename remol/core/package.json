@@ -2,8 +2,8 @@
   "name": "@remol/core",
   "version": "1.0.0",
   "description": "mol wire bindings",
-  "-typings": "./-/index.d.ts",
-  "-module": "./-/index.js",
+  "typings": "./-/index.d.ts",
+  "module": "./-/index.js",
   "exports": {
     ".": "./-/index.js",
     "./*": "./-/*.js"
@@ -36,7 +36,7 @@
     "dev": "tsc-watch --build --noClear --onSuccess jest"
   },
   "dependencies": {
-    "mol_wire_lib": "^1.0.22",
+    "mol_wire_lib": "^1.0.40",
     "autobind-decorator": "^2.4.0"
   },
   "devDependencies": {

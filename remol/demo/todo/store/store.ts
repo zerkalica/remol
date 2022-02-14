@@ -69,7 +69,7 @@ export class RemolDemoTodoStore extends Object {
   }
 
   get pending() {
-    return this.status() instanceof Promise
+    return Boolean(this.status() instanceof Promise)
   }
 
   get error() {

@@ -1,1 +1,1 @@
-module.exports = require('./jestConfig')(__dirname)
+module.exports = require('./-/jestConfig').jestConfig(__dirname)

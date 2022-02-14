@@ -33,6 +33,6 @@ export class RemolDemoFetch {
   }
 
   @action static batch<V>(input: RequestInfo, init?: RequestInit) {
-    return RemoDemoFetchBatch.response<V>(input, this.response(input, init).json())
+    return RemoDemoFetchBatch.response(input, this.response(input, init).json()) as Record<string, V>
   }
 }

@@ -12,14 +12,12 @@
   "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
-    "bundle": "mkdir -p ./-/public && cp ./index.html ./-/public/ && esbuild --sourcemap --bundle ./browser.tsx --outfile=./-/public/browser.js",
-    "build": "tsc --build && jest && npm run bundle",
-    "dev": "npm run bundle -- --servedir=-/public"
+    "build": "tsc --build && jest && remol-boot bundle",
+    "dev": "tsc --build && remol-boot dev"
   },
   "dependencies": {
     "@remol/core": "^1.0.0",
     "@remol/react": "^1.0.0",
-    "autobind-decorator": "^2.4.0",
     "react": "^18.0.0-rc.0",
     "react-dom": "^18.0.0-rc.0",
     "typestyle": "^2.2.0"

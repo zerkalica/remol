@@ -48,12 +48,12 @@ export class RemolWire<E> extends $mol_wire_pub_sub {
   }
 
   sync() {
-    this.track_promote()
+    this.promote()
     return this.up()
   }
 
   affect(quant: number) {
-    if (!super.affect(quant)) return false
+    // if (!super.affect(quant)) return false
 
     if (this.frame === undefined) this.frame = this.schedule()
 

@@ -7,19 +7,19 @@
   "author": "Stefan Zerkalica <zerkalica@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "clean": "yarn workspaces run clean",
-    "build": "yarn workspaces run build",
-    "up": "npm-check-updates -u && yarn workspaces run npm-check-updates -u && yarn workspaces run clean && yarn install",
+    "postinstall": "npm --workspace=@remol/boot run build",
+    "clean": "npm --workspaces run clean",
+    "build": "npm --workspaces run build",
+    "up": "npm-check-updates -u && npm --workspaces run npm-check-updates -u && npm --workspaces run clean && npm install",
     "release": "lerna publish from-package"
   },
   "workspaces": [
     "remol/*"
   ],
   "devDependencies": {
-    "@types/node": "^17.0.14",
+    "@types/node": "^17.0.18",
     "lerna": "^4.0.0",
-    "npm-check-updates": "^12.2.1",
-    "typescript": "^4.5.5",
-    "yarn": "^1.22.17"
+    "npm-check-updates": "^12.3.0",
+    "typescript": "^4.5.5"
   }
 }

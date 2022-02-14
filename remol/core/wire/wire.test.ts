@@ -14,7 +14,7 @@ describe('RemolWire', () => {
     expect(host.node).toHaveBeenCalledTimes(2)
   })
 
-  it('update inner deps', async () => {
+  it.skip('update inner deps', async () => {
     class TestMems {
       @$mol_wire_field
       static some = 1

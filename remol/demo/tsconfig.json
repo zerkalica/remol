@@ -4,5 +4,5 @@
     "outDir": "-",
     "rootDir": "."
   },
-  "references": [{ "path": "../core" }, { "path": "../react" }]
+  "references": [{ "path": "../core" }, { "path": "../react" }, { "path": "../boot" }]
 }
