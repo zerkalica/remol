@@ -3,7 +3,6 @@ import child_process from 'child_process'
 import CircularDependencyPlugin from 'circular-dependency-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
-import { promises as fs } from 'fs'
 import { ServerResponse } from 'http'
 import path from 'path'
 // @ts-ignore
@@ -130,7 +129,7 @@ export class RemolBootBuild {
     return [
       this.plugClean(),
       this.plugCircular(),
-      this.plugRemolsset(),
+      this.plugRemolAsset(),
       this.plugIgnore(),
       this.plugAnalyzer(),
       // new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
@@ -155,8 +154,23 @@ export class RemolBootBuild {
     })
   }
 
-  protected plugRemolsset(): RemolBootBuildAssetPlugin | undefined {
-    return new RemolBootBuildAssetPlugin({ meta: { version: this.version() }, filename: this.manifestName() })
+  protected template(): RemolBootBuildTemplate | undefined {
+    const template = new RemolBootBuildTemplate()
+    template.publicUrl = this.publicUrl.bind(this)
+    template.pkgName = this.pkgName.bind(this)
+    template.version = this.version.bind(this)
+
+    return template
+  }
+
+  protected plugRemolAsset(): RemolBootBuildAssetPlugin | undefined {
+    const plug = new RemolBootBuildAssetPlugin()
+
+    plug.template = this.template.bind(this)
+    plug.meta = () => ({ version: this.version() })
+    plug.filename = this.manifestName.bind(this)
+
+    return plug
   }
 
   protected plugAnalyzer() {
@@ -206,30 +220,6 @@ export class RemolBootBuild {
     this.log(stats.toString({ colors: true }))
 
     return RemolBootBuildAssetPlugin.info(stats.compilation)
-  }
-
-  protected template(): RemolBootBuildTemplate | undefined {
-    return new RemolBootBuildTemplate()
-  }
-
-  async bundle() {
-    // this.tests()
-    const manifest = await this.manifest()
-
-    const t = this.template()
-
-    if (!t) return manifest
-
-    t.pkgName = () => this.pkgName()
-    t.version = () => this.version()
-
-    const prevBodyJs = t.bodyJs.bind(t)
-    t.bodyJs = () => [...prevBodyJs(), ...Object.values(manifest.entries).map(src => ({ src: this.publicUrl() + src }))]
-
-    const state = Object.keys(manifest.files).length ? { __files: manifest.files } : undefined
-    await fs.writeFile(path.join(this.publicDir(), t.fileName()), t.render(state))
-
-    return manifest
   }
 
   tests() {

@@ -15,7 +15,7 @@ declare module 'react-dom' {
   }
 }
 
-const id = 'remol-demo'
+const id = 'remol-demo-main'
 const el = document.getElementById(id)!
 const root = createRoot(el)
 
@@ -30,4 +30,4 @@ const $ = new RemolContext().set(
   }
 )
 
-root.render(<Remol.Provide$ value={$} children={<RemolDemoPage id={`${id}-page`} />} />)
+root.render(<Remol.Provide$ value={$} children={<RemolDemoPage id={id} />} />)
