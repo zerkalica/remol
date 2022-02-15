@@ -130,7 +130,7 @@ export class RemolBootBuild {
     return [
       this.plugClean(),
       this.plugCircular(),
-      this.plugAcmeAsset(),
+      this.plugRemolsset(),
       this.plugIgnore(),
       this.plugAnalyzer(),
       // new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
@@ -139,37 +139,35 @@ export class RemolBootBuild {
     ]
   }
 
-  protected plugClean() {
-    return new CleanWebpackPlugin() as CleanWebpackPlugin | undefined
+  protected plugClean(): CleanWebpackPlugin | undefined {
+    return new CleanWebpackPlugin()
   }
 
-  protected plugIgnore() {
+  protected plugIgnore(): webpack.IgnorePlugin | undefined {
     return new webpack.IgnorePlugin({
       resourceRegExp: /^\.\/tsbuildinfo$/,
-    }) as webpack.IgnorePlugin | undefined
+    })
   }
 
-  protected plugCircular() {
+  protected plugCircular(): webpack.WebpackPluginInstance | undefined {
     return new CircularDependencyPlugin({
       failOnError: true,
-    }) as webpack.WebpackPluginInstance | undefined
+    })
   }
 
-  protected plugAcmeAsset() {
-    return new RemolBootBuildAssetPlugin({ meta: { version: this.version() }, filename: this.manifestName() }) as
-      | RemolBootBuildAssetPlugin
-      | undefined
+  protected plugRemolsset(): RemolBootBuildAssetPlugin | undefined {
+    return new RemolBootBuildAssetPlugin({ meta: { version: this.version() }, filename: this.manifestName() })
   }
 
   protected plugAnalyzer() {
     return this.analyzer() ? new BundleAnalyzerPlugin() : undefined
   }
 
-  protected plugProgress() {
-    return new webpack.ProgressPlugin() as webpack.ProgressPlugin | undefined
+  protected plugProgress(): webpack.ProgressPlugin | undefined {
+    return new webpack.ProgressPlugin()
   }
 
-  protected plugCopyWebpack() {
+  protected plugCopyWebpack(): webpack.WebpackPluginInstance | undefined {
     return new CopyWebpackPlugin({
       patterns: [
         {
@@ -181,7 +179,7 @@ export class RemolBootBuild {
           },
         },
       ],
-    }) as webpack.WebpackPluginInstance | undefined
+    })
   }
 
   protected log(obj: Object | string) {
@@ -201,10 +199,8 @@ export class RemolBootBuild {
     return { compiler, run }
   }
 
-  async manifest() {
-    const { run } = this.compiler()
-
-    const stats = await run()
+  async bundle() {
+    const stats = await this.compiler().run()
 
     if (!stats) throw new Error('No stats')
     this.log(stats.toString({ colors: true }))
@@ -212,7 +208,7 @@ export class RemolBootBuild {
     return RemolBootBuildAssetPlugin.info(stats.compilation)
   }
 
-  protected template() {
+  protected template(): RemolBootBuildTemplate | undefined {
     return new RemolBootBuildTemplate()
   }
 

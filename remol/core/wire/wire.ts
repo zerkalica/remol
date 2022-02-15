@@ -36,7 +36,7 @@ export class RemolWire<E> extends $mol_wire_pub_sub {
     return Promise.resolve().then(this.update.bind(this))
   }
 
-  up() {
+  override up() {
     const bu = this.track_on()
     try {
       const result = this.host.node()
@@ -52,11 +52,9 @@ export class RemolWire<E> extends $mol_wire_pub_sub {
     return this.up()
   }
 
-  affect(quant: number) {
-    // if (!super.affect(quant)) return false
+  override emit(quant: number) {
+    super.emit(quant)
 
     if (this.frame === undefined) this.frame = this.schedule()
-
-    return true
   }
 }

@@ -36,6 +36,10 @@ export class RemolBootBuildTemplate {
     return []
   }
 
+  manifest(): undefined | { files: Record<string, string>; entries: Record<string, string> } {
+    return undefined
+  }
+
   script(item: RemolBootBuildTemplateScriptProps) {
     return `<script src="${item.src}"></script>`
   }
@@ -79,13 +83,18 @@ export class RemolBootBuildTemplate {
     return ''
   }
 
+  publicUrl() {
+    return ''
+  }
+
   renderEnd(state?: Record<string, unknown>) {
+    const manifest = this.manifest()
+    const mainJs = manifest ? Object.values(manifest.entries).map(src => ({ src: this.publicUrl() + src })) : []
+
     return `
   </div>
   ${state ? this.state(state) : ''}
-  ${this.bodyJs()
-    .map(item => this.script(item))
-    .join('\n')}
+  ${[...this.bodyJs(), ...mainJs].map(item => this.script(item)).join('\n')}
 </body></html>
 `
   }

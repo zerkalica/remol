@@ -3,6 +3,8 @@ import path from 'path'
 import { callbackify, promisify } from 'util'
 import webpack from 'webpack'
 
+import { RemolBootBuildTemplate } from './Template'
+
 export class RemolBootBuildAssetPlugin {
   constructor(
     protected opts: {
@@ -11,6 +13,10 @@ export class RemolBootBuildAssetPlugin {
       filename?: string
     } = {}
   ) {}
+
+  template() {
+    return new RemolBootBuildTemplate()
+  }
 
   static info(compilation: webpack.Compilation) {
     const files = {} as Record<string, string>
@@ -51,8 +57,20 @@ export class RemolBootBuildAssetPlugin {
     if (!outDir) throw new Error('No outputOptions.path in webpack compilation')
 
     const manifestFile = join(outDir, this.opts.filename ?? 'manifest.json')
-
+    const manifest = { ...out, ...this.opts.meta }
     await mkdir(outDir)
-    await writeFile(manifestFile, JSON.stringify({ ...out, ...this.opts.meta }, null, this.opts.pretty ? '  ' : ''))
+    await writeFile(manifestFile, JSON.stringify(manifest, null, this.opts.pretty ? '  ' : ''))
+
+    const t = this.template()
+
+    if (t) {
+      const state = Object.keys(manifest.files).length ? { __files: manifest.files } : undefined
+      const htmlFile = join(outDir, t.fileName() ?? 'index.html')
+
+      const prevBodyJs = t.bodyJs.bind(t)
+      t.bodyJs = () => [...prevBodyJs(), ...Object.values(manifest.entries).map(src => ({ src: this.publicUrl() + src }))]
+
+      await writeFile(htmlFile, t.render(state))
+    }
   }
 }

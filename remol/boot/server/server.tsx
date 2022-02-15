@@ -39,12 +39,14 @@ export class RemolBootServer {
   protected server() {
     if (this.serverCached) return this.serverCached
     const mdl = this.middleware()
+
     this.serverCached = http.createServer((reqRaw, resRaw) => {
       const next = this.process.bind(this, reqRaw, resRaw)
       if (!mdl) return next()
 
       mdl(reqRaw, resRaw, next)
     })
+
     this.serverCached.once('error', this.fail.bind(this))
 
     return this.serverCached
