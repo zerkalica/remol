@@ -8,7 +8,7 @@ describe('RemolWire', () => {
       node: jest.fn(),
       update: jest.fn(),
     }
-    const wire = new RemolWire(host)
+    const wire = new RemolWire(host, '1')
     wire.sync()
     wire.sync()
     expect(host.node).toHaveBeenCalledTimes(2)
@@ -21,12 +21,15 @@ describe('RemolWire', () => {
     }
 
     const update = jest.fn()
-    const wire = new RemolWire({
-      node() {
-        return 123 + TestMems.some
+    const wire = new RemolWire(
+      {
+        node() {
+          return 123 + TestMems.some
+        },
+        update,
       },
-      update,
-    })
+      'test'
+    )
     expect(wire.sync()).toEqual(124)
 
     await new $mol_wire_fiber(

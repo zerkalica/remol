@@ -242,7 +242,7 @@ export class RemolBootBuild {
       mdl.invalidate(arg => cb(null, arg))
     )
 
-    close()
+    // close()
 
     if (this.noWatch()) this.tests()
     else this.watch(invalidate)
@@ -271,10 +271,14 @@ export class RemolBootBuild {
 
   protected watch(invalidate: () => Promise<undefined | webpack.Stats | webpack.MultiStats>) {
     const tswc = new TscWatchClient()
+    tswc.on('started', () => {
+      console.log('Compilation started')
+    })
+
     tswc.on('success', async () => {
       try {
         this.tests()
-        await invalidate()
+        // await invalidate()
       } catch (e) {
         console.error(e)
       }

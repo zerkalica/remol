@@ -26,7 +26,7 @@ export class RemolDemoUserEdit extends Remol<{
   }
 
   @action userSave() {
-    return this.users().user('' + this.userSelectedId(), {
+    this.users().user('' + this.userSelectedId(), {
       first_name: this.userEditableName(),
     })
   }

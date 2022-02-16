@@ -19,18 +19,18 @@ const css = stylesheet({
 
 export class RemolDemoTodoPage extends Remol<{ id: string }> {
   @field get store() {
-    return new RemolDemoTodoStore(this.context)
+    return new RemolDemoTodoStore(this.context, this.props.id + '-store')
   }
 
   @field get $() {
-    return super.$.clone().set(RemolDemoTodoStore.instance, this.store)
+    return super.$.clone(this.props.id + '-$').set(RemolDemoTodoStore.instance, this.store)
   }
 
   sub({ id } = this.props) {
     return (
       <div id={id} className={css.todoapp}>
         <RemolDemoTodoHeader id={`${id}-header`} />
-        {this.store.filteredTodos.length ? <RemolDemoTodoList id={`${id}-main`} /> : null}
+        {this.store.filteredTodos.length ? <RemolDemoTodoList id={`${id}-todo-list`} /> : null}
         <RemolDemoTodoFooter id={`${id}-footer`} />
       </div>
     )

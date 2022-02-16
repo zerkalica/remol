@@ -4,8 +4,10 @@ import { remolCompareDeep, remolComponentCopy, RemolContext, RemolError, remolFa
 
 import { RemolFallback } from './fallback'
 
-const RemolContextReact = React.createContext(RemolContext.instance)
-RemolContextReact.displayName = 'RemolContextReact'
+const RemolReactContext = React.createContext(RemolContext.instance)
+RemolReactContext.displayName = 'RemolReactContext'
+
+const registry = globalThis as unknown as { remol: Record<string, Remol> }
 
 /**
  * @example
@@ -41,10 +43,14 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
   constructor(p: Props) {
     super(p)
     this.state = { error: undefined }
+    if (registry['remol'] === undefined) registry['remol'] = {}
+    registry['remol'][this[Symbol.toStringTag]] = this
   }
 
+  [Symbol.toStringTag] = (this.props as unknown as { id?: string })?.id ?? this.constructor.name
+
   static use$() {
-    return this.current?.context ?? React.useContext(RemolContextReact)
+    return this.current?.context ?? React.useContext(RemolReactContext)
   }
 
   static fc<Props>(Origin: React.FC<Props>) {
@@ -58,7 +64,7 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     ) as new (p: Readonly<Props>) => Remol<Props>
   }
 
-  static Provide$ = RemolContextReact.Provider
+  static Provide$ = RemolReactContext.Provider
 
   static fallback(fallback: Remol['fallback']) {
     this.current!.fallback = fallback
@@ -104,17 +110,11 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     return this.mem0(obj, 3)
   }
 
-  toString() {
-    return `${this.constructor.name}${(this.props as any)?.id ? `[${(this.props as any).id}]` : ''}`
-  }
-
-  [Symbol.toStringTag] = this.toString()
-
   protected static getDerivedStateFromError(error: Error) {
     return { error: RemolError.normalize(error) }
   }
 
-  shouldComponentUpdate(next: Props, state: { error?: Error }, ctx: React.ContextType<typeof RemolContextReact>) {
+  shouldComponentUpdate(next: Props, state: { error?: Error }, ctx: React.ContextType<typeof RemolReactContext>) {
     if (this.state?.error !== state.error) return true
     if (ctx !== this.context) return true
     if (!remolCompareDeep(this.props2, next)) {
@@ -126,8 +126,8 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     return false
   }
 
-  context!: React.ContextType<typeof RemolContextReact>
-  static contextType = RemolContextReact
+  context!: React.ContextType<typeof RemolReactContext>
+  static contextType = RemolReactContext
 
   static Origin = undefined! as React.FC<any>
 
@@ -147,10 +147,11 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     this.FallbackView = undefined!
     this.cursor = 0
     this.registry = undefined
+    delete registry['remol'][this[Symbol.toStringTag]]
   }
 
   fallback(p: { error?: Error; children?: React.ReactNode; reset?(): void }) {
-    return <RemolFallback children={p.children} error={p.error} reset={p.reset} />
+    return <RemolFallback children={p.children ?? null} error={p.error} reset={p.reset} />
   }
 
   cursor = 0
@@ -181,7 +182,7 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
 
       this.lastEl = this.sub()
       if (this.context === this.$) return this.lastEl
-      return <RemolContextReact.Provider value={this.$} children={this.lastEl} />
+      return <RemolReactContext.Provider value={this.$} children={this.lastEl} />
     } catch (orig) {
       if (orig instanceof Promise) return remolFail(orig)
       this.error = RemolError.normalize(orig)
@@ -194,7 +195,7 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     this.forceUpdate()
   }
 
-  fiber = new RemolWire(this)
+  fiber = new RemolWire(this, this[Symbol.toStringTag] + '.fiber')
   FallbackView = this.fallback.bind(this)
   ChildrenView = remolComponentCopy(this.constructor, this.fiber.sync.bind(this.fiber))
 
@@ -204,23 +205,20 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
 
   render() {
     if (this.state?.error) this.error = this.state.error
-    if (this.error) {
-      const el = this.lastEl
+    if (!this.error)
+      return (
+        <React.Suspense fallback={<this.FallbackView />}>
+          <this.ChildrenView />
+        </React.Suspense>
+      )
+
+    try {
       return this.fallback({
         error: this.error,
-        children: el
-          ? this.state?.error === undefined
-            ? el
-            : { ...el, props: { ...el.props, children: undefined } }
-          : undefined,
         reset: this.reset.bind(this),
       })
+    } catch (error) {
+      return <pre>{(error as Error).stack}</pre>
     }
-
-    return (
-      <React.Suspense fallback={<this.FallbackView children={this.lastEl} />}>
-        <this.ChildrenView />
-      </React.Suspense>
-    )
   }
 }

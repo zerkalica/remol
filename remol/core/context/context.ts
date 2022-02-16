@@ -13,15 +13,13 @@ export type RemolContextUpdater = (r: RemolContext) => RemolContext
 export class RemolContext {
   protected registry: Map<RemolContextKey, unknown> | undefined = undefined
 
-  constructor(protected parent?: RemolContext) {}
+  constructor(protected parent?: RemolContext, id = 'RemolContext.Root') {
+    this[Symbol.toStringTag] = id
+  }
+  [Symbol.toStringTag]: string
 
-  clone(cb?: RemolContextUpdater) {
-    const next = new RemolContext(this)
-    if (! cb) return next
-
-    cb(next)
-
-    return next.changed ? next : this
+  clone(id: string) {
+    return new RemolContext(this, id)
   }
 
   get isChanged() {

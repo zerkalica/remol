@@ -67,6 +67,7 @@ export class RemolBootBuildTemplate {
   renderPre() {
     return `<!doctype html><html lang="${this.lang()}">
   <head>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
     ${this.headMeta()}
   </head>
   <body>

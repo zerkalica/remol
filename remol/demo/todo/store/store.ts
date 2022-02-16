@@ -27,7 +27,7 @@ export class RemolDemoTodoStore extends Object {
     return this.$.get(RemolDemoFetch)
   }
 
-  @mem(0) reset(next = null) {
+  @mem(0) reset(next?: null) {
     return Math.random() + new Date().getTime()
   }
 
@@ -69,26 +69,21 @@ export class RemolDemoTodoStore extends Object {
   }
 
   get pending() {
-    return Boolean(this.status() instanceof Promise)
+    return this.status() === true
   }
 
-  get error() {
-    const v = this.status()
-
-    return v instanceof Error ? v : undefined
-  }
-
-  @mem(0) status(next?: unknown) {
+  @mem(0) status(next?: Error | boolean) {
     return next ?? null
   }
 
   fetch(url: string, init: RequestInit) {
     try {
       const res = this.fetcher.response(url, init).json() as { data: { ids: string[] } }
-      // this.reset()
+      this.status(false)
+      this.reset(null)
       return res
     } catch (error) {
-      this.status(error)
+      this.status(error instanceof Promise ? true : (error as Error))
       remolFail(error)
     }
   }
@@ -123,14 +118,14 @@ export class RemolDemoTodoStore extends Object {
   }
 
   @action toggleAll() {
-    return this.fetch('/todos/toggle', { method: 'PATCH' })
+    this.fetch('/todos/toggle', { method: 'PATCH' })
   }
 
   @action completeAll() {
-    return this.fetch('/todos/complete', { method: 'PATCH' })
+    this.fetch('/todos/complete', { method: 'PATCH' })
   }
 
   @action clearCompleted() {
-    return this.fetch('/todos/complete', { method: 'DELETE' })
+    this.fetch('/todos/complete', { method: 'DELETE' })
   }
 }

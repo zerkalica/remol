@@ -3,7 +3,6 @@ import serveStatic from 'serve-static'
 
 import { RemolServerMiddleware } from './mdlCombine'
 
-import type { RemolBootBuild } from '../build/build'
 export class RemolBootServer {
   port() {
     return 8081
@@ -13,11 +12,11 @@ export class RemolBootServer {
     return undefined as undefined | string
   }
 
-  protected bundlerMdl(): undefined | ReturnType<RemolBootBuild['middleware']> {
+  protected bundlerMdl(): undefined | RemolServerMiddleware {
     return undefined
   }
 
-  protected staticMdl() {
+  protected staticMdl(): undefined | RemolServerMiddleware {
     const publicDir = this.publicDir()
 
     return publicDir ? serveStatic(publicDir, { index: false }) : undefined
@@ -57,19 +56,14 @@ export class RemolBootServer {
   }
 
   protected fail(e: Error) {
-    console.error({
-      place: 'AcmeServer.startFail',
-      message: e,
-    })
+    console.error(e)
   }
 
   protected ready() {
-    console.debug({
-      place: 'AcmeServer.ready',
-      message:
-        `Server listening on \x1b[42m\x1b[1mhttp://localhost:` +
+    console.log(
+      `Server listening on \x1b[42m\x1b[1mhttp://localhost:` +
         `${this.port()}\x1b[0m in \x1b[41m` +
-        `${process.env.NODE_ENV}\x1b[0m 🌎...`,
-    })
+        `${process.env.NODE_ENV ?? 'empty'}\x1b[0m 🌎...`
+    )
   }
 }

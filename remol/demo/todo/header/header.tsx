@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { action, mem, remolEventFactory } from '@remol/core'
+import { action, mem } from '@remol/core'
 import { Remol } from '@remol/react'
 
 import { RemolDemoTodoStore } from '../store/store'
@@ -34,18 +34,21 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
     this.title('')
   }
 
-  @remolEventFactory(1)
+  @action.factory
   toggleAll() {
-    return async (e: React.ChangeEvent<HTMLInputElement>) => this.store.toggleAll()
+    return (e: React.ChangeEvent<HTMLInputElement>) => {
+      this.store.toggleAll()
+    }
   }
 
   sub({ id } = this.props) {
+    const pending = this.store.pending
     return (
       <header id={id} className={remolDemoTodoTheme.header}>
         <input
           id={`${id}-toggleAll`}
           className={remolDemoTodoTheme.toggleAll}
-          disabled={this.store.pending}
+          disabled={pending}
           type="checkbox"
           onChange={this.toggleAll()}
           checked={this.store.activeTodoCount === 0}

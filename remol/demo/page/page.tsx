@@ -25,8 +25,8 @@ export class RemolDemoPage extends Remol<{ id: string }> {
         {/* <RemolDemoList id={`${p.id}-list`} /> */}
         <RemolDemoCounterFunc id={`${p.id}-counter-func`} />
         <RemolDemoCounterKlass id={`${p.id}-counter-klass`} />
-        <RemolDemoUserEdit id={`${p.id}-user`} />
-        <RemolDemoTodoPage id={`${p.id}-todo`} />
+        <RemolDemoUserEdit id={`${p.id}-user-edit`} />
+        <RemolDemoTodoPage id={`${p.id}-todo-page`} />
       </div>
     )
   }

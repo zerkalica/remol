@@ -6,9 +6,12 @@ export interface RemolWireHost<E> {
 }
 
 export class RemolWire<E> extends $mol_wire_pub_sub {
-  constructor(protected host: RemolWireHost<E>) {
+  constructor(protected host: RemolWireHost<E>, id: string) {
     super()
+    this[Symbol.toStringTag] = id
   }
+
+  [Symbol.toStringTag]: string
 
   update() {
     if (this.frame === undefined) return
