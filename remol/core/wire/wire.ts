@@ -1,63 +1,46 @@
-import { $mol_wire_cursor, $mol_wire_pub, $mol_wire_pub_sub } from 'mol_wire_lib'
+import { $mol_wire_auto, $mol_wire_cursor, $mol_wire_fiber } from 'mol_wire_lib'
 
 export interface RemolWireHost<E> {
-  node(): E | null
+  node(): E
   update(): void
 }
 
-export class RemolWire<E> extends $mol_wire_pub_sub {
-  constructor(protected host: RemolWireHost<E>, id: string) {
-    super()
-    this[Symbol.toStringTag] = id
+export class RemolWire<E> extends $mol_wire_fiber<RemolWireHost<E>, unknown[], E> {
+  constructor(host: RemolWireHost<E>, id: string) {
+    super(host, host.node, id)
   }
 
-  [Symbol.toStringTag]: string
+  override emit(quant?: $mol_wire_cursor): void {
+    // if changed via props/state do not run forceUpdate
+    if (this.rendering) return
+    // super.emit(quant)
 
-  update() {
-    if (this.frame === undefined) return
-    this.frame = undefined
-
-    if (this.cursor === $mol_wire_cursor.fresh) return
-    if (this.cursor === $mol_wire_cursor.final) return
-
-    check: if (this.cursor === $mol_wire_cursor.doubt) {
-      for (let i = this.pub_from; i < this.sub_from; i += 2) {
-        ;(this[i] as $mol_wire_pub)?.up()
-        if (this.cursor !== $mol_wire_cursor.doubt) break check
-      }
-
-      this.cursor = $mol_wire_cursor.fresh
-      return
-    }
-
-    this.host.update()
-  }
-
-  frame = undefined as undefined | Promise<void>
-
-  schedule() {
-    return Promise.resolve().then(this.update.bind(this))
-  }
-
-  override up() {
-    const bu = this.track_on()
     try {
-      const result = this.host.node()
-      this.track_cut()
+      this.rendering = true
+      // forceUpdate can call render on any component. Disable slave -> master relations.
+      $mol_wire_auto(null)
+      this.host.update()
+    } catch (error: any) {
+      // if (!(this.cache instanceof Error)) super.put(error)
+    }
+    console.log(this, 'render off')
+    this.rendering = false
+  }
+
+  protected rendering = false
+
+  render() {
+    if (this.rendering) {
+      if (this.cache instanceof Error) throw this.cache
+      return this.cache
+    }
+    this.rendering = true
+    try {
+      const result = this.sync()
+      this.rendering = false
       return result
     } finally {
-      this.track_off(bu)
+      console.log(this, 'render off')
     }
-  }
-
-  sync() {
-    this.promote()
-    return this.up()
-  }
-
-  override emit(quant: number) {
-    super.emit(quant)
-
-    if (this.frame === undefined) this.frame = this.schedule()
   }
 }

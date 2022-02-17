@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { remolCompareDeep, remolComponentCopy, RemolContext, RemolError, remolFail, RemolWire, RemolWireFunc, RemolWireHost } from '@remol/core'
+import { remolCompareDeep, remolComponentCopy, RemolContext, RemolError, RemolWire, RemolWireFunc, RemolWireHost } from '@remol/core'
 
 import { RemolFallback } from './fallback'
 
@@ -39,7 +39,10 @@ const registry = globalThis as unknown as { remol: Record<string, Remol> }
   })
  * ```
  */
-export class Remol<Props = unknown> extends React.Component<Props, { error?: Error }> implements RemolWireHost<JSX.Element> {
+export class Remol<Props = unknown>
+  extends React.Component<Props, { error?: Error }>
+  implements RemolWireHost<JSX.Element | null>
+{
   constructor(p: Props) {
     super(p)
     this.state = { error: undefined }
@@ -70,15 +73,6 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     this.current!.fallback = fallback
   }
 
-  static inputEventFix<E>(cb: (e: E) => unknown) {
-    const ctx = this.current!
-
-    return (e: E) => {
-      cb(e)
-      ctx.update()
-    }
-  }
-
   private static refGet() {
     const ctx = this.current!
     return (ctx.registry ?? (ctx.registry = []))[ctx.cursor++] as undefined
@@ -94,20 +88,8 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
     return this.refGet() ?? this.refSet(RemolWireFunc.action(obj))
   }
 
-  static mem0<V extends Record<string, Function>>(obj: V, index = 0) {
-    return this.refGet() ?? this.refSet(RemolWireFunc.mem(obj, index))
-  }
-
-  static mem1<V extends Record<string, Function>>(obj: V) {
-    return this.mem0(obj, 1)
-  }
-
-  static mem2<V extends Record<string, Function>>(obj: V) {
-    return this.mem0(obj, 2)
-  }
-
-  static mem3<V extends Record<string, Function>>(obj: V) {
-    return this.mem0(obj, 3)
+  static mem<V extends Record<string, Function>>(index: number, obj: V) {
+    return this.refGet() ?? this.refSet(RemolWireFunc.mem(index, obj))
   }
 
   protected static getDerivedStateFromError(error: Error) {
@@ -115,11 +97,14 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
   }
 
   shouldComponentUpdate(next: Props, state: { error?: Error }, ctx: React.ContextType<typeof RemolReactContext>) {
-    if (this.state?.error !== state.error) return true
+    if (this.state?.error !== state.error) {
+      this.error = state.error
+      return true
+    }
+
     if (ctx !== this.context) return true
-    if (!remolCompareDeep(this.props2, next)) {
-      this.error = undefined
-      ;(this as { state: { error?: Error } }).state.error = undefined
+
+    if (!remolCompareDeep(this.props, next)) {
       return true
     }
 
@@ -141,10 +126,7 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
 
   componentWillUnmount() {
     this.fiber.destructor()
-    this.lastEl = null
     this.fiber = undefined!
-    this.ChildrenView = undefined!
-    this.FallbackView = undefined!
     this.cursor = 0
     this.registry = undefined
     delete registry['remol'][this[Symbol.toStringTag]]
@@ -156,69 +138,52 @@ export class Remol<Props = unknown> extends React.Component<Props, { error?: Err
 
   cursor = 0
   registry = undefined as unknown[] | undefined
-  lastEl = null as JSX.Element | null
 
   static current = undefined as Remol<any> | undefined
 
-  reset() {
-    this.error = undefined
-    const error = this.state?.error
-    if (error === undefined) this.update()
-    else this.setState({ error: undefined })
-  }
-
-  private props2 = RemolWireFunc.field(this.props)
+  // private props2 = RemolWireFunc.field({ ...this.props })
 
   private error: Error | undefined = undefined
 
   node() {
-    // https://github.com/facebook/react/blob/790b5246f691adafbf4b6a4b3fe2e6cc1370c43e/packages/react-reconciler/src/ReactFiberWorkLoop.new.js#L816
-    if (this.error) return remolFail(this.error)
-
+    const prev = this.props
     try {
       Remol.current = this
       this.cursor = 0
-      ;(this as { props: Props }).props = this.props2
+      // ;(this as { props: Props }).props = this.props2
 
-      this.lastEl = this.sub()
-      if (this.context === this.$) return this.lastEl
-      return <RemolReactContext.Provider value={this.$} children={this.lastEl} />
-    } catch (orig) {
-      if (orig instanceof Promise) return remolFail(orig)
-      this.error = RemolError.normalize(orig)
-
-      return remolFail(this.error)
+      const node = this.sub()
+      if (this.context === this.$) return node
+      return <RemolReactContext.Provider value={this.$} children={node} />
+    } finally {
+      // ;(this as any).props = prev
     }
   }
+
+  fiber = new RemolWire<JSX.Element | null>(this, this[Symbol.toStringTag] + '.fiber')
 
   update() {
     this.forceUpdate()
   }
 
-  fiber = new RemolWire(this, this[Symbol.toStringTag] + '.fiber')
-  FallbackView = this.fallback.bind(this)
-  ChildrenView = remolComponentCopy(this.constructor, this.fiber.sync.bind(this.fiber))
-
   sub() {
-    return (this.constructor as typeof Remol).Origin(this.props2)
+    return (this.constructor as typeof Remol).Origin(this.props)
   }
 
-  render() {
-    if (this.state?.error) this.error = this.state.error
-    if (!this.error)
-      return (
-        <React.Suspense fallback={<this.FallbackView />}>
-          <this.ChildrenView />
-        </React.Suspense>
-      )
+  static isServer = typeof process !== 'undefined' && process.versions != null && process.versions.node != null
 
+  render() {
     try {
+      if (this.error) throw this.error
+      return this.fiber.render()
+    } catch (error: unknown) {
+      if (error instanceof Promise && Remol.isServer) throw error
+      if (error instanceof Error) console.error(error)
+      this.error = undefined
+
       return this.fallback({
-        error: this.error,
-        reset: this.reset.bind(this),
+        error: error instanceof Promise ? undefined : RemolError.normalize(error),
       })
-    } catch (error) {
-      return <pre>{(error as Error).stack}</pre>
     }
   }
 }

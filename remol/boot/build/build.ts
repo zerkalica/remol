@@ -101,6 +101,9 @@ export class RemolBootBuild {
           return name.endsWith('.js')
         },
       },
+      watchOptions: {
+        aggregateTimeout: 500,
+      },
       module: {
         rules: this.rules().filter((rule): rule is NonNullable<typeof rule> => Boolean(rule)),
       },

@@ -6,6 +6,7 @@ export {
   $mol_wire_field as field,
   $mol_wire_sync as remolSync,
   $mol_wire_async as remolAsync,
+  $mol_wire_auto as remolAuto,
   $mol_compare_deep as remolCompareDeep,
 } from 'mol_wire_lib'
 

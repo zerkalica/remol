@@ -63,9 +63,9 @@ export class RemolDemoUserEdit extends Remol<{
         </div>
         <input
           value={this.userEditableName()}
-          onChange={Remol.inputEventFix(e => {
+          onChange={e => {
             this.userEditableName(e.target.value)
-          })}
+          }}
         />
         <button type="button" onClick={() => this.userSave()}>
           Save

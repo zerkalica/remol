@@ -18,7 +18,7 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
   @action
   setTitle(e: React.ChangeEvent<HTMLInputElement>) {
     this.title(e.target.value)
-    this.update()
+    // this.forceUpdate()
   }
 
   @action
@@ -42,6 +42,7 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
   }
 
   sub({ id } = this.props) {
+    console.log('header render')
     const pending = this.store.pending
     return (
       <header id={id} className={remolDemoTodoTheme.header}>

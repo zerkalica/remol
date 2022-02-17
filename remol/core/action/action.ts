@@ -16,11 +16,11 @@ export function remolAction<Host extends object, Args extends unknown[], Result>
     fibers.get(this)?.destructor()
     const fiber = $mol_wire_fiber.temp(this, orig, ...args)
 
-    if ($.$mol_wire_auto) return fiber.sync()
+    if ($.$mol_wire_auto()) return fiber.sync()
 
     fibers.set(this, fiber)
 
-    return fiber.async() as unknown as Result
+    return fiber.up() as unknown as Result
   }
 
   const descr2 = { ...descr, value }

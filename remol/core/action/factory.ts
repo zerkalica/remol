@@ -18,7 +18,7 @@ export function remolActionFactory(argsCount: number) {
       return (...args: Args) => {
         prev?.destructor()
         const fiber = $mol_wire_fiber.temp(this, handler, ...args)
-        if ($.$mol_wire_auto) return fiber.sync()
+        if ($.$mol_wire_auto()) return fiber.sync()
         prev = fiber
 
         return fiber.async() as unknown as void

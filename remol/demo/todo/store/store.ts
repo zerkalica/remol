@@ -36,8 +36,12 @@ export class RemolDemoTodoStore extends Object {
     return this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
   }
 
+  @mem(0) ids() {
+    return this.list().data.ids
+  }
+
   @mem(0) prefetched() {
-    const ids = this.list().data.ids
+    const ids = this.ids()
 
     return this.fetcher.batch<RemolDemoTodoDTO>('/todo?id=' + ids.join(','))
   }
@@ -49,7 +53,7 @@ export class RemolDemoTodoStore extends Object {
         body: JSON.stringify({ [id]: next }),
       })[id]
 
-      this.reset()
+      this.reset(null)
 
       return updated
     }
@@ -65,7 +69,7 @@ export class RemolDemoTodoStore extends Object {
   }
 
   @mem(0) items() {
-    return this.list().data.ids.map(id => this.item(id))
+    return this.ids().map(id => this.item(id))
   }
 
   get pending() {
@@ -92,11 +96,11 @@ export class RemolDemoTodoStore extends Object {
     return this.$.get(RemolDemoLocation.instance)
   }
 
-  get activeTodoCount() {
+  @field get activeTodoCount() {
     return this.list().data.activeCount
   }
 
-  get completedCount() {
+  @field get completedCount() {
     return this.list().data.completedCount
   }
 

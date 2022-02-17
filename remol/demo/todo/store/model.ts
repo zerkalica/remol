@@ -40,17 +40,20 @@ export class RemolDemoTodoModel extends Object {
   }
 
   @mem(1) dto_pick<Field extends keyof RemolDemoTodoDTO>(field: Field, value?: RemolDemoTodoDTO[Field]) {
-    const next = this.dto(value === undefined ? undefined : { ...this.dto(), [field]: value })
+    const prev = this.dto()
+    if (value === undefined) return prev[field]
+
+    const next = this.dto({ ...prev, [field]: value })
 
     return next[field]
   }
 
-  @mem(1) dto(next?: Partial<RemolDemoTodoDTO> | null) {
+  @mem(0) dto(next?: Partial<RemolDemoTodoDTO> | null) {
     return next ?? {}
   }
 
   get pending() {
-    return this.status() instanceof Promise
+    return this.status() === true
   }
 
   get error() {
@@ -59,16 +62,20 @@ export class RemolDemoTodoModel extends Object {
     return v instanceof Error ? v : undefined
   }
 
-  @mem(0) status(next?: unknown) {
-    return next ?? null
+  @mem(0) status(next?: boolean | Error) {
+    return next ?? false
   }
 
-  @action update(patch: Partial<RemolDemoTodoDTO> | null = null) {
+  remove() {
+    this.update(null)
+  }
+
+  @action update(patch: Partial<RemolDemoTodoDTO> | null) {
     try {
       this.dto(patch)
-      this.status(null)
+      this.status(false)
     } catch (error) {
-      this.status(error)
+      this.status(error instanceof Promise ? true : (error as Error))
       remolFail(error)
     }
   }

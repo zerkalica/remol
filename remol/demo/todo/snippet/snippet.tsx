@@ -17,7 +17,7 @@ export class RemolDemoTodoSnippet extends Remol<{
   }
 
   @action remove() {
-    this.props.todo.update(null)
+    this.props.todo.remove()
   }
 
   @mem(0) draft(next?: RemolDemoTodoModel | null) {
@@ -29,13 +29,8 @@ export class RemolDemoTodoSnippet extends Remol<{
     if (this.draft()) return
     if (todo.pending) return
 
-    const draft = new RemolDemoTodoModel(`${this.props.id}.beginEdit()`)
-    draft.dto = next => {
-      if (next) return next
-
-      return todo.dto(next)
-    }
-
+    const draft = new RemolDemoTodoModel(`${this.props.id}.draft`)
+    draft.dto(todo.dto())
     this.draft(draft)
   }
 
@@ -49,10 +44,10 @@ export class RemolDemoTodoSnippet extends Remol<{
 
     if (title) {
       if (todo.title() !== title) {
-        todo.dto(draft.dto())
+        todo.update(draft.dto())
       }
     } else {
-      this.remove()
+      todo.remove()
     }
 
     this.draft(null)
@@ -67,10 +62,10 @@ export class RemolDemoTodoSnippet extends Remol<{
     el?.focus()
   }
 
-  @action setText({ target }: React.KeyboardEvent<HTMLInputElement>) {
-    const title = (target as any).value.trim()
+  @action setText(e: React.ChangeEvent<HTMLInputElement>) {
+    const title = e.target.value.trim()
     this.draft()?.title(title)
-    this.update()
+    this.forceUpdate()
   }
 
   Form({ id, todo } = this.props, css = theme.css, draft = this.draft()) {
