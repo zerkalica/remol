@@ -20,11 +20,16 @@ export class RemolDemoFetchMock extends RemolDemoFetch {
     if (json === undefined) return super.fetch(url, init)
 
     const res = new Response()
-    res.json = () => Promise.resolve(json)
+    res.json = () => {
+      const pr = Promise.resolve(json)
+      pr.then(() => {
+        console.log('<-', method, p.pathname, json)
+      })
+      return pr
+    }
 
     console.log('->', method, p.pathname, init.body)
     const res2 = await new Promise<typeof res>(resolve => setTimeout(() => resolve(res), this.timeout()))
-    console.log('<-', method, p.pathname, json)
 
     return res2
   }

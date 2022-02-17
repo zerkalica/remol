@@ -43,7 +43,10 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
 
   sub({ id } = this.props) {
     console.log('header render')
+    const checked = this.store.activeTodoCount2 === 0
+    // const checked = this.store.activeTodoCount() === 0
     const pending = this.store.pending
+
     return (
       <header id={id} className={remolDemoTodoTheme.header}>
         <input
@@ -52,7 +55,7 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
           disabled={pending}
           type="checkbox"
           onChange={this.toggleAll()}
-          checked={this.store.activeTodoCount === 0}
+          checked={checked}
         />
         <input
           id={`${id}-input`}

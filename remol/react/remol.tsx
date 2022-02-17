@@ -48,9 +48,14 @@ export class Remol<Props = unknown>
     this.state = { error: undefined }
     if (registry['remol'] === undefined) registry['remol'] = {}
     registry['remol'][this[Symbol.toStringTag]] = this
+
+    const id = (this.props as unknown as { id?: string })?.id ?? this.constructor.name
+    this[Symbol.toStringTag] = id
+    this.fiber = new RemolWire<JSX.Element | null>(this, this[Symbol.toStringTag] + '.fiber')
+    console.log('init', id)
   }
 
-  [Symbol.toStringTag] = (this.props as unknown as { id?: string })?.id ?? this.constructor.name
+  [Symbol.toStringTag]: string
 
   static use$() {
     return this.current?.context ?? React.useContext(RemolReactContext)
@@ -125,6 +130,7 @@ export class Remol<Props = unknown>
   }
 
   componentWillUnmount() {
+    console.log('unmount ', this[Symbol.toStringTag])
     this.fiber.destructor()
     this.fiber = undefined!
     this.cursor = 0
@@ -146,23 +152,19 @@ export class Remol<Props = unknown>
   private error: Error | undefined = undefined
 
   node() {
-    const prev = this.props
-    try {
-      Remol.current = this
-      this.cursor = 0
-      // ;(this as { props: Props }).props = this.props2
+    Remol.current = this
+    this.cursor = 0
+    // ;(this as { props: Props }).props = this.props2
 
-      const node = this.sub()
-      if (this.context === this.$) return node
-      return <RemolReactContext.Provider value={this.$} children={node} />
-    } finally {
-      // ;(this as any).props = prev
-    }
+    const node = this.sub()
+
+    return this.context === this.$ ? node : <RemolReactContext.Provider value={this.$} children={node} />
   }
 
-  fiber = new RemolWire<JSX.Element | null>(this, this[Symbol.toStringTag] + '.fiber')
+  fiber: RemolWire<JSX.Element | null>
 
-  update() {
+  up() {
+    console.log('update ', this[Symbol.toStringTag])
     this.forceUpdate()
   }
 
@@ -175,10 +177,10 @@ export class Remol<Props = unknown>
   render() {
     try {
       if (this.error) throw this.error
-      return this.fiber.render()
+      return this.fiber.sync()
     } catch (error: unknown) {
       if (error instanceof Promise && Remol.isServer) throw error
-      if (error instanceof Error) console.error(error)
+      if (error instanceof Error && this.error !== error) console.error(error)
       this.error = undefined
 
       return this.fallback({

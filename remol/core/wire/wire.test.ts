@@ -6,11 +6,12 @@ describe('RemolWire', () => {
   it('cache task', () => {
     const host = {
       node: jest.fn(),
-      update: jest.fn(),
+      up: jest.fn(),
     }
     const wire = new RemolWire(host, '1')
     wire.sync()
     wire.sync()
+    RemolWire.rewind()
     expect(host.node).toHaveBeenCalledTimes(1)
   })
 
@@ -20,13 +21,13 @@ describe('RemolWire', () => {
       static some = 1
     }
 
-    const update = jest.fn()
+    const up = jest.fn()
     const wire = new RemolWire(
       {
         node() {
           return 123 + TestMems.some
         },
-        update: update,
+        up: up,
       },
       'test'
     )
@@ -40,7 +41,8 @@ describe('RemolWire', () => {
       },
       'fiber'
     ).async()
+    RemolWire.rewind()
 
-    expect(update).toHaveBeenCalledTimes(1)
+    expect(up).toHaveBeenCalledTimes(1)
   })
 })

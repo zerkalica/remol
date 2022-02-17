@@ -50,7 +50,7 @@ export class RemolDemoTodoFooter extends Remol<{ id: string }> {
   }
 
   sub({ id } = this.props, store = this.store) {
-    if (store.activeTodoCount === 0 && store.completedCount === 0) return null
+    if (store.activeTodoCount() === 0 && store.completedCount === 0) return null
 
     return (
       <footer id={id} className={this.css.footer}>

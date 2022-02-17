@@ -33,7 +33,9 @@ export class RemolDemoTodoStore extends Object {
 
   @mem(0) list() {
     this.reset()
-    return this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
+    const list = this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
+    console.log('list loaded', list)
+    return list
   }
 
   @mem(0) ids() {
@@ -96,8 +98,14 @@ export class RemolDemoTodoStore extends Object {
     return this.$.get(RemolDemoLocation.instance)
   }
 
-  @field get activeTodoCount() {
-    return this.list().data.activeCount
+  @field get activeTodoCount2() {
+    const count = this.list().data.activeCount
+    return count
+  }
+
+  @mem(0) activeTodoCount() {
+    const count = this.list().data.activeCount
+    return count
   }
 
   @field get completedCount() {

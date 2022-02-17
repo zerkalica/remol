@@ -3,6 +3,10 @@ import { RemolDemoStoreMock } from '../../model/mock'
 import type { RemolDemoTodoDTO } from './model'
 
 export class RemolDemoTodoStoreMock extends RemolDemoStoreMock<RemolDemoTodoDTO> {
+  max() {
+    return 1
+  }
+
   override create(id: string) {
     return {
       id,
