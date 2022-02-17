@@ -22,7 +22,7 @@ export const RemolDemoCounterFunc = Remol.fc(function RemolDemoCounterFunc(p: { 
       <TestInput3 />
       <h3>RemolDemoCounterFunc</h3>
       {value()}
-      <button id={`${p.id}-add`} onClick={() => add()}>
+      <button id={`${p.id}_add`} onClick={() => add()}>
         Add
       </button>
     </div>

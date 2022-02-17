@@ -50,6 +50,7 @@ export class RemolDemoTodoStore extends Object {
 
   @mem(1) dto(id: string, next?: Partial<RemolDemoTodoDTO> | null) {
     if (next !== undefined) {
+      throw new Error('test')
       const updated = this.fetcher.batch<RemolDemoTodoDTO>('/todo', {
         method: 'PATCH',
         body: JSON.stringify({ [id]: next }),
@@ -57,14 +58,14 @@ export class RemolDemoTodoStore extends Object {
 
       this.reset(null)
 
-      return updated
+      return updated ?? {}
     }
 
-    return this.prefetched()[id]
+    return this.prefetched()[id] ?? {}
   }
 
   item(id = RemolModel.createId()) {
-    const todo = new RemolDemoTodoModel(`${this.toString()}.items[${id}]`)
+    const todo = new RemolDemoTodoModel(`${this[Symbol.toStringTag]}.item("${id}")`)
     todo.id = () => id
     todo.dto = this.dto.bind(this, id)
     return todo
@@ -76,6 +77,11 @@ export class RemolDemoTodoStore extends Object {
 
   get pending() {
     return this.status() === true
+  }
+
+  get error() {
+    const status = this.status()
+    return status instanceof Error ? status : null
   }
 
   @mem(0) status(next?: Error | boolean) {

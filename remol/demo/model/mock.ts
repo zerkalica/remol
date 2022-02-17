@@ -38,11 +38,15 @@ export abstract class RemolDemoStoreMock<DTO extends { id: string }> extends Obj
   patch(obj: Record<string, DTO | null>) {
     const data = {} as typeof obj
     for (let id in obj) {
-      if (obj[id] === null) {
+      const next = obj[id]
+      if (next === null) {
         delete this.items[id]
         continue
       }
-      Object.assign(this.items[id], obj[id])
+
+      if (!this.items[id]) this.items[id] = next
+      else Object.assign(this.items[id], next)
+
       data[id] = this.items[id]
     }
     return { data }

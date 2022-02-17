@@ -19,7 +19,7 @@ export class RemolDemoTodoList extends Remol<{ id: string }> {
     return (
       <ul id={id} className={css.todoList}>
         {store.filteredTodos.map(todo => (
-          <RemolDemoTodoSnippet id={`${id}-todo[${todo.id()}]`} key={todo.id()} todo={todo} />
+          <RemolDemoTodoSnippet id={`${id}_todo["${todo.id()}"]`} key={todo.id()} todo={todo} />
         ))}
       </ul>
     )

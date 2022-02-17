@@ -54,14 +54,14 @@ export class RemolDemoTodoFooter extends Remol<{ id: string }> {
 
     return (
       <footer id={id} className={this.css.footer}>
-        <span className={this.css.todoCount} id={`${id}-count`}>
-          <strong id={`${id}-number`}>{store.activeTodoCount}</strong> item(s) left
+        <span className={this.css.todoCount} id={`${id}_count`}>
+          <strong id={`${id}_number`}>{store.activeTodoCount()}</strong> item(s) left
         </span>
-        <ul className={this.css.filters} id={`${id}-filters`}>
+        <ul className={this.css.filters} id={`${id}_filters`}>
           {RemolDemoTodoFooter.links.map(link => (
-            <li key={link.id} className={this.css.filterItem} id={`${id}-link(${link.id})-item`}>
+            <li key={link.id} className={this.css.filterItem} id={`${id}_link["${link.id}"]`}>
               <a
-                id={`${id}-link(${link.id})-href`}
+                id={`${id}_link["${link.id}"].href`}
                 className={this.linkCss(store.filter() === link.id)}
                 href={this.filterLink(link.id)}
                 data-linkid={link.id}
@@ -73,7 +73,7 @@ export class RemolDemoTodoFooter extends Remol<{ id: string }> {
           ))}
         </ul>
         {store.completedCount !== 0 && (
-          <button id={`${id}-clear`} className={this.css.clearCompleted} disabled={store.pending} onClick={store.clearCompleted}>
+          <button id={`${id}_clear`} className={this.css.clearCompleted} disabled={store.pending} onClick={store.clearCompleted}>
             Clear completed
           </button>
         )}

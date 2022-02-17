@@ -37,7 +37,7 @@ export class RemolBootBuild {
   }
 
   pkgName() {
-    return require(path.join(this.projectRoot(), 'package.json')).name.replace(/[\/]/g, '-').replace(/@/g, '')
+    return require(path.join(this.projectRoot(), 'package.json')).name.replace(/[\/]/g, '_').replace(/@/g, '')
   }
 
   distRoot() {

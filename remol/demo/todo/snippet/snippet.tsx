@@ -29,7 +29,7 @@ export class RemolDemoTodoSnippet extends Remol<{
     if (this.draft()) return
     if (todo.pending) return
 
-    const draft = new RemolDemoTodoModel(`${this.props.id}.draft`)
+    const draft = new RemolDemoTodoModel(`${this.props.id}.draft()`)
     draft.dto(todo.dto())
     this.draft(draft)
   }
@@ -74,7 +74,7 @@ export class RemolDemoTodoSnippet extends Remol<{
     return (
       <li id={id} className={css.editing}>
         <input
-          id={`${id}-editing`}
+          id={`${id}_editing`}
           ref={this.setFocusRef}
           className={css.edit}
           disabled={todo.pending}
@@ -91,17 +91,17 @@ export class RemolDemoTodoSnippet extends Remol<{
     return (
       <li id={id} className={css.regular}>
         <input
-          id={`${id}-toggle`}
+          id={`${id}_toggle`}
           className={css.toggle}
           type="checkbox"
           disabled={todo.pending}
           checked={todo.checked()}
           onChange={this.toggle}
         />
-        <label id={`${id}-beginEdit`} className={theme.label(todo.checked(), todo.pending)} onDoubleClick={this.beginEdit}>
+        <label id={`${id}_beginEdit`} className={theme.label(todo.checked(), todo.pending)} onDoubleClick={this.beginEdit}>
           {todo.title()}
         </label>
-        <button id={`${id}-destroy`} className={css.destroy} disabled={todo.pending} onClick={this.remove} />
+        <button id={`${id}_destroy`} className={css.destroy} disabled={todo.pending} onClick={this.remove} />
       </li>
     )
   }

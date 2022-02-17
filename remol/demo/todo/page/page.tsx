@@ -4,7 +4,9 @@ import { stylesheet } from 'typestyle'
 import { field } from '@remol/core'
 import { Remol } from '@remol/react'
 
+import { RemolDemoTodoFooter } from '../footer/footer'
 import { RemolDemoTodoHeader } from '../header/header'
+import { RemolDemoTodoList } from '../list/list'
 import { RemolDemoTodoStore } from '../store/store'
 
 const css = stylesheet({
@@ -17,21 +19,19 @@ const css = stylesheet({
 
 export class RemolDemoTodoPage extends Remol<{ id: string }> {
   @field get store() {
-    return new RemolDemoTodoStore(this.context, this.props.id + '-store')
+    return new RemolDemoTodoStore(this.context, this.props.id + '.store')
   }
 
   @field get $() {
-    return super.$.clone(this.props.id + '-$').set(RemolDemoTodoStore.instance, this.store)
+    return super.$.clone(this.props.id + '.$').set(RemolDemoTodoStore.instance, this.store)
   }
 
   sub({ id } = this.props) {
     return (
       <div id={id} className={css.todoapp}>
-        {this.store.filteredTodos.length}
-        {/* {this.store.activeTodoCount === 0} */}
-        <RemolDemoTodoHeader id={`${id}-header`} />
-        {/* {this.store.filteredTodos.length ? <RemolDemoTodoList id={`${id}-list`} /> : null} */}
-        {/* <RemolDemoTodoFooter id={`${id}-footer`} /> */}
+        <RemolDemoTodoHeader id={`${id}_header`} />
+        {this.store.filteredTodos.length ? <RemolDemoTodoList id={`${id}_list`} /> : null}
+        <RemolDemoTodoFooter id={`${id}_footer`} />
       </div>
     )
   }

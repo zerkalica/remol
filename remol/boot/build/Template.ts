@@ -64,6 +64,14 @@ export class RemolBootBuildTemplate {
     return []
   }
 
+  rootId() {
+    return `${this.pkgName()}_main`
+  }
+
+  stateId() {
+    return `${this.pkgName()}_state`
+  }
+
   renderPre() {
     return `<!doctype html><html lang="${this.lang()}">
   <head>
@@ -72,7 +80,7 @@ export class RemolBootBuildTemplate {
   </head>
   <body>
   <noscript>${this.noScript()}</noscript>
-  <div id="${this.pkgName()}-main">
+  <div id="${this.rootId()}">
 `
   }
 
@@ -87,7 +95,7 @@ export class RemolBootBuildTemplate {
   </div>
   ${
     state
-      ? `<script id="${this.pkgName()}-state" type="application/json" crossorigin="anonymous">${JSON.stringify(state)}</script>`
+      ? `<script id="${this.stateId()}" type="application/json" crossorigin="anonymous">${JSON.stringify(state)}</script>`
       : ''
   }
   ${[...bodyJs, ...bodyJsManifest].map(item => `<script src="${item.src}"></script>`).join('\n')}

@@ -164,6 +164,7 @@ export class Remol<Props = unknown>
   fiber: RemolWire<JSX.Element | null>
 
   up() {
+    if (!this.fiber) return
     console.log('update ', this[Symbol.toStringTag])
     this.forceUpdate()
   }

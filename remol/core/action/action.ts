@@ -20,7 +20,7 @@ export function remolAction<Host extends object, Args extends unknown[], Result>
 
     fibers.set(this, fiber)
 
-    return fiber.up() as unknown as Result
+    return fiber.async() as unknown as Result
   }
 
   const descr2 = { ...descr, value }

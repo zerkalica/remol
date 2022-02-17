@@ -21,7 +21,7 @@ export class RemolDemoCounterKlass extends Remol<{ id: string }> {
       <div id={p.id}>
         <h3>RemolDemoCounterKlass</h3>
         {this.computed()}
-        <button id={`${p.id}-add`} onClick={() => this.add()}>
+        <button id={`${p.id}_add`} onClick={() => this.add()}>
           Add
         </button>
       </div>

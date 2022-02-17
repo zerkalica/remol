@@ -19,11 +19,11 @@ export class RemolDemoPage extends Remol<{ id: string }> {
   sub(p = this.props) {
     return (
       <div id={p.id} className={css.app}>
-        {/* <RemolDemoList id={`${p.id}-list`} /> */}
-        {/* <RemolDemoCounterFunc id={`${p.id}-counter-func`} /> */}
-        {/* <RemolDemoCounterKlass id={`${p.id}-counter-klass`} /> */}
-        {/* <RemolDemoUserEdit id={`${p.id}-user-edit`} /> */}
-        <RemolDemoTodoPage id={`${p.id}-todo-page`} />
+        {/* <RemolDemoList id={`${p.id}_list`} /> */}
+        {/* <RemolDemoCounterFunc id={`${p.id}_counter-func`} /> */}
+        {/* <RemolDemoCounterKlass id={`${p.id}_counter-klass`} /> */}
+        {/* <RemolDemoUserEdit id={`${p.id}_user-edit`} /> */}
+        <RemolDemoTodoPage id={`${p.id}_todo`} />
       </div>
     )
   }
