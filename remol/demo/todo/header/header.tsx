@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { action, mem, remolFail } from '@remol/core'
+import { action, mem, RemolActionQueue } from '@remol/core'
 import { Remol } from '@remol/react'
 
 import { RemolDemoTodoStore } from '../store/store'
@@ -17,28 +17,20 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
 
   @action setTitle(e: React.ChangeEvent<HTMLInputElement>) {
     this.title(e.target.value)
-    // this.forceUpdate()
   }
 
   @action setRef(ref?: HTMLInputElement | null) {
     ref?.focus()
   }
 
-  @mem(0) submitStatus(next?: boolean | Error) {
-    return next ?? false
-  }
+  submit_q = new RemolActionQueue(this[Symbol.toStringTag] + '.q')
 
   @action submit(e: React.KeyboardEvent<HTMLInputElement>) {
-    try {
-      if (e.key !== 'Enter' || !this.title()) return
-
+    if (e.key !== 'Enter' || !this.title()) return
+    this.submit_q.run(() => {
       this.store.item().title(this.title())
       this.title('')
-      this.submitStatus(false)
-    } catch (error) {
-      this.submitStatus(error instanceof Promise ? true : (error as Error))
-      remolFail(error)
-    }
+    })
   }
 
   @action.factory toggleAll() {
@@ -69,6 +61,7 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
           placeholder="What needs to be done?"
           onInput={this.setTitle}
           ref={this.setRef}
+          disabled={this.submit_q.pending}
           value={this.title()}
           onKeyDown={this.submit}
         />

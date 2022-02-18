@@ -11,7 +11,7 @@ export abstract class RemolModel<DTO extends Object = Object> extends Object {
     super()
   }
 
-  static createId() {
+  @action static createId() {
     return crypto.randomUUID() || remolFail(new Error('Crypto.randomUUID() not supported, update your browser'))
   }
 

@@ -1,6 +1,6 @@
-import { $mol_after_frame, $mol_wire_auto } from 'mol_wire_lib'
+import { $mol_after_frame, $mol_object2, $mol_wire_auto } from 'mol_wire_lib'
 
-export class RemolSchedule<Host extends { up(): void }> {
+export class RemolSchedule<Host extends { up(): void }> extends $mol_object2 {
   hosts = new Set<Host>()
   task: $mol_after_frame | null = null
 

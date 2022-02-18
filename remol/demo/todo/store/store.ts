@@ -50,7 +50,7 @@ export class RemolDemoTodoStore extends Object {
 
   @mem(1) dto(id: string, next?: Partial<RemolDemoTodoDTO> | null) {
     if (next !== undefined) {
-      throw new Error('test')
+      // throw new Error('test')
       const updated = this.fetcher.batch<RemolDemoTodoDTO>('/todo', {
         method: 'PATCH',
         body: JSON.stringify({ [id]: next }),
@@ -64,7 +64,7 @@ export class RemolDemoTodoStore extends Object {
     return this.prefetched()[id] ?? {}
   }
 
-  item(id = RemolModel.createId()) {
+  @action item(id = RemolModel.createId()) {
     const todo = new RemolDemoTodoModel(`${this[Symbol.toStringTag]}.item("${id}")`)
     todo.id = () => id
     todo.dto = this.dto.bind(this, id)
