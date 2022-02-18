@@ -1,7 +1,7 @@
 import React from 'react'
 import { stylesheet } from 'typestyle'
 
-import { field } from '@remol/core'
+import { field, mem } from '@remol/core'
 import { Remol } from '@remol/react'
 
 import { RemolDemoTodoFooter } from '../footer/footer'
@@ -18,19 +18,19 @@ const css = stylesheet({
 })
 
 export class RemolDemoTodoPage extends Remol<{ id: string }> {
-  @field get store() {
-    return new RemolDemoTodoStore(this.context, this.props.id + '.store')
+  @mem(0) store() {
+    return new RemolDemoTodoStore()
   }
 
   @field get $() {
-    return super.$.clone(this.props.id + '.$').set(RemolDemoTodoStore.instance, this.store)
+    return super.$.clone().set(RemolDemoTodoStore.instance, this.store())
   }
 
   sub({ id } = this.props) {
     return (
       <div id={id} className={css.todoapp}>
         <RemolDemoTodoHeader id={`${id}_header`} />
-        {this.store.filteredTodos.length ? <RemolDemoTodoList id={`${id}_list`} /> : null}
+        {this.store().filteredTodos.length ? <RemolDemoTodoList id={`${id}_list`} /> : null}
         <RemolDemoTodoFooter id={`${id}_footer`} />
       </div>
     )

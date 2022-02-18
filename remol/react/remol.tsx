@@ -7,7 +7,7 @@ import { RemolFallback } from './fallback'
 const RemolReactContext = React.createContext(RemolContext.instance)
 RemolReactContext.displayName = 'RemolReactContext'
 
-const registry = globalThis as unknown as { remol: Record<string, Remol> }
+const registry = globalThis as unknown as Record<string, Remol>
 
 /**
  * @example
@@ -39,20 +39,20 @@ const registry = globalThis as unknown as { remol: Record<string, Remol> }
   })
  * ```
  */
-export class Remol<Props = unknown>
+export class Remol<Props extends {} = {}>
   extends React.Component<Props, { error?: Error }>
   implements RemolWireHost<JSX.Element | null>
 {
-  constructor(p: Props) {
-    super(p)
+  constructor(props: Props) {
+    super(props)
     this.state = { error: undefined }
-    if (registry['remol'] === undefined) registry['remol'] = {}
-    registry['remol'][this[Symbol.toStringTag]] = this
-
-    const id = (this.props as unknown as { id?: string })?.id ?? this.constructor.name
+    const id = (props as unknown as { id?: string })?.id ?? this.constructor.name
+    registry[id] = this
     this[Symbol.toStringTag] = id
     this.fiber = new RemolWire<JSX.Element | null>(this, this[Symbol.toStringTag] + '.fiber')
     console.log('init', id)
+
+    this._props = RemolWireFunc.field({ ...props })
   }
 
   [Symbol.toStringTag]: string
@@ -102,9 +102,13 @@ export class Remol<Props = unknown>
   }
 
   shouldComponentUpdate(next: Props, state: { error?: Error }, ctx: React.ContextType<typeof RemolReactContext>) {
-    if (this.state.error !== state.error || ctx !== this.context || !remolCompareDeep(this.props, next)) {
+    if (this.state.error !== state.error || ctx !== this.context) {
       this.error = state.error
-      this.fiber.cache = undefined!
+      return true
+    }
+
+    if (!remolCompareDeep(this.props, next)) {
+      Object.assign(this._props, next)
       return true
     }
 
@@ -130,7 +134,7 @@ export class Remol<Props = unknown>
     this.fiber = undefined!
     this.cursor = 0
     this.registry = undefined
-    delete registry['remol'][this[Symbol.toStringTag]]
+    delete registry[this[Symbol.toStringTag]]
   }
 
   fallback(p: { error?: Error; children?: React.ReactNode; reset?(): void }) {
@@ -142,18 +146,24 @@ export class Remol<Props = unknown>
 
   static current = undefined as Remol<any> | undefined
 
-  // private props2 = RemolWireFunc.field({ ...this.props })
+  private _props: Props
 
   private error: Error | undefined = undefined
 
   node() {
     Remol.current = this
     this.cursor = 0
-    // ;(this as { props: Props }).props = this.props2
 
-    const node = this.sub()
+    const prev = this.props
+    ;(this as { props: Props }).props = this._props
 
-    return this.context === this.$ ? node : <RemolReactContext.Provider value={this.$} children={node} />
+    try {
+      const node = this.sub()
+
+      return this.context === this.$ ? node : <RemolReactContext.Provider value={this.$} children={node} />
+    } finally {
+      ;(this as { props: Props }).props = prev
+    }
   }
 
   fiber: RemolWire<JSX.Element | null>
@@ -174,8 +184,10 @@ export class Remol<Props = unknown>
     try {
       if (this.error) throw this.error
       return this.fiber.sync()
-    } catch (err: unknown) {
+    } catch (err) {
       const error = RemolError.normalize(err)
+      // On server side transparent for promises: root component must be wrapped to <React.Suspense/>
+      // And fetcher service must keep state in server request
       if (error instanceof Promise && Remol.isServer) throw error
       if (error instanceof Error && this.error !== error) console.error(error)
       this.error = undefined

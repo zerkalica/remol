@@ -20,7 +20,7 @@ export class RemolContext extends Object {
 
   [Symbol.toStringTag]: string
 
-  clone(id: string) {
+  clone(id?: string) {
     return new RemolContext(this, id)
   }
 

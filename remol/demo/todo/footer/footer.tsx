@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { action } from '@remol/core'
+import { action, mem, RemolActionQueue } from '@remol/core'
 import { Remol } from '@remol/react'
 
 import { RemolDemoLocation } from '../../location/location'
@@ -49,6 +49,16 @@ export class RemolDemoTodoFooter extends Remol<{ id: string }> {
     this.store.filter(linkid)
   }
 
+  @mem(0) clearCompletedStatus() {
+    return new RemolActionQueue()
+  }
+
+  @action clearCompleted(e: React.MouseEvent) {
+    this.clearCompletedStatus().run(() => {
+      this.store.clearCompleted()
+    })
+  }
+
   sub({ id } = this.props, store = this.store) {
     if (store.activeTodoCount() === 0 && store.completedCount === 0) return null
 
@@ -73,7 +83,12 @@ export class RemolDemoTodoFooter extends Remol<{ id: string }> {
           ))}
         </ul>
         {store.completedCount !== 0 && (
-          <button id={`${id}_clear`} className={this.css.clearCompleted} disabled={store.pending} onClick={store.clearCompleted}>
+          <button
+            id={`${id}_clear`}
+            className={this.css.clearCompleted}
+            disabled={this.clearCompletedStatus().pending}
+            onClick={this.clearCompleted}
+          >
             Clear completed
           </button>
         )}

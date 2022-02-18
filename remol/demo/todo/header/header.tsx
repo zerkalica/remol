@@ -36,24 +36,28 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
     })
   }
 
+  @mem(0) toggleAllStatus() {
+    return new RemolActionQueue()
+  }
+
   @action.factory toggleAll() {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
-      this.store.toggleAll()
+      this.toggleAllStatus().run(() => {
+        this.store.toggleAll()
+      })
     }
   }
 
   sub({ id } = this.props) {
     // const checked = this.store.activeTodoCount2 === 0
     const checked = this.store.activeTodoCount() === 0
-    const pending = this.store.pending
 
     return (
       <header id={id} className={remolDemoTodoTheme.header}>
-        {this.store.error?.stack ?? ''}
         <input
           id={`${id}_toggleAll`}
           className={remolDemoTodoTheme.toggleAll}
-          disabled={pending}
+          disabled={this.toggleAllStatus().pending}
           type="checkbox"
           onChange={this.toggleAll()}
           checked={checked}

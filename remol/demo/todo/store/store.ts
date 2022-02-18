@@ -1,4 +1,4 @@
-import { action, field, mem, RemolContext, remolFail } from '@remol/core'
+import { action, field, mem, RemolContextObject } from '@remol/core'
 
 import { RemolDemoFetch } from '../../fetch/fetch'
 import { RemolDemoLocation } from '../../location/location'
@@ -12,14 +12,7 @@ export enum TODO_FILTER {
   ACTIVE = 'active',
 }
 
-export class RemolDemoTodoStore extends Object {
-  constructor(protected $ = RemolContext.instance, id = 'RemolDemoTodoStore') {
-    super()
-    this[Symbol.toStringTag] = id
-  }
-
-  [Symbol.toStringTag]: string
-
+export class RemolDemoTodoStore extends RemolContextObject {
   static instance = new RemolDemoTodoStore()
 
   get fetcher() {
@@ -77,29 +70,10 @@ export class RemolDemoTodoStore extends Object {
     return this.ids().map(id => this.item(id))
   }
 
-  get pending() {
-    return this.status() === true
-  }
-
-  get error() {
-    const status = this.status()
-    return status instanceof Error ? status : null
-  }
-
-  @mem(0) status(next?: Error | boolean) {
-    return next ?? null
-  }
-
   fetch(url: string, init: RequestInit) {
-    try {
-      const res = this.fetcher.response(url, init).json() as { data: { ids: string[] } }
-      this.status(false)
-      this.reset(null)
-      return res
-    } catch (error) {
-      this.status(error instanceof Promise ? true : (error as Error))
-      remolFail(error)
-    }
+    const res = this.fetcher.response(url, init).json() as { data: { ids: string[] } }
+    this.reset(null)
+    return res
   }
 
   get location() {
