@@ -19,7 +19,7 @@ const css = stylesheet({
 
 export class RemolDemoTodoPage extends Remol<{ id: string }> {
   @mem(0) store() {
-    return new RemolDemoTodoStore()
+    return new RemolDemoTodoStore(this.context)
   }
 
   @field get $() {

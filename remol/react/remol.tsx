@@ -52,7 +52,10 @@ export class Remol<Props extends {} = {}>
     this.fiber = new RemolWire<JSX.Element | null>(this, this[Symbol.toStringTag] + '.fiber')
     console.log('init', id)
 
-    this._props = RemolWireFunc.field({ ...props })
+    this._props = RemolWireFunc.field(props)
+    // if ((this._props as any).todo !== (props as any).todo) {
+    //   console.log(this._props)
+    // }
   }
 
   [Symbol.toStringTag]: string
