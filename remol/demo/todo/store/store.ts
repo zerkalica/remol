@@ -2,7 +2,6 @@ import { action, field, mem, RemolContext, remolFail } from '@remol/core'
 
 import { RemolDemoFetch } from '../../fetch/fetch'
 import { RemolDemoLocation } from '../../location/location'
-import { RemolModel } from '../../model/model'
 import { RemolDemoTodoDTO, RemolDemoTodoModel } from './model'
 
 import type { RemolDemoTodoStoreMock } from './mock'
@@ -28,7 +27,7 @@ export class RemolDemoTodoStore extends Object {
   }
 
   @mem(0) reset(next?: null) {
-    return Math.random() + new Date().getTime()
+    return new Date().getTime()
   }
 
   @mem(0) list() {
@@ -61,12 +60,15 @@ export class RemolDemoTodoStore extends Object {
       return updated ?? {}
     }
 
-    return this.prefetched()[id] ?? {}
+    return (
+      this.prefetched()[id] ?? {
+        id,
+      }
+    )
   }
 
-  @action item(id = RemolModel.createId()) {
+  @mem(1) item(id: string) {
     const todo = new RemolDemoTodoModel(`${this[Symbol.toStringTag]}.item("${id}")`)
-    todo.id = () => id
     todo.dto = this.dto.bind(this, id)
     return todo
   }

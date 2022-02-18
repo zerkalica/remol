@@ -3,6 +3,7 @@ import React from 'react'
 import { action, mem, RemolActionQueue } from '@remol/core'
 import { Remol } from '@remol/react'
 
+import { RemolModel } from '../../model/model'
 import { RemolDemoTodoStore } from '../store/store'
 import { remolDemoTodoTheme } from './theme'
 
@@ -15,7 +16,7 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
     return next ?? ''
   }
 
-  @action setTitle(e: React.ChangeEvent<HTMLInputElement>) {
+  @action.sync setTitle(e: React.ChangeEvent<HTMLInputElement>) {
     this.title(e.target.value)
   }
 
@@ -23,12 +24,14 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
     ref?.focus()
   }
 
-  submit_q = new RemolActionQueue(this[Symbol.toStringTag] + '.q')
+  @mem(0) submitStatus() {
+    return new RemolActionQueue()
+  }
 
   @action submit(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key !== 'Enter' || !this.title()) return
-    this.submit_q.run(() => {
-      this.store.item().title(this.title())
+    this.submitStatus().run(() => {
+      this.store.item(RemolModel.createId()).title(this.title())
       this.title('')
     })
   }
@@ -61,7 +64,7 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
           placeholder="What needs to be done?"
           onInput={this.setTitle}
           ref={this.setRef}
-          disabled={this.submit_q.pending}
+          disabled={this.submitStatus().pending}
           value={this.title()}
           onKeyDown={this.submit}
         />

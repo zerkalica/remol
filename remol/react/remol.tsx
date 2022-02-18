@@ -102,14 +102,9 @@ export class Remol<Props = unknown>
   }
 
   shouldComponentUpdate(next: Props, state: { error?: Error }, ctx: React.ContextType<typeof RemolReactContext>) {
-    if (this.state?.error !== state.error) {
+    if (this.state.error !== state.error || ctx !== this.context || !remolCompareDeep(this.props, next)) {
       this.error = state.error
-      return true
-    }
-
-    if (ctx !== this.context) return true
-
-    if (!remolCompareDeep(this.props, next)) {
+      this.fiber.cache = undefined!
       return true
     }
 
@@ -179,13 +174,14 @@ export class Remol<Props = unknown>
     try {
       if (this.error) throw this.error
       return this.fiber.sync()
-    } catch (error: unknown) {
+    } catch (err: unknown) {
+      const error = RemolError.normalize(err)
       if (error instanceof Promise && Remol.isServer) throw error
       if (error instanceof Error && this.error !== error) console.error(error)
       this.error = undefined
 
       return this.fallback({
-        error: error instanceof Promise ? undefined : RemolError.normalize(error),
+        error: error instanceof Promise ? undefined : error,
       })
     }
   }

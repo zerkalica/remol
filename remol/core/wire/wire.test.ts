@@ -1,5 +1,6 @@
 import { $mol_wire_fiber, $mol_wire_field } from 'mol_wire_lib'
 
+import { RemolSchedule } from '../schedule/schedule'
 import { RemolWire } from './wire'
 
 describe('RemolWire', () => {
@@ -10,8 +11,8 @@ describe('RemolWire', () => {
     }
     const wire = new RemolWire(host, '1')
     wire.sync()
+    RemolSchedule.schedule_sync()
     wire.sync()
-    RemolWire.rewind()
     expect(host.node).toHaveBeenCalledTimes(1)
   })
 
@@ -33,6 +34,7 @@ describe('RemolWire', () => {
     )
     expect(wire.sync()).toEqual(124)
 
+    RemolSchedule.schedule_sync()
     await new $mol_wire_fiber(
       null,
       () => {
@@ -41,7 +43,6 @@ describe('RemolWire', () => {
       },
       'fiber'
     ).async()
-    RemolWire.rewind()
 
     expect(up).toHaveBeenCalledTimes(1)
   })

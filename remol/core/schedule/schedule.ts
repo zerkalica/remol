@@ -4,17 +4,26 @@ export class RemolSchedule<Host extends { up(): void }> extends $mol_object2 {
   hosts = new Set<Host>()
   task: $mol_after_frame | null = null
 
+  protected static sync = false
+
+  // Workaround, to sync after react input to prevent cursor jumps https://github.com/facebook/react/issues/14904
+  static schedule_sync() {
+    this.sync = true
+  }
+
   plan(host: Host) {
     this.hosts.add(host)
+
+    if (RemolSchedule.sync) {
+      RemolSchedule.sync = false
+      this.task?.destructor()
+      this.sync()
+      return
+    }
+
     if (this.task) return
 
     this.task = new $mol_after_frame(this.sync.bind(this))
-  }
-
-  rewind() {
-    this.task?.destructor()
-    this.task = null
-    this.sync()
   }
 
   destructor() {

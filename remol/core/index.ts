@@ -8,13 +8,15 @@ export {
   $mol_wire_async as remolAsync,
   $mol_wire_auto as remolAuto,
   $mol_compare_deep as remolCompareDeep,
+  $mol_object2 as RemolObject,
 } from 'mol_wire_lib'
 export const remolWaitTimeout = $.$mol_wait_timeout.bind($)
 export const remolWaitTimeoutAsync = $.$mol_wait_timeout_async.bind($)
 
+export { RemolContextObject } from './context/object'
 export { RemolActionQueue } from './action/queue'
 export { remolAction as action } from './action/action'
-export { RemolContext, RemolContextKey, RemolContextUpdater } from './context/context'
+export { RemolContext, RemolContextKey } from './context/context'
 export { RemolError } from './error/error'
 export { remolFuncName } from './func/name'
 export { remolMiddlewareAsync } from './middleware/async'
