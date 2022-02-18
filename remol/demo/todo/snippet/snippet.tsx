@@ -62,10 +62,8 @@ export class RemolDemoTodoSnippet extends Remol<{
     el?.focus()
   }
 
-  @action setText(e: React.ChangeEvent<HTMLInputElement>) {
-    const title = e.target.value.trim()
-    this.draft()?.title(title)
-    this.forceUpdate()
+  @action.sync setTitle(e: React.ChangeEvent<HTMLInputElement>) {
+    this.draft()?.title(e.target.value.trim())
   }
 
   Form({ id, todo } = this.props, css = theme.css, draft = this.draft()) {
@@ -80,7 +78,7 @@ export class RemolDemoTodoSnippet extends Remol<{
           disabled={todo.pending}
           value={draft.title()}
           onBlur={this.submit}
-          onInput={this.setText}
+          onInput={this.setTitle}
           onKeyDown={this.submitOrRestore}
         />
       </li>

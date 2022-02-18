@@ -179,13 +179,14 @@ export class Remol<Props = unknown>
     try {
       if (this.error) throw this.error
       return this.fiber.sync()
-    } catch (error: unknown) {
+    } catch (err: unknown) {
+      const error = RemolError.normalize(err)
       if (error instanceof Promise && Remol.isServer) throw error
       if (error instanceof Error && this.error !== error) console.error(error)
       this.error = undefined
 
       return this.fallback({
-        error: error instanceof Promise ? undefined : RemolError.normalize(error),
+        error: error instanceof Promise ? undefined : error,
       })
     }
   }

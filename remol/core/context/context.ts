@@ -1,3 +1,5 @@
+import { $mol_wire_auto, $mol_wire_fiber } from 'mol_wire_lib'
+
 type ReactLikeContext<V> = {
   _currentValue?: V
   $$typeof: Symbol
@@ -60,7 +62,18 @@ export class RemolContext {
     return p
   }
 
-  static instance = new RemolContext()
+  static cache: RemolContext | undefined = undefined
+
+  static get instance() {
+    const owner = $mol_wire_auto()
+
+    if (owner instanceof $mol_wire_fiber) {
+      const $ = (owner.host as { $?: RemolContext }).$
+      if ($) return $
+    }
+
+    return (this.cache = this.cache ?? new RemolContext())
+  }
 }
 
 function isReactContext<V>(v: any): v is ReactLikeContext<V> {

@@ -2,7 +2,7 @@ import { RemolDemoFetch } from './fetch'
 
 export class RemolDemoFetchMock extends RemolDemoFetch {
   static timeout() {
-    return 1700
+    return 700
   }
 
   static data(pathname: string, method: string, body: any) {
@@ -15,9 +15,10 @@ export class RemolDemoFetchMock extends RemolDemoFetch {
     const p = new URL(url)
     const method = init.method ?? 'GET'
     const body = init.body ? JSON.parse(init.body.toString()) : { id: p.searchParams.get('id')?.split(',') } ?? []
-    const json = this.data(p.pathname, method, body)
+    const obj = this.data(p.pathname, method, body)
 
-    if (json === undefined) return super.fetch(url, init)
+    if (obj === undefined) return super.fetch(url, init)
+    const json = JSON.parse(JSON.stringify(obj))
 
     const res = new Response()
     res.json = () => {

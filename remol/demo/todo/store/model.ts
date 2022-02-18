@@ -32,11 +32,8 @@ export class RemolDemoTodoModel extends Object {
 
   [Symbol.toStringTag]: string
 
-  @mem(0) id() {
-    return (
-      this.dto_pick('id') ??
-      (crypto.randomUUID() || remolFail(new Error('Crypto.randomUUID() not supported, update your browser')))
-    )
+  @mem(0) id(next?: string) {
+    return this.dto_pick('id', next)
   }
 
   @mem(1) dto_pick<Field extends keyof RemolDemoTodoDTO>(field: Field, value?: RemolDemoTodoDTO[Field]) {

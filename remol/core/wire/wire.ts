@@ -17,13 +17,8 @@ export class RemolWire<E> extends $mol_wire_fiber<RemolWireHost<E>, unknown[], E
   }
   protected static scheduler = new RemolSchedule<RemolWireHost<any>>()
 
-  static rewind() {
-    this.scheduler.rewind()
-  }
-
   override emit(quant?: $mol_wire_cursor): void {
     super.emit(quant)
-    // this.host.up()
     RemolWire.scheduler.plan(this.host)
   }
 }

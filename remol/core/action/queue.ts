@@ -1,39 +1,22 @@
-import { $mol_fail_hidden, $mol_object2, $mol_wire_fiber, $mol_wire_mem } from 'mol_wire_lib'
+import { $mol_fail_hidden, $mol_wire_auto, $mol_wire_fiber, $mol_wire_mem } from 'mol_wire_lib'
 
-export class RemolActionQueue extends $mol_object2 {
-  constructor(id?: string) {
-    super()
-    this[Symbol.toStringTag] = id ?? this.constructor.name
-  }
+import { RemolContextObject } from '../context/object'
+import { RemolError } from '../error/error'
 
-  [Symbol.toStringTag]: string
-
-  protected tasks: $mol_wire_fiber<any, unknown[], unknown>[] = []
+export class RemolActionQueue extends RemolContextObject {
+  protected tasks = [] as (() => unknown)[]
 
   run(calculate: () => void) {
-    try {
-      calculate()
-      this.status(false)
-    } catch (error: unknown) {
-      this.status(error instanceof Promise ? true : [error as Error])
-      $mol_fail_hidden(error)
+    const current = $mol_wire_auto()
+
+    if (!calculate.name && current) {
+      Object.defineProperty(calculate, 'name', {
+        value: (current as unknown as { [Symbol.toStringTag]: string })[Symbol.toStringTag] + '#task',
+      })
     }
 
-    // const current = $mol_wire_auto()
-
-    // if (!calculate.name && current) {
-    //   Object.defineProperty(calculate, 'name', {
-    //     value: (current as unknown as { [Symbol.toStringTag]: string })[Symbol.toStringTag] + '#task',
-    //   })
-    // }
-
-    // this.tasks.push(this.createFiber(calculate))
-    // this.refresh()
-  }
-
-  createFiber(calculate: () => void) {
-    const fiber = new $mol_wire_fiber(this, calculate, this[Symbol.toStringTag] + '.fiber')
-    return fiber
+    this.tasks.push(calculate)
+    this.continue()
   }
 
   @$mol_wire_mem(0) status(next?: [Error] | boolean) {
@@ -53,45 +36,50 @@ export class RemolActionQueue extends $mol_object2 {
     return this.status() === false
   }
 
-  protected scheduled = false
+  protected fiber: $mol_wire_fiber<any, unknown[], unknown> | undefined = undefined
 
-  refresh() {
+  async continue() {
     if (this.tasks.length === 0) return
-    if (this.scheduled) return
-    this.scheduled = true
+    if (this.fiber) return
+    this.fiber = new $mol_wire_fiber(this, this.up, this[Symbol.toStringTag] + '.up()')
 
-    // Recreate completed fiber if refresh called from error
-    // this.tasks[0] = $mol_wire_fiber.temp(null, this.tasks[0].task)
-    Promise.resolve().then(this.up.bind(this))
-  }
-
-  async up() {
-    if (this.tasks.length === 0) return
-    const task = this.tasks[0]
+    await Promise.resolve()
 
     try {
-      this.status(true)
-      await task.async()
-      this.tasks = this.tasks.slice(1)
-
-      if (this.tasks.length === 0) this.status(false)
-
-      this.scheduled = false
-      this.refresh()
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.scheduled = false
-      }
-
-      this.status(error instanceof Promise ? true : [error as Error])
-      if (error instanceof Promise) return error
+      await this.fiber.async()
+    } catch (error) {
       console.error(error)
     }
   }
 
+  protected up() {
+    if (this.tasks.length === 0) return
+    const task = this.tasks[0]
+
+    try {
+      task()
+      this.tasks = this.tasks.slice(1)
+      if (this.tasks.length === 0) this.status(false)
+
+      this.fiber = undefined
+      this.continue()
+    } catch (err) {
+      const error = RemolError.normalize(err)
+
+      if (error instanceof Promise) {
+        this.status(true)
+      } else {
+        this.fiber = undefined
+        this.status([error])
+      }
+
+      $mol_fail_hidden(error)
+    }
+  }
+
   destructor() {
-    for (let task of this.tasks) task.destructor()
+    this.fiber?.destructor()
+    this.fiber = undefined
     this.tasks = []
-    this.scheduled = false
   }
 }
