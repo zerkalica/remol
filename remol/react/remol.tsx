@@ -102,14 +102,9 @@ export class Remol<Props = unknown>
   }
 
   shouldComponentUpdate(next: Props, state: { error?: Error }, ctx: React.ContextType<typeof RemolReactContext>) {
-    if (this.state?.error !== state.error) {
+    if (this.state.error !== state.error || ctx !== this.context || !remolCompareDeep(this.props, next)) {
       this.error = state.error
-      return true
-    }
-
-    if (ctx !== this.context) return true
-
-    if (!remolCompareDeep(this.props, next)) {
+      this.fiber.cache = undefined!
       return true
     }
 

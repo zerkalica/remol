@@ -16,7 +16,7 @@ export const remolWaitTimeoutAsync = $.$mol_wait_timeout_async.bind($)
 export { RemolContextObject } from './context/object'
 export { RemolActionQueue } from './action/queue'
 export { remolAction as action } from './action/action'
-export { RemolContext, RemolContextKey, RemolContextUpdater } from './context/context'
+export { RemolContext, RemolContextKey } from './context/context'
 export { RemolError } from './error/error'
 export { remolFuncName } from './func/name'
 export { remolMiddlewareAsync } from './middleware/async'

@@ -10,18 +10,22 @@ type RemolContextValue = Object | Function
 
 export type RemolContextKey<V extends RemolContextValue = RemolContextValue> = ReactLikeContext<V> | V
 
-export type RemolContextUpdater = (r: RemolContext) => RemolContext
-
-export class RemolContext {
+export class RemolContext extends Object {
   protected registry: Map<RemolContextKey, unknown> | undefined = undefined
 
-  constructor(protected parent?: RemolContext, id = 'RemolContext.Root') {
-    this[Symbol.toStringTag] = id
+  constructor(protected parent?: RemolContext, id = RemolContext.id) {
+    super()
+    this[Symbol.toStringTag] = id ?? this.constructor.name
   }
+
   [Symbol.toStringTag]: string
 
   clone(id: string) {
     return new RemolContext(this, id)
+  }
+
+  static clone(id?: string) {
+    return new RemolContext(RemolContext.instance, id)
   }
 
   get isChanged() {
@@ -73,6 +77,10 @@ export class RemolContext {
     }
 
     return (this.cache = this.cache ?? new RemolContext())
+  }
+
+  static get id() {
+    return $mol_wire_auto()?.toString()
   }
 }
 

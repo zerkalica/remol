@@ -24,13 +24,13 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
     ref?.focus()
   }
 
-  @mem(0) submit_status() {
+  @mem(0) submitStatus() {
     return new RemolActionQueue()
   }
 
   @action submit(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key !== 'Enter' || !this.title()) return
-    this.submit_status().run(() => {
+    this.submitStatus().run(() => {
       this.store.item(RemolModel.createId()).title(this.title())
       this.title('')
     })
@@ -64,7 +64,7 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
           placeholder="What needs to be done?"
           onInput={this.setTitle}
           ref={this.setRef}
-          disabled={this.submit_status().pending}
+          disabled={this.submitStatus().pending}
           value={this.title()}
           onKeyDown={this.submit}
         />
