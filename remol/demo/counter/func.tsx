@@ -3,6 +3,8 @@ import React from 'react'
 import { mem } from '@remol/core'
 import { Remol } from '@remol/react'
 
+let some = 1
+
 export const RemolDemoCounterFunc = Remol.fc(function RemolDemoCounterFunc(p: { id: string }) {
   const { value } = Remol.mem(0, {
     value(next?: number) {
@@ -17,7 +19,7 @@ export const RemolDemoCounterFunc = Remol.fc(function RemolDemoCounterFunc(p: { 
 
   return (
     <div id={p.id}>
-      <TestInput />
+      <TestInput key={1} some={value()} />
       <TestInput2 />
       <TestInput3 />
       <h3>RemolDemoCounterFunc</h3>
@@ -29,11 +31,11 @@ export const RemolDemoCounterFunc = Remol.fc(function RemolDemoCounterFunc(p: { 
   )
 })
 
-function TestInput() {
+const TestInput = React.memo(function TestInput(p: { some: number }) {
   const [v, setValue] = React.useState('')
 
   return <input onChange={e => setValue(e.target.value)} value={v} />
-}
+})
 
 class TestInput2 extends React.Component {
   v = ''

@@ -13,6 +13,7 @@ export {
 export const remolWaitTimeout = $.$mol_wait_timeout.bind($)
 export const remolWaitTimeoutAsync = $.$mol_wait_timeout_async.bind($)
 
+export { RemolWireProps } from './wire/props'
 export { RemolContextObject } from './context/object'
 export { RemolActionQueue } from './action/queue'
 export { remolAction as action } from './action/action'

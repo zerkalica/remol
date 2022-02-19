@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { remolCompareDeep, remolComponentCopy, RemolContext, RemolError, RemolWire, RemolWireFunc, RemolWireHost } from '@remol/core'
+import { remolCompareDeep, remolComponentCopy, RemolContext, RemolError, RemolWire, RemolWireFunc, RemolWireHost, RemolWireProps } from '@remol/core'
 
 import { RemolFallback } from './fallback'
 
@@ -52,7 +52,7 @@ export class Remol<Props extends {} = {}>
     this.fiber = new RemolWire<JSX.Element | null>(this, this[Symbol.toStringTag] + '.fiber')
     console.log('init', id)
 
-    this._props = RemolWireFunc.field(props)
+    this._props = new RemolWireProps(props)
     // if ((this._props as any).todo !== (props as any).todo) {
     //   console.log(this._props)
     // }
@@ -111,7 +111,6 @@ export class Remol<Props extends {} = {}>
     }
 
     if (!remolCompareDeep(this.props, next)) {
-      Object.assign(this._props, next)
       return true
     }
 
@@ -149,7 +148,7 @@ export class Remol<Props extends {} = {}>
 
   static current = undefined as Remol<any> | undefined
 
-  private _props: Props
+  private _props: RemolWireProps<Props>
 
   private error: Error | undefined = undefined
 
@@ -158,7 +157,7 @@ export class Remol<Props extends {} = {}>
     this.cursor = 0
 
     const prev = this.props
-    ;(this as { props: Props }).props = this._props
+    ;(this as { props: Props }).props = this._props.update(this.props)
 
     try {
       const node = this.sub()
