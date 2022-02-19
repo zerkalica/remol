@@ -9,9 +9,11 @@ export class RemolWireProps<Props extends Record<string | symbol, unknown>> exte
     for (let key in props) {
       this.fibers[key] = undefined
     }
+    this.proxy = new Proxy<Props>(props, this)
   }
 
-  protected proxy = new Proxy<Props>(this.props, this)
+  protected last: Props | undefined = undefined
+  protected proxy: Props
   protected fibers: Record<string | symbol, $mol_wire_fiber<null, unknown[], unknown> | undefined>
 
   get(t: Props, key: string | symbol) {
@@ -19,11 +21,13 @@ export class RemolWireProps<Props extends Record<string | symbol, unknown>> exte
   }
 
   update(next: Props) {
-    const keys = Object.keys(next)
+    if (next === this.last) return this.proxy
+    this.last = next
     const prev = $mol_wire_auto()
 
     $mol_wire_auto(null)
 
+    const keys = Object.keys(next)
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
       const fiber = this.fibers[key] ?? (this.fibers[key] = new $mol_wire_fiber(null, pass, key))

@@ -1,4 +1,4 @@
-import { action, field, mem, RemolContextObject } from '@remol/core'
+import { action, field, mem, RemolContextObject, remolFail } from '@remol/core'
 
 import { RemolDemoFetch } from '../../fetch/fetch'
 import { RemolDemoLocation } from '../../location/location'
@@ -23,11 +23,21 @@ export class RemolDemoTodoStore extends RemolContextObject {
     return new Date().getTime()
   }
 
+  @mem(0) list_last(next?: ReturnType<RemolDemoTodoStoreMock['list']>) {
+    return next
+  }
+
   @mem(0) list() {
     this.reset()
-    const list = this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
-    console.log('list loaded', list)
-    return list
+    try {
+      const list = this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
+      this.list_last(list)
+      return list
+    } catch (error) {
+      const last = this.list_last()
+      if (error instanceof Promise && last) return last
+      remolFail(error)
+    }
   }
 
   @mem(0) ids() {

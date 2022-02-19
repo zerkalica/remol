@@ -23,6 +23,7 @@ export class RemolDemoTodoModel extends Object {
   }
 
   @action toggle() {
+    // this.checked(true)
     this.checked(!this.checked())
   }
 

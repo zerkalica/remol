@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { remolCompareDeep, remolComponentCopy, RemolContext, RemolError, RemolWire, RemolWireFunc, RemolWireHost, RemolWireProps } from '@remol/core'
+import { remolComponentCopy, RemolContext, RemolError, RemolWire, RemolWireFunc, RemolWireHost, RemolWireProps } from '@remol/core'
 
 import { RemolFallback } from './fallback'
 
@@ -110,7 +110,7 @@ export class Remol<Props extends {} = {}>
       return true
     }
 
-    if (!remolCompareDeep(this.props, next)) {
+    if (this.props !== next) {
       return true
     }
 

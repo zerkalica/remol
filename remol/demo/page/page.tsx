@@ -5,7 +5,6 @@ import { stylesheet } from 'typestyle'
 
 import { Remol } from '@remol/react'
 
-import { RemolDemoCounterFunc } from '../counter/func'
 import { RemolDemoTodoPage } from '../todo/page/page'
 
 const css = stylesheet({
@@ -21,7 +20,7 @@ export class RemolDemoPage extends Remol<{ id: string }> {
     return (
       <div id={p.id} className={css.app}>
         {/* <RemolDemoList id={`${p.id}_list`} /> */}
-        <RemolDemoCounterFunc id={`${p.id}_counter-func`} />
+        {/* <RemolDemoCounterFunc id={`${p.id}_counter-func`} /> */}
         {/* <RemolDemoCounterKlass id={`${p.id}_counter-klass`} /> */}
         {/* <RemolDemoUserEdit id={`${p.id}_user-edit`} /> */}
         <RemolDemoTodoPage id={`${p.id}_todo`} />
