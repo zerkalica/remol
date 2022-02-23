@@ -2,8 +2,8 @@
   "name": "@remol/core",
   "version": "1.0.0",
   "description": "mol wire bindings",
-  "typings": "./-/index.d.ts",
-  "module": "./-/index.js",
+  "_typings": "./-/index.d.ts",
+  "_module": "./-/index.js",
   "exports": {
     ".": "./-/index.js",
     "./*": "./-/*.js"
@@ -41,6 +41,5 @@
   },
   "devDependencies": {
     "@remol/boot": "^1.0.0"
-  },
-  "types": "./-/index.d.ts"
+  }
 }

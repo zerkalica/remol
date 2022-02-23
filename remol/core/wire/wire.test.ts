@@ -36,12 +36,12 @@ describe('RemolWire', () => {
 
     RemolSchedule.schedule_sync()
     await new $mol_wire_fiber(
-      null,
+      'fiber',
       () => {
         TestMems.some++
         return 1
       },
-      'fiber'
+      null
     ).async()
 
     expect(up).toHaveBeenCalledTimes(1)

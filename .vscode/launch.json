@@ -11,11 +11,25 @@
       "program": "${workspaceRoot}/remol/demo/-/boot/dev/server.js"
     },
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest All",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
+    },
+    {
       "type": "chrome",
+      "runtimeArgs": ["--disable-session-crashed-bubble", "--disable-features=Translate"],
       "request": "launch",
       "name": "Launch Chrome",
-      "url": "http://localhost:8080",
-      "webRoot": "${workspaceRoot}"
+      "url": "http://localhost:8081",
+      "webRoot": "${workspaceRoot}/remol"
     }
   ]
 }

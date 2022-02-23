@@ -1,4 +1,4 @@
-import { action, mem, remolFail } from '@remol/core'
+import { action, mem, RemolActionQueue, remolFail } from '@remol/core'
 
 export type RemolDemoTodoDTO = {
   id: string
@@ -22,9 +22,18 @@ export class RemolDemoTodoModel extends Object {
     return this.dto_pick('title', next) ?? 'test'
   }
 
+  @mem(0) pipe() {
+    return new RemolActionQueue()
+  }
+
   @action toggle() {
-    // this.checked(true)
-    this.checked(!this.checked())
+    console.log(this.id(), 'checked=', this.checked())
+    const checked = this.checked()
+    this.toggle2(!checked)
+  }
+
+  @action toggle2(checked: boolean) {
+    this.checked(!checked)
   }
 
   checked(next?: RemolDemoTodoDTO['checked']) {

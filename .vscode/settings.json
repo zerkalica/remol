@@ -2,14 +2,16 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "search.exclude": {
     "**/node_modules": true,
-    "**/-*": true
+    "**/-*": true,
+    "**/.swc": true
   },
   "files.exclude": {
+    "**/.swc": true,
     "**/node_modules": true,
     "**/-*": false
   },
   "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.count": 175,
-  "importSorter.sortConfiguration.removeUnusedImports": true,
+  "importSorter.sortConfiguration.removeUnusedImports": false,
   "importSorter.generalConfiguration.sortOnBeforeSave": true,
   "importSorter.generalConfiguration.sortImportsInDirectory": false,
   "importSorter.importStringConfiguration.hasSemicolon": false,

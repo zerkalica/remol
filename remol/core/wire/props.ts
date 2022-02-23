@@ -17,7 +17,11 @@ export class RemolWireProps<Props extends Record<string | symbol, unknown>> exte
   protected fibers: Record<string | symbol, $mol_wire_fiber<null, unknown[], unknown> | undefined>
 
   get(t: Props, key: string | symbol) {
-    return this.fibers[key]?.sync()
+    const fiber = this.fibers[key]
+
+    if (fiber === undefined) return t[key]
+
+    return fiber.sync()
   }
 
   update(next: Props) {
@@ -30,7 +34,7 @@ export class RemolWireProps<Props extends Record<string | symbol, unknown>> exte
     const keys = Object.keys(next)
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
-      const fiber = this.fibers[key] ?? (this.fibers[key] = new $mol_wire_fiber(null, pass, key))
+      const fiber = this.fibers[key] ?? (this.fibers[key] = new $mol_wire_fiber(key, pass, null))
       fiber.put(next[key])
     }
 

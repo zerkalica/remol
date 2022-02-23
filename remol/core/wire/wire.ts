@@ -11,14 +11,14 @@ export interface RemolWireHost<E> {
  * fiber -> forceUpdate -> render
  * react -> shoutComponentUpdate -> render
  */
-export class RemolWire<E> extends $mol_wire_fiber<RemolWireHost<E>, unknown[], E> {
-  constructor(host: RemolWireHost<E>, id: string) {
-    super(host, host.node, id)
+export class RemolWire<Result> extends $mol_wire_fiber<RemolWireHost<Result>, unknown[], Result> {
+  constructor(host: RemolWireHost<Result>, id: string) {
+    super(id, host.node, host)
   }
   protected static scheduler = new RemolSchedule<RemolWireHost<any>>()
 
   override emit(quant?: $mol_wire_cursor): void {
     super.emit(quant)
-    RemolWire.scheduler.plan(this.host)
+    if (this.host) RemolWire.scheduler.plan(this.host)
   }
 }

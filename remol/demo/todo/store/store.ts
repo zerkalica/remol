@@ -27,10 +27,14 @@ export class RemolDemoTodoStore extends RemolContextObject {
     return next
   }
 
-  @mem(0) list() {
+  @mem(0) list_real() {
     this.reset()
+    return this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
+  }
+
+  @mem(0) list() {
     try {
-      const list = this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
+      const list = this.list_real()
       this.list_last(list)
       return list
     } catch (error) {
@@ -46,6 +50,7 @@ export class RemolDemoTodoStore extends RemolContextObject {
 
   @mem(0) prefetched() {
     const ids = this.ids()
+    this.reset()
 
     return this.fetcher.batch<RemolDemoTodoDTO>('/todo?id=' + ids.join(','))
   }
@@ -66,6 +71,8 @@ export class RemolDemoTodoStore extends RemolContextObject {
     return (
       this.prefetched()[id] ?? {
         id,
+        title: '',
+        checked: false,
       }
     )
   }

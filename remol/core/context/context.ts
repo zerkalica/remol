@@ -80,7 +80,7 @@ export class RemolContext extends Object {
   }
 
   static get id() {
-    return $mol_wire_auto()?.toString()
+    return $mol_wire_auto()?.toString() + '#'
   }
 }
 

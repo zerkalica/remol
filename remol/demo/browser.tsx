@@ -19,15 +19,13 @@ const id = 'remol_demo'
 const el = document.getElementById(id + '_main')!
 const root = createRoot(el)
 
-const $ = new RemolContext().set(
-  RemolDemoFetch,
-  class RemolDemoFetchMockApp extends RemolDemoFetchMock {
-    static todos = new RemolDemoTodoStoreMock()
-
-    static data(pathname: string, method: string, body: any) {
-      return this.todos.data(pathname, method, body)
-    }
+class RemolDemoFetchMockApp extends RemolDemoFetchMock {
+  static todos = new RemolDemoTodoStoreMock()
+  static data(pathname: string, method: string, body: any) {
+    return this.todos.data(pathname, method, body)
   }
-)
+}
+
+const $ = new RemolContext().set(RemolDemoFetch, RemolDemoFetchMockApp)
 
 root.render(<Remol.Provide$ value={$} children={<RemolDemoPage id={id} />} />)

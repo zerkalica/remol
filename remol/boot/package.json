@@ -28,23 +28,26 @@
     "dev": "tsc-watch --build --noClear --onSuccess 'jest --passWithNoTests'"
   },
   "dependencies": {
-    "enhanced-resolve": "^5.9.0",
-    "yargs": "^16.0.2",
-    "serve-static": "^1.14.2",
+    "@swc/core": "^1.2.144",
+    "@types/jest": "^27.4.0",
     "@types/serve-static": "^1.13.10",
     "@types/webpack-bundle-analyzer": "^4.4.1",
-    "@types/jest": "^27.4.0",
+    "abortcontroller-polyfill": "^1.7.3",
     "circular-dependency-plugin": "^5.2.2",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^10.2.4",
+    "enhanced-resolve": "^5.9.0",
+    "jest": "^27.5.1",
+    "serve-static": "^1.14.2",
     "source-map-loader": "^3.0.1",
+    "source-map-support": "^0.5.21",
+    "swc": "^1.0.11",
+    "swc-loader": "^0.1.15",
+    "tsc-watch": "^4.6.0",
     "webpack": "^5.68.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-dev-middleware": "^5.3.1",
-    "abortcontroller-polyfill": "^1.7.3",
-    "jest": "^27.5.1",
-    "source-map-support": "^0.5.21",
-    "tsc-watch": "^4.6.0"
+    "yargs": "^16.0.2"
   },
   "devDependencies": {
     "@types/yargs": "^16.0.2"

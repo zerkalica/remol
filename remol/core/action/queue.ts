@@ -41,7 +41,7 @@ export class RemolActionQueue extends RemolContextObject {
   async continue() {
     if (this.tasks.length === 0) return
     if (this.fiber) return
-    this.fiber = new $mol_wire_fiber(this, this.up, this[Symbol.toStringTag] + '.up()')
+    this.fiber = new $mol_wire_fiber(this[Symbol.toStringTag] + '.up()', this.up, this)
 
     await Promise.resolve()
 

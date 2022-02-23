@@ -11,7 +11,7 @@ const css = stylesheet({
   app: {
     display: 'grid',
     gridGap: '1rem',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: '1fr',
   },
 })
 

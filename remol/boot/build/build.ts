@@ -63,7 +63,7 @@ export class RemolBootBuild {
   }
 
   protected browserEntry() {
-    return path.join(this.distRoot(), 'browser')
+    return path.join(this.distRoot(), 'browser.tsx')
   }
 
   manifestName() {
@@ -116,7 +116,7 @@ export class RemolBootBuild {
   }
 
   protected rules(): readonly (webpack.RuleSetRule | undefined)[] {
-    return [this.ruleSourceMap()]
+    return [this.ruleTs(), this.ruleSourceMap()]
   }
 
   protected ruleSourceMap(): webpack.RuleSetRule | undefined {
@@ -125,6 +125,27 @@ export class RemolBootBuild {
       exclude: /mol_wire_lib/,
       enforce: 'pre',
       use: ['source-map-loader'],
+    }
+  }
+
+  protected ruleTs(): webpack.RuleSetRule | undefined {
+    return {
+      test: /\.tsx?$/,
+      exclude: /(node_modules|bower_components|-)/,
+      use: {
+        loader: 'swc-loader',
+        options: {
+          jsc: {
+            target: 'es2018',
+            parser: {
+              syntax: 'typescript',
+              tsx: true,
+              decorators: true,
+              dynamicImport: true,
+            },
+          },
+        },
+      },
     }
   }
 
@@ -247,8 +268,8 @@ export class RemolBootBuild {
 
     // close()
 
-    if (this.noWatch()) this.tests()
-    else this.watch(invalidate)
+    // if (this.noWatch()) this.tests()
+    // else this.watch(invalidate)
 
     return mdl
   }
@@ -281,7 +302,7 @@ export class RemolBootBuild {
     tswc.on('success', async () => {
       try {
         this.tests()
-        // await invalidate()
+        await invalidate()
       } catch (e) {
         console.error(e)
       }
