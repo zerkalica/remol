@@ -6,7 +6,7 @@ import type { Config } from '@jest/types'
 
 const resolver = path.join(__dirname, 'resolver.js')
 
-export function jestConfig(pkgDir: string, { tsConfigJson = 'tsconfig.json', outDir = '-' } = {}) {
+export function jestConfig(pkgDir = process.cwd(), { tsConfigJson = 'tsconfig.json', outDir = '-' } = {}) {
   const t = remolBootInfoTsConfig(path.join(pkgDir, tsConfigJson))
   const roots = t.projectReferences?.map(ref => path.join(ref.path, outDir)) ?? []
   roots.push(path.join(pkgDir, outDir))

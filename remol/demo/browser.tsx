@@ -27,5 +27,4 @@ class RemolDemoFetchMockApp extends RemolDemoFetchMock {
 }
 
 const $ = new RemolContext().set(RemolDemoFetch, RemolDemoFetchMockApp)
-
 root.render(<Remol.Provide$ value={$} children={<RemolDemoPage id={id} />} />)

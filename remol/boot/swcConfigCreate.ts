@@ -1,12 +1,8 @@
 import path from 'path'
 
-import type { BundleInput } from '@swc/core/spack'
+// import type { BundleInput } from '@swc/core/spack'
 
-type RemolBuildConfig = BundleInput & {
-  sourceMap?: boolean
-}
-
-export function remolBootSwcConfigCreate(projectRoot = process.cwd()): RemolBuildConfig {
+export function remolBootSwcConfigCreate(projectRoot = process.cwd()) {
   return {
     entry: {
       web: path.join(projectRoot, 'browser.tsx'),

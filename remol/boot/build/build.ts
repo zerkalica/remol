@@ -3,8 +3,9 @@ import child_process from 'child_process'
 import CircularDependencyPlugin from 'circular-dependency-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
-import { ServerResponse } from 'http'
+import { IncomingMessage, ServerResponse } from 'http'
 import path from 'path'
+import serveStatic from 'serve-static'
 // @ts-ignore
 import TscWatchClient from 'tsc-watch/client'
 import { promisify } from 'util'
@@ -12,6 +13,7 @@ import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 
+import { remolServerMdlCombine, RemolServerMiddleware } from '../server/mdlCombine'
 import { RemolBootBuildAssetPlugin } from './AssetPlugin'
 import { RemolBootBuildTemplate } from './Template'
 
@@ -63,7 +65,7 @@ export class RemolBootBuild {
   }
 
   protected browserEntry() {
-    return path.join(this.distRoot(), 'browser.tsx')
+    return path.join(this.distRoot(), 'browser')
   }
 
   manifestName() {
@@ -129,24 +131,25 @@ export class RemolBootBuild {
   }
 
   protected ruleTs(): webpack.RuleSetRule | undefined {
-    return {
-      test: /\.tsx?$/,
-      exclude: /(node_modules|bower_components|-)/,
-      use: {
-        loader: 'swc-loader',
-        options: {
-          jsc: {
-            target: 'es2018',
-            parser: {
-              syntax: 'typescript',
-              tsx: true,
-              decorators: true,
-              dynamicImport: true,
-            },
-          },
-        },
-      },
-    }
+    return undefined
+    // return {
+    //   test: /\.tsx?$/,
+    //   exclude: /(node_modules|bower_components|-)/,
+    //   use: {
+    //     loader: 'swc-loader',
+    //     options: {
+    //       jsc: {
+    //         target: 'es2018',
+    //         parser: {
+    //           syntax: 'typescript',
+    //           tsx: true,
+    //           decorators: true,
+    //           dynamicImport: true,
+    //         },
+    //       },
+    //     },
+    //   },
+    // }
   }
 
   protected plugins(): readonly (webpack.WebpackPluginInstance | undefined)[] {
@@ -178,11 +181,28 @@ export class RemolBootBuild {
     })
   }
 
+  protected reloadPath() {
+    return '/__reload'
+  }
+
   protected template(): RemolBootBuildTemplate | undefined {
     const template = new RemolBootBuildTemplate()
     template.publicUrl = this.publicUrl.bind(this)
     template.pkgName = this.pkgName.bind(this)
     template.version = this.version.bind(this)
+    template.devJs = () => [
+      {
+        body: `new EventSource(window.origin + '${this.reloadPath()}').onmessage = e => {
+        const res = JSON.parse(e.data)
+        console.log('recv', res.t)
+        if (res.t === 'success') window.location.reload()
+        if (res.t === 'success:ts') document.body.innerHTML = '<h1>Bundle js...</h1>'
+        if (res.t === 'started') document.body.innerHTML = '<h1>Compile ts...</h1>'
+        if (res.t === 'error') document.body.innerHTML = '<h1>Error</h1><pre>' + res.error + '</pre>'
+      }
+      `,
+      },
+    ]
 
     return template
   }
@@ -224,7 +244,10 @@ export class RemolBootBuild {
     console.log(obj)
   }
 
+  protected compilerCached: { compiler: webpack.Compiler; run(): Promise<webpack.Stats | undefined> } | undefined = undefined
+
   protected compiler() {
+    if (this.compilerCached) return this.compilerCached
     const outDir = this.publicDir()
     const browserEntry = this.browserEntry()
     const pkgName = this.pkgName()
@@ -234,11 +257,15 @@ export class RemolBootBuild {
     const run = promisify(compiler.run.bind(compiler))
     this.log({ browserEntry, outDir, pkgName, version })
 
-    return { compiler, run }
+    return (this.compilerCached = { compiler, run })
+  }
+
+  run() {
+    return this.compiler().run()
   }
 
   async bundle() {
-    const stats = await this.compiler().run()
+    const stats = await this.run()
 
     if (!stats) throw new Error('No stats')
     this.log(stats.toString({ colors: true }))
@@ -253,25 +280,28 @@ export class RemolBootBuild {
     if (p.status) throw p.error ?? new Error(`Jest returns ${p.status}${p.stderr ? `: ${p.stderr}` : ''}`)
   }
 
+  protected client: ServerResponse | undefined = undefined
+
   middleware() {
     this.isDevOverrided = true
-    const { compiler } = this.compiler()
+    this.watch()
 
-    const mdl = webpackDevMiddleware(compiler, {
-      serverSideRender: true,
+    return remolServerMdlCombine(this.mdlReload.bind(this), serveStatic(this.publicDir()))
+  }
+
+  mdlReload(req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) {
+    if (req.url !== this.reloadPath()) return next()
+
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache',
     })
+    this.client = res
 
-    const close = promisify(mdl.close.bind(mdl))
-    const invalidate = promisify((cb: (err: any, result?: webpack.Stats | webpack.MultiStats) => void) =>
-      mdl.invalidate(arg => cb(null, arg))
-    )
-
-    // close()
-
-    // if (this.noWatch()) this.tests()
-    // else this.watch(invalidate)
-
-    return mdl
+    req.on('close', () => {
+      this.client = undefined
+    })
   }
 
   manifestFromResponse(
@@ -293,21 +323,48 @@ export class RemolBootBuild {
     }
   }
 
-  protected watch(invalidate: () => Promise<undefined | webpack.Stats | webpack.MultiStats>) {
-    const tswc = new TscWatchClient()
-    tswc.on('started', () => {
-      console.log('Compilation started')
-    })
+  clientSend(t?: string, e?: Error) {
+    console.log('message', t + '...')
+    const data = `data: ${JSON.stringify({ t, error: e?.stack })}\n\n`
 
-    tswc.on('success', async () => {
-      try {
-        this.tests()
-        await invalidate()
-      } catch (e) {
-        console.error(e)
-      }
-    })
-    tswc.on('compile_errors', invalidate)
+    this.client?.write(data)
+  }
+
+  protected running = undefined as undefined | Promise<webpack.Stats | undefined>
+
+  tsStarted() {
+    this.clientSend('started')
+  }
+
+  async tsSuccess() {
+    try {
+      this.clientSend('success:ts')
+      if (this.running) await this.running
+      this.running = this.run()
+
+      const r = await this.running
+      // r?.compilation.finish()
+
+      this.clientSend('success')
+      this.tests()
+      this.running = undefined
+    } catch (error) {
+      this.running = undefined
+      this.clientSend('error', error as Error)
+      console.error(error)
+    }
+  }
+
+  tsError(e?: Error) {
+    this.clientSend('error', e ?? new Error('Ts compile error, check console'))
+  }
+
+  protected watch() {
+    const tswc = new TscWatchClient()
+
+    tswc.on('started', this.tsStarted.bind(this))
+    tswc.on('success', this.tsSuccess.bind(this))
+    tswc.on('compile_errors', this.tsError.bind(this))
     tswc.start('--noClear', '--build', '.')
   }
 }

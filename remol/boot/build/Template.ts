@@ -1,4 +1,4 @@
-export type RemolBootBuildTemplateScriptProps = { src: string }
+export type RemolBootBuildTemplateScriptProps = { src?: string; body?: string }
 
 export class RemolBootBuildTemplate {
   fileName() {
@@ -64,6 +64,10 @@ export class RemolBootBuildTemplate {
     return []
   }
 
+  devJs(): readonly RemolBootBuildTemplateScriptProps[] {
+    return []
+  }
+
   rootId() {
     return `${this.pkgName()}_main`
   }
@@ -84,10 +88,14 @@ export class RemolBootBuildTemplate {
 `
   }
 
+  reloadPath() {
+    return '/__reload'
+  }
+
   renderPost() {
     const manifest = this.manifest()
     const state = manifest && Object.keys(manifest.files).length ? { __files: manifest.files } : undefined
-    const bodyJsManifest = manifest ? Object.values(manifest.entries).map(src => ({ src: this.publicUrl() + src })) : []
+    const bodyJsManifest = manifest ? Object.values(manifest.entries).map(src => ({ src: this.publicUrl() + src, body: '' })) : []
     const bodyJs = this.bodyJs()
 
     return `
@@ -98,7 +106,9 @@ export class RemolBootBuildTemplate {
       ? `<script id="${this.stateId()}" type="application/json" crossorigin="anonymous">${JSON.stringify(state)}</script>`
       : ''
   }
-  ${[...bodyJs, ...bodyJsManifest].map(item => `<script src="${item.src}"></script>`).join('\n')}
+  ${[...bodyJs, ...bodyJsManifest, ...this.devJs()]
+    .map(item => `<script${item.src ? ` src="${item.src}"` : ''}>${item.body ?? ''}</script>`)
+    .join('\n')}
 </body></html>
 `
   }
