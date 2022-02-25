@@ -1,0 +1,30 @@
+<!doctype html><html lang="en">
+  <head>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+  <title>Dev remol_demo</title>
+
+  </head>
+  <body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="remol_demo_main">
+
+    
+  </div>
+  
+  <script src="/remol_demo.js"></script>
+<script>new EventSource(window.origin + '/__reload').onmessage = e => {
+        const res = JSON.parse(e.data)
+        console.log('recv', res.t)
+        if (res.t === 'success') window.location.reload()
+        if (res.t === 'success:ts') document.body.innerHTML = '<h1>Bundle js...</h1>'
+        if (res.t === 'started') document.body.innerHTML = '<h1>Compile ts...</h1>'
+        if (res.t === 'error') document.body.innerHTML = '<h1>Error</h1><pre>' + res.error + '</pre>'
+      }
+      </script>
+</body></html>

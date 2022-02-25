@@ -1,0 +1,1 @@
+{"version":3,"file":"klass.d.ts","sourceRoot":"","sources":["../../counter/klass.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAA;AAGzB,OAAO,EAAE,KAAK,EAAE,MAAM,cAAc,CAAA;AAEpC,qBAAa,qBAAsB,SAAQ,KAAK,CAAC;IAAE,EAAE,EAAE,MAAM,CAAA;CAAE,CAAC;IACtD,KAAK,CAAC,IAAI,CAAC,EAAE,MAAM;IAInB,QAAQ;IAIR,GAAG;IAIX,GAAG,CAAC,CAAC;;;;MAAa;CAWnB"}
