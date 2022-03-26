@@ -17,8 +17,8 @@
     
   </div>
   
-  <script src="/remol_demo.js"></script>
-<script>new EventSource(window.origin + '/__reload').onmessage = e => {
+  <script src="/remol/remol_demo.js"></script>
+<script>new EventSource(window.origin + '/remol/__reload').onmessage = e => {
         const res = JSON.parse(e.data)
         console.log('recv', res.t)
         if (res.t === 'success') window.location.reload()
