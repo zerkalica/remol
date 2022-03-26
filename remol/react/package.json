@@ -27,7 +27,7 @@
   "devDependencies": {
     "@remol/boot": "^1.0.0",
     "@remol/core": "^1.0.0",
-    "@types/react": "^17.0.39"
+    "@types/react": "^17.0.43"
   },
   "dependencies": {
     "@remol/core": "^1.0.0"

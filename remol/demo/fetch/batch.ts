@@ -9,15 +9,15 @@ export type RemoDemoFetchBatchErrorDTO = {
 }
 
 export class RemoDemoFetchBatchError extends Error {
-  readonly cause: RemoDemoFetchBatchErrorDTO | undefined
+  readonly dto: RemoDemoFetchBatchErrorDTO | undefined
 
-  constructor(p: { id: string; input: RequestInfo; cause: RemoDemoFetchBatchErrorDTO }) {
-    super(`${p.input}: [${p.id}], ${p.cause.code} (${p.cause.message ?? ''})`)
-    this.cause = p?.cause
+  constructor(p: { id: string; input: RequestInfo; dto: RemoDemoFetchBatchErrorDTO }) {
+    super(`${p.input}: [${p.id}], ${p.dto.code} (${p.dto.message ?? ''})`)
+    this.dto = p?.dto
   }
 
   get code() {
-    return this.cause?.code
+    return this.dto?.code
   }
 }
 
@@ -34,6 +34,6 @@ export class RemoDemoFetchBatch extends Object {
     const error = this.errors[id]
     if (error === undefined) return data[id]
 
-    throw new RemoDemoFetchBatchError({ id, cause: error, input: this.input })
+    throw new RemoDemoFetchBatchError({ id, dto: error, input: this.input })
   }
 }

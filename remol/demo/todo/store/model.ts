@@ -26,13 +26,8 @@ export class RemolDemoTodoModel extends Object {
     return new RemolActionQueue()
   }
 
-  @mem(0) checkedLast(next?: boolean) {
-    return false
-  }
-
   @action toggle() {
-    this.checkedLast(!this.checked())
-    this.checked(this.checked())
+    this.checked(!this.checked())
   }
 
   checked(next?: RemolDemoTodoDTO['checked']) {
