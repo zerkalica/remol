@@ -37260,7 +37260,7 @@ class RemolDemoTodoSnippet extends react_1.Remol {
         const title = draft.title().trim();
         if (title) {
             if (todo.title() !== title) {
-                todo.update(draft.dto());
+                todo.dto_safe(draft.dto());
             }
         }
         else {
@@ -37599,10 +37599,10 @@ class RemolDemoTodoModel extends Object {
         return this.dto_pick('id', next);
     }
     dto_pick(field, value) {
-        const prev = this.dto();
+        const prev = this.dto_safe();
         if (value === undefined)
             return prev[field];
-        const next = this.dto({ ...prev, [field]: value });
+        const next = this.dto_safe({ ...prev, [field]: value });
         return next[field];
     }
     dto(next) {
@@ -37619,12 +37619,13 @@ class RemolDemoTodoModel extends Object {
         return next !== null && next !== void 0 ? next : false;
     }
     remove() {
-        this.update(null);
+        this.dto_safe(null);
     }
-    update(patch) {
+    dto_safe(next) {
         try {
-            this.dto(patch);
+            const dto = this.dto(next);
             this.status(false);
+            return dto;
         }
         catch (error) {
             this.status(error instanceof Promise ? true : error);
@@ -37652,9 +37653,6 @@ __decorate([
 __decorate([
     (0, core_1.mem)(0)
 ], RemolDemoTodoModel.prototype, "status", null);
-__decorate([
-    core_1.action
-], RemolDemoTodoModel.prototype, "update", null);
 exports.RemolDemoTodoModel = RemolDemoTodoModel;
 
 
@@ -37693,25 +37691,10 @@ class RemolDemoTodoStore extends core_1.RemolContextObject {
     reset(next) {
         return new Date().getTime();
     }
-    list_last(next) {
-        return next;
-    }
-    list_real() {
-        this.reset();
-        return this.fetcher.response('/todos').json();
-    }
     list() {
-        try {
-            const list = this.list_real();
-            this.list_last(list);
-            return list;
-        }
-        catch (error) {
-            const last = this.list_last();
-            if (error instanceof Promise && last)
-                return last;
-            (0, core_1.remolFail)(error);
-        }
+        this.reset();
+        const list = this.fetcher.response('/todos').json();
+        return list;
     }
     ids() {
         return this.list().data.ids;
@@ -37729,7 +37712,6 @@ class RemolDemoTodoStore extends core_1.RemolContextObject {
                 method: 'PATCH',
                 body: JSON.stringify({ [id]: next }),
             })[id];
-            this.reset(null);
             return updated !== null && updated !== void 0 ? updated : {};
         }
         return ((_a = this.prefetched()[id]) !== null && _a !== void 0 ? _a : {
@@ -37794,12 +37776,6 @@ RemolDemoTodoStore.instance = new RemolDemoTodoStore();
 __decorate([
     (0, core_1.mem)(0)
 ], RemolDemoTodoStore.prototype, "reset", null);
-__decorate([
-    (0, core_1.mem)(0)
-], RemolDemoTodoStore.prototype, "list_last", null);
-__decorate([
-    (0, core_1.mem)(0)
-], RemolDemoTodoStore.prototype, "list_real", null);
 __decorate([
     (0, core_1.mem)(0)
 ], RemolDemoTodoStore.prototype, "list", null);
