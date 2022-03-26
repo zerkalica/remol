@@ -12,7 +12,7 @@
   "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
-    "build": "tsc --build && jest && remol-boot bundle",
+    "build": "tsc --build && jest && remol-boot bundle --publicUrl=/remol/",
     "dev": "tsc --build && remol-boot dev"
   },
   "dependencies": {

@@ -16,13 +16,18 @@ export async function remolBootCommand() {
 }
 
 async function commandYargs() {
-  const context: RemolBootCommandContext = { distRoot: path.join(process.cwd(), '-'), dev: true }
+  const context: RemolBootCommandContext = { distRoot: path.join(process.cwd(), '-'), dev: true, publicUrl: '/' }
 
   return addContextOptions(yargs, context)
 }
 
 function addContextOptions(yargs: Argv, p: RemolBootCommandContext): Argv<RemolBootCommandContext> {
   return yargs
+    .option('publicUrl', {
+      type: 'string',
+      default: p.publicUrl,
+      description: 'Public url',
+    })
     .option('distRoot', {
       type: 'string',
       default: p.distRoot,

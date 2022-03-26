@@ -44,7 +44,7 @@ export class RemolDemoTodoSnippet extends Remol<{
 
     if (title) {
       if (todo.title() !== title) {
-        todo.update(draft.dto())
+        todo.dto_safe(draft.dto())
       }
     } else {
       todo.remove()

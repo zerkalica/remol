@@ -72,7 +72,6 @@ export class RemolDemoTodoStoreMock extends RemolDemoStoreMock<RemolDemoTodoDTO>
     const items = Object.values(this.items)
     for (const todo of items) {
       if (todo.checked) delete this.items[todo.id]
-      todo.checked = true
     }
 
     return {

@@ -41,10 +41,10 @@ export class RemolDemoTodoModel extends Object {
   }
 
   @mem(1) dto_pick<Field extends keyof RemolDemoTodoDTO>(field: Field, value?: RemolDemoTodoDTO[Field]) {
-    const prev = this.dto()
+    const prev = this.dto_safe()
     if (value === undefined) return prev[field]
 
-    const next = this.dto({ ...prev, [field]: value })
+    const next = this.dto_safe({ ...prev, [field]: value })
 
     return next[field]
   }
@@ -68,13 +68,14 @@ export class RemolDemoTodoModel extends Object {
   }
 
   remove() {
-    this.update(null)
+    this.dto_safe(null)
   }
 
-  @action update(patch: Partial<RemolDemoTodoDTO> | null) {
+  dto_safe(next?: Partial<RemolDemoTodoDTO> | null) {
     try {
-      this.dto(patch)
+      const dto = this.dto(next)
       this.status(false)
+      return dto
     } catch (error) {
       this.status(error instanceof Promise ? true : (error as Error))
       remolFail(error)

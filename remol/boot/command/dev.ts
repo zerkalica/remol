@@ -3,10 +3,16 @@ import { RemolBootBuild } from '../build/build'
 import { RemolBootServer } from '../server/server'
 import { RemolBootCommandContext } from './context'
 
-export async function remolBootCommandDev({ dev, distRoot, port = 8081 }: RemolBootCommandContext & { port?: number }) {
+export async function remolBootCommandDev({
+  dev,
+  distRoot,
+  port = 8081,
+  publicUrl,
+}: RemolBootCommandContext & { port?: number }) {
   const build = new RemolBootBuild()
   build.isDev = () => dev
   build.distRoot = () => distRoot
+  build.publicUrl = () => publicUrl
 
   const server = new RemolBootServer()
   server.middleware = () => build.middleware()

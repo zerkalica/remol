@@ -23,25 +23,10 @@ export class RemolDemoTodoStore extends RemolContextObject {
     return new Date().getTime()
   }
 
-  @mem(0) list_last(next?: ReturnType<RemolDemoTodoStoreMock['list']>) {
-    return next
-  }
-
-  @mem(0) list_real() {
-    this.reset()
-    return this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
-  }
-
   @mem(0) list() {
-    try {
-      const list = this.list_real()
-      this.list_last(list)
-      return list
-    } catch (error) {
-      const last = this.list_last()
-      if (error instanceof Promise && last) return last
-      remolFail(error)
-    }
+    this.reset()
+    const list = this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
+    return list
   }
 
   @mem(0) ids() {
@@ -62,8 +47,6 @@ export class RemolDemoTodoStore extends RemolContextObject {
         method: 'PATCH',
         body: JSON.stringify({ [id]: next }),
       })[id]
-
-      this.reset(null)
 
       return updated ?? {}
     }

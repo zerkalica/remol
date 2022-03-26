@@ -113,6 +113,7 @@ export class RemolBootBuild {
       output: {
         filename: isDev ? `[name].js` : `[name]-[contenthash].js`,
         path: outDir,
+        publicPath: this.publicUrl(),
       },
     }
   }
@@ -181,8 +182,12 @@ export class RemolBootBuild {
     })
   }
 
-  protected reloadPath() {
-    return '/__reload'
+  protected reloadSegment() {
+    return '__reload'
+  }
+
+  protected reloadUrl() {
+    return this.publicUrl() + this.reloadSegment()
   }
 
   protected template(): RemolBootBuildTemplate | undefined {
@@ -190,9 +195,10 @@ export class RemolBootBuild {
     template.publicUrl = this.publicUrl.bind(this)
     template.pkgName = this.pkgName.bind(this)
     template.version = this.version.bind(this)
-    template.devJs = () => [
-      {
-        body: `new EventSource(window.origin + '${this.reloadPath()}').onmessage = e => {
+    if (this.isDev()) {
+      template.devJs = () => [
+        {
+          body: `new EventSource(window.origin + '${this.reloadUrl()}').onmessage = e => {
         const res = JSON.parse(e.data)
         console.log('recv', res.t)
         if (res.t === 'success') window.location.reload()
@@ -201,8 +207,9 @@ export class RemolBootBuild {
         if (res.t === 'error') document.body.innerHTML = '<h1>Error</h1><pre>' + res.error + '</pre>'
       }
       `,
-      },
-    ]
+        },
+      ]
+    }
 
     return template
   }
@@ -286,11 +293,16 @@ export class RemolBootBuild {
     this.isDevOverrided = true
     this.watch()
 
-    return remolServerMdlCombine(this.mdlReload.bind(this), serveStatic(this.publicDir()))
+    return remolServerMdlCombine(this.mdlReload.bind(this), this.mdlStatic.bind(this, serveStatic(this.publicDir())))
+  }
+
+  mdlStatic(orig: any, req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) {
+    // req.url = `${this.publicUrl()}${req.url?.substring(1)}`
+    orig(req, res, next)
   }
 
   mdlReload(req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) {
-    if (req.url !== this.reloadPath()) return next()
+    if (req.url !== this.reloadUrl()) return next()
 
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
