@@ -1,5 +1,5 @@
 export class RemolError extends Error {
-  cause?: unknown
+  cause?: any
 
   static errorMap = new WeakMap<Object, Error>()
 
