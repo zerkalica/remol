@@ -104,7 +104,7 @@ var $;
             $mol_wire_auto()?.track_next(this);
         }
         refresh() { }
-        commit() { }
+        complete() { }
         emit(quant = $mol_wire_cursor.stale) {
             for (let i = this.sub_from; i < this.length; i += 2) {
                 ;
@@ -349,14 +349,12 @@ var $;
             }
             this.sub_from = this.cursor;
         }
-        commit() {
-            this.commit_pubs();
-        }
-        commit_pubs() {
+        complete() { }
+        complete_pubs() {
             const limit = this.cursor < 0 ? this.sub_from : this.cursor;
             for (let cursor = this.pub_from; cursor < limit; cursor += 2) {
                 const pub = this[cursor];
-                pub?.commit();
+                pub?.complete();
             }
         }
         absorb(quant = $mol_wire_cursor.stale) {
@@ -377,183 +375,6 @@ var $;
     $.$mol_wire_pub_sub = $mol_wire_pub_sub;
 })($ || ($ = {}));
 //mol/wire/pub/sub/sub.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_compare_deep_cache = new WeakMap();
-    function $mol_compare_deep(left, right) {
-        if (Object.is(left, right))
-            return true;
-        if (left === null)
-            return false;
-        if (right === null)
-            return false;
-        if (typeof left !== 'object')
-            return false;
-        if (typeof right !== 'object')
-            return false;
-        const left_proto = Reflect.getPrototypeOf(left);
-        const right_proto = Reflect.getPrototypeOf(right);
-        if (left_proto !== right_proto)
-            return false;
-        if (left instanceof Boolean)
-            return Object.is(left.valueOf(), right['valueOf']());
-        if (left instanceof Number)
-            return Object.is(left.valueOf(), right['valueOf']());
-        if (left instanceof String)
-            return Object.is(left.valueOf(), right['valueOf']());
-        if (left instanceof Date)
-            return Object.is(left.valueOf(), right['valueOf']());
-        if (left instanceof RegExp)
-            return left.source === right['source'] && left.flags === right['flags'];
-        let left_cache = $.$mol_compare_deep_cache.get(left);
-        if (left_cache) {
-            const right_cache = left_cache.get(right);
-            if (typeof right_cache === 'boolean')
-                return right_cache;
-        }
-        else {
-            left_cache = new WeakMap([[right, true]]);
-            $.$mol_compare_deep_cache.set(left, left_cache);
-        }
-        let result;
-        try {
-            if (left_proto && !Reflect.getPrototypeOf(left_proto))
-                result = compare_pojo(left, right);
-            else if (Array.isArray(left))
-                result = compare_array(left, right);
-            else if (left instanceof Set)
-                result = compare_set(left, right);
-            else if (left instanceof Map)
-                result = compare_map(left, right);
-            else if (left instanceof Error)
-                result = left.stack === right.stack;
-            else if (ArrayBuffer.isView(left))
-                result = compare_buffer(left, right);
-            else if (Symbol.toPrimitive in left)
-                result = compare_primitive(left, right);
-            else
-                result = false;
-        }
-        finally {
-            left_cache.set(right, result);
-        }
-        return result;
-    }
-    $.$mol_compare_deep = $mol_compare_deep;
-    function compare_array(left, right) {
-        const len = left.length;
-        if (len !== right.length)
-            return false;
-        for (let i = 0; i < len; ++i) {
-            if (!$mol_compare_deep(left[i], right[i]))
-                return false;
-        }
-        return true;
-    }
-    function compare_buffer(left, right) {
-        const len = left.byteLength;
-        if (len !== right.byteLength)
-            return false;
-        for (let i = 0; i < len; ++i) {
-            if (left[i] !== right[i])
-                return false;
-        }
-        return true;
-    }
-    function compare_iterator(left, right, compare) {
-        while (true) {
-            const left_next = left.next();
-            const right_next = right.next();
-            if (left_next.done !== right_next.done)
-                return false;
-            if (left_next.done)
-                break;
-            if (!compare(left_next.value, right_next.value))
-                return false;
-        }
-        return true;
-    }
-    function compare_set(left, right) {
-        if (left.size !== right.size)
-            return false;
-        return compare_iterator(left.values(), right.values(), $mol_compare_deep);
-    }
-    function compare_map(left, right) {
-        if (left.size !== right.size)
-            return false;
-        return compare_iterator(left.keys(), right.keys(), Object.is)
-            && compare_iterator(left.values(), right.values(), $mol_compare_deep);
-    }
-    function compare_pojo(left, right) {
-        const left_keys = Object.getOwnPropertyNames(left);
-        const right_keys = Object.getOwnPropertyNames(right);
-        if (left_keys.length !== right_keys.length)
-            return false;
-        for (let key of left_keys) {
-            if (!$mol_compare_deep(left[key], Reflect.get(right, key)))
-                return false;
-        }
-        return true;
-    }
-    function compare_primitive(left, right) {
-        return Object.is(left[Symbol.toPrimitive]('default'), right[Symbol.toPrimitive]('default'));
-    }
-})($ || ($ = {}));
-//mol/compare/deep/deep.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_guid(length = 8, exists = () => false) {
-        for (;;) {
-            let id = Math.random().toString(36).substring(2, length + 2).toUpperCase();
-            if (exists(id))
-                continue;
-            return id;
-        }
-    }
-    $.$mol_guid = $mol_guid;
-})($ || ($ = {}));
-//mol/guid/guid.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_key_store = new WeakMap();
-    function $mol_key(value) {
-        if (!value)
-            return JSON.stringify(value);
-        if (typeof value !== 'object' && typeof value !== 'function')
-            return JSON.stringify(value);
-        return JSON.stringify(value, (field, value) => {
-            if (!value)
-                return value;
-            if (typeof value !== 'object' && typeof value !== 'function')
-                return value;
-            if (Array.isArray(value))
-                return value;
-            const proto = Reflect.getPrototypeOf(value);
-            if (!proto)
-                return value;
-            if (Reflect.getPrototypeOf(proto) === null)
-                return value;
-            if ('toJSON' in value)
-                return value;
-            if (value instanceof RegExp)
-                return value.toString();
-            let key = $.$mol_key_store.get(value);
-            if (key)
-                return key;
-            key = $mol_guid();
-            $.$mol_key_store.set(value, key);
-            return key;
-        });
-    }
-    $.$mol_key = $mol_key;
-})($ || ($ = {}));
-//mol/key/key.ts
 ;
 "use strict";
 var $;
@@ -757,82 +578,10 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_wire_method(host, field, descr) {
-        if (!descr)
-            descr = Reflect.getOwnPropertyDescriptor(host, field);
-        const orig = descr?.value ?? host[field];
-        const sup = Reflect.getPrototypeOf(host);
-        if (typeof sup[field] === 'function') {
-            Object.defineProperty(orig, 'name', { value: sup[field].name });
-        }
-        const value = function (...args) {
-            const fiber = $mol_wire_fiber.temp(this ?? null, orig, ...args);
-            return fiber.sync();
-        };
-        Object.defineProperty(value, 'name', { value: orig.name + ' ' });
-        Object.assign(value, { orig });
-        const descr2 = { ...descr, value };
-        Reflect.defineProperty(host, field, descr2);
-        return descr2;
-    }
-    $.$mol_wire_method = $mol_wire_method;
-})($ || ($ = {}));
-//mol/wire/method/method.ts
-;
-"use strict";
-var $;
-(function ($) {
     const handled = new WeakSet();
     class $mol_wire_fiber extends $mol_wire_pub_sub {
         task;
         host;
-        static temp(host, task, ...args) {
-            const existen = $mol_wire_auto()?.track_next();
-            reuse: if (existen) {
-                if (!(existen instanceof $mol_wire_fiber))
-                    break reuse;
-                if (existen.host !== host)
-                    break reuse;
-                if (existen.task !== task)
-                    break reuse;
-                if (!$mol_compare_deep(existen.args, args))
-                    break reuse;
-                return existen;
-            }
-            return new this(`${host?.[Symbol.toStringTag] ?? host}.${task.name}(#)`, task, host, ...args);
-        }
-        static persist(task, keys) {
-            const field = task.name + '()';
-            if (keys) {
-                return function $mol_wire_fiber_persist(host, args) {
-                    let dict, key, fiber;
-                    key = `${host?.[Symbol.toStringTag] ?? host}.${task.name}(${args.map(v => $mol_key(v)).join(',')})`;
-                    dict = Object.getOwnPropertyDescriptor(host ?? task, field)?.value;
-                    if (dict) {
-                        const existen = dict.get(key);
-                        if (existen)
-                            return existen;
-                    }
-                    else {
-                        dict = (host ?? task)[field] = new Map();
-                    }
-                    fiber = new $mol_wire_fiber(key, task, host, ...args);
-                    dict.set(key, fiber);
-                    return fiber;
-                };
-            }
-            else {
-                return function $mol_wire_fiber_persist(host, args) {
-                    const existen = Object.getOwnPropertyDescriptor(host ?? task, field)?.value;
-                    if (existen)
-                        return existen;
-                    const key = `${host?.[Symbol.toStringTag] ?? host}.${field}`;
-                    const fiber = new $mol_wire_fiber(key, task, host, ...args);
-                    (host ?? task)[field] = fiber;
-                    return fiber;
-                };
-            }
-        }
         static warm = true;
         static planning = [];
         static reaping = [];
@@ -876,10 +625,6 @@ var $;
                 return;
             return this.cache;
         }
-        persistent() {
-            const id = this[Symbol.toStringTag];
-            return id[id.length - 2] !== '#';
-        }
         field() {
             return this.task.name + '()';
         }
@@ -891,23 +636,6 @@ var $;
             this.pop();
             this.pub_from = this.sub_from = args.length;
             this[Symbol.toStringTag] = id;
-        }
-        destructor() {
-            super.destructor();
-            const prev = this.cache;
-            if ($mol_owning_check(this, prev)) {
-                prev.destructor();
-            }
-            if (this.persistent()) {
-                if (this.pub_from === 0) {
-                    ;
-                    (this.host ?? this.task)[this.field()] = null;
-                }
-                else {
-                    ;
-                    (this.host ?? this.task)[this.field()].delete(this[Symbol.toStringTag]);
-                }
-            }
         }
         plan() {
             $mol_wire_fiber.planning.push(this);
@@ -941,15 +669,6 @@ var $;
             else
                 super.emit(quant);
         }
-        commit() {
-            if (this.persistent())
-                return;
-            super.commit();
-            if (this.host instanceof $mol_wire_fiber) {
-                this.host.put(this.cache);
-            }
-            this.destructor();
-        }
         refresh() {
             if (this.cursor === $mol_wire_cursor.fresh)
                 return;
@@ -968,7 +687,17 @@ var $;
             const bu = this.track_on();
             let result;
             try {
-                result = this.task.call(this.host, ...(this.pub_from ? this.slice(0, this.pub_from) : []));
+                switch (this.pub_from) {
+                    case 0:
+                        result = this.task.call(this.host);
+                        break;
+                    case 1:
+                        result = this.task.call(this.host, this[0]);
+                        break;
+                    default:
+                        result = this.task.call(this.host, ...this.slice(0, this.pub_from));
+                        break;
+                }
                 if (result instanceof Promise) {
                     const put = (res) => {
                         if (this.cache === result)
@@ -999,41 +728,6 @@ var $;
             this.track_off(bu);
             this.put(result);
         }
-        put(next) {
-            const prev = this.cache;
-            if (next !== prev) {
-                if ($mol_owning_check(this, prev)) {
-                    prev.destructor();
-                }
-                this.cache = next;
-                if (this.persistent() && $mol_owning_catch(this, next)) {
-                    try {
-                        next[Symbol.toStringTag] = this[Symbol.toStringTag];
-                    }
-                    catch { }
-                }
-                if (this.sub_from < this.length) {
-                    if (!$mol_compare_deep(prev, next)) {
-                        this.emit();
-                    }
-                }
-            }
-            this.cursor = $mol_wire_cursor.fresh;
-            if (next instanceof Promise)
-                return next;
-            if (this.persistent()) {
-                this.commit_pubs();
-            }
-            else {
-                if (this.sub_empty) {
-                    this.commit();
-                }
-            }
-            return next;
-        }
-        recall(...args) {
-            return this.task.call(this.host, ...args);
-        }
         sync() {
             if (!$mol_wire_fiber.warm) {
                 return this.result();
@@ -1063,12 +757,359 @@ var $;
             }
         }
     }
-    __decorate([
-        $mol_wire_method
-    ], $mol_wire_fiber.prototype, "recall", null);
     $.$mol_wire_fiber = $mol_wire_fiber;
 })($ || ($ = {}));
 //mol/wire/fiber/fiber.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_compare_deep_cache = new WeakMap();
+    function $mol_compare_deep(left, right) {
+        if (Object.is(left, right))
+            return true;
+        if (left === null)
+            return false;
+        if (right === null)
+            return false;
+        if (typeof left !== 'object')
+            return false;
+        if (typeof right !== 'object')
+            return false;
+        const left_proto = Reflect.getPrototypeOf(left);
+        const right_proto = Reflect.getPrototypeOf(right);
+        if (left_proto !== right_proto)
+            return false;
+        if (left instanceof Boolean)
+            return Object.is(left.valueOf(), right['valueOf']());
+        if (left instanceof Number)
+            return Object.is(left.valueOf(), right['valueOf']());
+        if (left instanceof String)
+            return Object.is(left.valueOf(), right['valueOf']());
+        if (left instanceof Date)
+            return Object.is(left.valueOf(), right['valueOf']());
+        if (left instanceof RegExp)
+            return left.source === right['source'] && left.flags === right['flags'];
+        let left_cache = $.$mol_compare_deep_cache.get(left);
+        if (left_cache) {
+            const right_cache = left_cache.get(right);
+            if (typeof right_cache === 'boolean')
+                return right_cache;
+        }
+        else {
+            left_cache = new WeakMap([[right, true]]);
+            $.$mol_compare_deep_cache.set(left, left_cache);
+        }
+        let result;
+        try {
+            if (left_proto && !Reflect.getPrototypeOf(left_proto))
+                result = compare_pojo(left, right);
+            else if (Array.isArray(left))
+                result = compare_array(left, right);
+            else if (left instanceof Set)
+                result = compare_set(left, right);
+            else if (left instanceof Map)
+                result = compare_map(left, right);
+            else if (left instanceof Error)
+                result = left.stack === right.stack;
+            else if (ArrayBuffer.isView(left))
+                result = compare_buffer(left, right);
+            else if (Symbol.toPrimitive in left)
+                result = compare_primitive(left, right);
+            else
+                result = false;
+        }
+        finally {
+            left_cache.set(right, result);
+        }
+        return result;
+    }
+    $.$mol_compare_deep = $mol_compare_deep;
+    function compare_array(left, right) {
+        const len = left.length;
+        if (len !== right.length)
+            return false;
+        for (let i = 0; i < len; ++i) {
+            if (!$mol_compare_deep(left[i], right[i]))
+                return false;
+        }
+        return true;
+    }
+    function compare_buffer(left, right) {
+        const len = left.byteLength;
+        if (len !== right.byteLength)
+            return false;
+        for (let i = 0; i < len; ++i) {
+            if (left[i] !== right[i])
+                return false;
+        }
+        return true;
+    }
+    function compare_iterator(left, right, compare) {
+        while (true) {
+            const left_next = left.next();
+            const right_next = right.next();
+            if (left_next.done !== right_next.done)
+                return false;
+            if (left_next.done)
+                break;
+            if (!compare(left_next.value, right_next.value))
+                return false;
+        }
+        return true;
+    }
+    function compare_set(left, right) {
+        if (left.size !== right.size)
+            return false;
+        return compare_iterator(left.values(), right.values(), $mol_compare_deep);
+    }
+    function compare_map(left, right) {
+        if (left.size !== right.size)
+            return false;
+        return compare_iterator(left.keys(), right.keys(), Object.is)
+            && compare_iterator(left.values(), right.values(), $mol_compare_deep);
+    }
+    function compare_pojo(left, right) {
+        const left_keys = Object.getOwnPropertyNames(left);
+        const right_keys = Object.getOwnPropertyNames(right);
+        if (left_keys.length !== right_keys.length)
+            return false;
+        for (let key of left_keys) {
+            if (!$mol_compare_deep(left[key], Reflect.get(right, key)))
+                return false;
+        }
+        return true;
+    }
+    function compare_primitive(left, right) {
+        return Object.is(left[Symbol.toPrimitive]('default'), right[Symbol.toPrimitive]('default'));
+    }
+})($ || ($ = {}));
+//mol/compare/deep/deep.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_task extends $mol_wire_fiber {
+        static getter(task) {
+            return function $mol_wire_fiber_temp_get(host, args) {
+                const existen = $mol_wire_auto()?.track_next();
+                reuse: if (existen) {
+                    if (!(existen instanceof $mol_wire_task))
+                        break reuse;
+                    if (existen.host !== host)
+                        break reuse;
+                    if (existen.task !== task)
+                        break reuse;
+                    if (!$mol_compare_deep(existen.args, args))
+                        break reuse;
+                    return existen;
+                }
+                return new $mol_wire_task(`${host?.[Symbol.toStringTag] ?? host}.${task.name}(#)`, task, host, ...args);
+            };
+        }
+        complete() {
+            if (this.sub_empty)
+                this.destructor();
+        }
+        put(next) {
+            const prev = this.cache;
+            if (next !== prev) {
+                this.cache = next;
+                this.emit();
+            }
+            if (next instanceof Promise) {
+                this.cursor = $mol_wire_cursor.fresh;
+                return next;
+            }
+            this.cursor = $mol_wire_cursor.final;
+            if (this.sub_empty)
+                this.destructor();
+            return next;
+        }
+    }
+    $.$mol_wire_task = $mol_wire_task;
+})($ || ($ = {}));
+//mol/wire/task/task.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_guid(length = 8, exists = () => false) {
+        for (;;) {
+            let id = Math.random().toString(36).substring(2, length + 2).toUpperCase();
+            if (exists(id))
+                continue;
+            return id;
+        }
+    }
+    $.$mol_guid = $mol_guid;
+})($ || ($ = {}));
+//mol/guid/guid.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_key_store = new WeakMap();
+    function $mol_key(value) {
+        if (!value)
+            return JSON.stringify(value);
+        if (typeof value !== 'object' && typeof value !== 'function')
+            return JSON.stringify(value);
+        return JSON.stringify(value, (field, value) => {
+            if (!value)
+                return value;
+            if (typeof value !== 'object' && typeof value !== 'function')
+                return value;
+            if (Array.isArray(value))
+                return value;
+            const proto = Reflect.getPrototypeOf(value);
+            if (!proto)
+                return value;
+            if (Reflect.getPrototypeOf(proto) === null)
+                return value;
+            if ('toJSON' in value)
+                return value;
+            if (value instanceof RegExp)
+                return value.toString();
+            let key = $.$mol_key_store.get(value);
+            if (key)
+                return key;
+            key = $mol_guid();
+            $.$mol_key_store.set(value, key);
+            return key;
+        });
+    }
+    $.$mol_key = $mol_key;
+})($ || ($ = {}));
+//mol/key/key.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_method(host, field, descr) {
+        if (!descr)
+            descr = Reflect.getOwnPropertyDescriptor(host, field);
+        const orig = descr?.value ?? host[field];
+        const sup = Reflect.getPrototypeOf(host);
+        if (typeof sup[field] === 'function') {
+            Object.defineProperty(orig, 'name', { value: sup[field].name });
+        }
+        const temp = $mol_wire_task.getter(orig);
+        const value = function (...args) {
+            const fiber = temp(this ?? null, args);
+            return fiber.sync();
+        };
+        Object.defineProperty(value, 'name', { value: orig.name + ' ' });
+        Object.assign(value, { orig });
+        const descr2 = { ...descr, value };
+        Reflect.defineProperty(host, field, descr2);
+        return descr2;
+    }
+    $.$mol_wire_method = $mol_wire_method;
+})($ || ($ = {}));
+//mol/wire/method/method.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_atom extends $mol_wire_fiber {
+        static getter(task, keys) {
+            const field = task.name + '()';
+            if (keys) {
+                return function $mol_wire_fiber_persist_get(host, args) {
+                    let dict, key, fiber;
+                    key = `${host?.[Symbol.toStringTag] ?? host}.${task.name}(${args.map(v => $mol_key(v)).join(',')})`;
+                    dict = Object.getOwnPropertyDescriptor(host ?? task, field)?.value;
+                    if (dict) {
+                        const existen = dict.get(key);
+                        if (existen)
+                            return existen;
+                    }
+                    else {
+                        dict = (host ?? task)[field] = new Map();
+                    }
+                    fiber = new $mol_wire_atom(key, task, host, ...args);
+                    dict.set(key, fiber);
+                    return fiber;
+                };
+            }
+            else {
+                return function $mol_wire_fiber_persist_get(host, args) {
+                    const existen = Object.getOwnPropertyDescriptor(host ?? task, field)?.value;
+                    if (existen)
+                        return existen;
+                    const key = `${host?.[Symbol.toStringTag] ?? host}.${field}`;
+                    const fiber = new $mol_wire_atom(key, task, host, ...args);
+                    (host ?? task)[field] = fiber;
+                    return fiber;
+                };
+            }
+        }
+        recall(...args) {
+            if (this.cursor > $mol_wire_cursor.fresh) {
+                try {
+                    this.once();
+                }
+                catch (error) {
+                    if (error instanceof Promise)
+                        $mol_fail_hidden(error);
+                }
+            }
+            return this.put(this.task.call(this.host, ...args));
+        }
+        once() {
+            return this.sync();
+        }
+        destructor() {
+            super.destructor();
+            const prev = this.cache;
+            if ($mol_owning_check(this, prev)) {
+                prev.destructor();
+            }
+            if (this.pub_from === 0) {
+                ;
+                (this.host ?? this.task)[this.field()] = null;
+            }
+            else {
+                ;
+                (this.host ?? this.task)[this.field()].delete(this[Symbol.toStringTag]);
+            }
+        }
+        put(next) {
+            const prev = this.cache;
+            if (next !== prev) {
+                if ($mol_owning_check(this, prev)) {
+                    prev.destructor();
+                }
+                this.cache = next;
+                if ($mol_owning_catch(this, next)) {
+                    try {
+                        next[Symbol.toStringTag] = this[Symbol.toStringTag];
+                    }
+                    catch { }
+                }
+                if (this.sub_from < this.length) {
+                    if (!$mol_compare_deep(prev, next)) {
+                        this.emit();
+                    }
+                }
+            }
+            this.cursor = $mol_wire_cursor.fresh;
+            if (next instanceof Promise)
+                return next;
+            this.complete_pubs();
+            return next;
+        }
+    }
+    __decorate([
+        $mol_wire_method
+    ], $mol_wire_atom.prototype, "recall", null);
+    __decorate([
+        $mol_wire_method
+    ], $mol_wire_atom.prototype, "once", null);
+    $.$mol_wire_atom = $mol_wire_atom;
+})($ || ($ = {}));
+//mol/wire/atom/atom.ts
 ;
 "use strict";
 var $;
@@ -1107,8 +1148,9 @@ var $;
                 const val = obj[field];
                 if (typeof val !== 'function')
                     return val;
+                const temp = $mol_wire_task.getter(val);
                 return function $mol_wire_sync(...args) {
-                    const fiber = $mol_wire_fiber.temp(obj, val, ...args);
+                    const fiber = temp(obj, args);
                     return fiber.sync();
                 };
             }
@@ -1128,9 +1170,10 @@ var $;
                 if (typeof val !== 'function')
                     return val;
                 let fiber;
+                const temp = $mol_wire_task.getter(val);
                 return function $mol_wire_async(...args) {
                     fiber?.destructor();
-                    fiber = $mol_wire_fiber.temp(obj, val, ...args);
+                    fiber = temp(obj, args);
                     return fiber.async();
                 };
             }
@@ -1139,37 +1182,6 @@ var $;
     $.$mol_wire_async = $mol_wire_async;
 })($ || ($ = {}));
 //mol/wire/async/async.ts
-;
-"use strict";
-var $;
-(function ($) {
-    const cacthed = new WeakMap();
-    function $mol_fail_catch(error) {
-        if (typeof error !== 'object')
-            return false;
-        if (cacthed.get(error))
-            return false;
-        cacthed.set(error, true);
-        return true;
-    }
-    $.$mol_fail_catch = $mol_fail_catch;
-})($ || ($ = {}));
-//mol/fail/catch/catch.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_fail_log(error) {
-        if (error instanceof Promise)
-            return false;
-        if (!$mol_fail_catch(error))
-            return false;
-        console.error(error);
-        return true;
-    }
-    $.$mol_fail_log = $mol_fail_log;
-})($ || ($ = {}));
-//mol/fail/log/log.ts
 ;
 "use strict";
 var $;
@@ -1195,16 +1207,16 @@ var $;
     $.$mol_wire_mem = $mol_wire_mem;
     function $mol_wire_mem_func(keys) {
         return (func) => {
-            const persist = $mol_wire_fiber.persist(func, keys);
+            const persist = $mol_wire_atom.getter(func, keys);
             const wrapper = function (...args) {
                 let atom = persist(this, args.slice(0, keys));
-                if (args.length <= keys || args[keys] === undefined)
-                    return atom.sync();
-                try {
-                    atom.sync();
-                }
-                catch (error) {
-                    $mol_fail_log(error);
+                if (args.length <= keys || args[keys] === undefined) {
+                    if ($mol_wire_auto() instanceof $mol_wire_task) {
+                        return atom.once();
+                    }
+                    else {
+                        return atom.sync();
+                    }
                 }
                 return atom.recall(...args);
             };
@@ -1237,7 +1249,7 @@ var $;
         if (!descr)
             descr = Reflect.getOwnPropertyDescriptor(host, field);
         const _get = descr?.get || $mol_const(descr?.value);
-        const persist = $mol_wire_fiber.persist(_get, 0);
+        const persist = $mol_wire_atom.getter(_get, 0);
         const _set = descr?.set || function (next) {
             persist(this, []).put(next);
         };
@@ -1248,8 +1260,9 @@ var $;
         function get() {
             return persist(this, []).sync();
         }
+        const temp = $mol_wire_task.getter(_set);
         function set(next) {
-            $mol_wire_fiber.temp(this, _set, next).sync();
+            temp(this, [next]).sync();
         }
         Object.defineProperty(get, 'name', { value: _get.name + '$' });
         Object.defineProperty(set, 'name', { value: _set.name + '@' });
@@ -1456,6 +1469,126 @@ var $;
     $.$mol_wait_timeout = $mol_wait_timeout;
 })($ || ($ = {}));
 //mol/wait/timeout/timeout.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_mem = $mol_wire_mem(0);
+    $.$mol_mem_key = $mol_wire_mem(1);
+    $.$mol_mem_key2 = $mol_wire_mem(2);
+    $.$mol_mem_key3 = $mol_wire_mem(3);
+})($ || ($ = {}));
+//mol/mem/mem.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_log3_area_lazy(event) {
+        const self = this;
+        const stack = self.$mol_log3_stack;
+        const deep = stack.length;
+        let logged = false;
+        stack.push(() => {
+            logged = true;
+            self.$mol_log3_area.call(self, event);
+        });
+        return () => {
+            if (logged)
+                self.console.groupEnd();
+            if (stack.length > deep)
+                stack.length = deep;
+        };
+    }
+    $.$mol_log3_area_lazy = $mol_log3_area_lazy;
+    $.$mol_log3_stack = [];
+})($ || ($ = {}));
+//mol/log3/log3.ts
+;
+"use strict";
+//mol/type/keys/extract/extract.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_log3_web_make(level, color) {
+        return function $mol_log3_logger(event) {
+            const pending = this.$mol_log3_stack.pop();
+            if (pending)
+                pending();
+            let tpl = '%c';
+            const chunks = Object.values(event);
+            for (let i = 0; i < chunks.length; ++i) {
+                tpl += (typeof chunks[i] === 'string') ? ' ⦙ %s' : ' ⦙ %o';
+            }
+            const style = `color:${color};font-weight:bolder`;
+            this.console[level](tpl, style, ...chunks);
+            const self = this;
+            return () => self.console.groupEnd();
+        };
+    }
+    $.$mol_log3_web_make = $mol_log3_web_make;
+    $.$mol_log3_come = $mol_log3_web_make('info', 'royalblue');
+    $.$mol_log3_done = $mol_log3_web_make('info', 'forestgreen');
+    $.$mol_log3_fail = $mol_log3_web_make('error', 'orangered');
+    $.$mol_log3_warn = $mol_log3_web_make('warn', 'goldenrod');
+    $.$mol_log3_rise = $mol_log3_web_make('log', 'magenta');
+    $.$mol_log3_area = $mol_log3_web_make('group', 'cyan');
+})($ || ($ = {}));
+//mol/log3/log3.web.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_log extends $mol_object2 {
+        static watch(task) {
+            return task;
+        }
+        static track(fiber) {
+            const prev = $mol_wire_probe(() => this.track(fiber));
+            let next;
+            try {
+                next = fiber.sync();
+            }
+            finally {
+                for (const pub of fiber.pub_list) {
+                    if (pub instanceof $mol_wire_fiber) {
+                        this.track(pub);
+                    }
+                }
+            }
+            if (prev !== undefined && !$mol_compare_deep(prev, next)) {
+                this.$.$mol_log3_rise({
+                    message: 'Changed',
+                    place: fiber,
+                });
+            }
+            return next;
+        }
+        static active() {
+            try {
+                this.watch()?.();
+            }
+            finally {
+                for (const pub of $mol_wire_auto().pub_list) {
+                    if (pub instanceof $mol_wire_fiber) {
+                        this.track(pub);
+                    }
+                }
+            }
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_wire_log, "watch", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_wire_log, "track", null);
+    __decorate([
+        $mol_mem
+    ], $mol_wire_log, "active", null);
+    $.$mol_wire_log = $mol_wire_log;
+})($ || ($ = {}));
+//mol/wire/log/log.ts
 
 //# sourceMappingURL=web.js.map
 
@@ -2110,7 +2243,7 @@ var CacheComponent = 24;
 var TracingMarkerComponent = 25;
 
 // -----------------------------------------------------------------------------
-var enableClientRenderFallbackOnTextMismatch = true; // TODO: Need to review this code one more time before landing
+var enableClientRenderFallbackOnTextMismatch = true; // Recoil still uses useMutableSource in www, need to delete
 // the react-reconciler package.
 
 var enableNewReconciler = false; // Support legacy Primer support on internal FB www
@@ -8038,10 +8171,10 @@ var queuedPointers = new Map();
 var queuedPointerCaptures = new Map(); // We could consider replaying selectionchange and touchmoves too.
 
 var queuedExplicitHydrationTargets = [];
-var discreteReplayableEvents = ['mousedown', 'mouseup', 'touchcancel', 'touchend', 'touchstart', 'auxclick', 'dblclick', 'pointercancel', 'pointerdown', 'pointerup', 'dragend', 'dragstart', 'drop', 'compositionend', 'compositionstart', 'keydown', 'keypress', 'keyup', 'input', 'textInput', // Intentionally camelCase
+var synchronouslyHydratedEvents = ['mousedown', 'mouseup', 'touchcancel', 'touchend', 'touchstart', 'auxclick', 'dblclick', 'pointercancel', 'pointerdown', 'pointerup', 'dragend', 'dragstart', 'drop', 'compositionend', 'compositionstart', 'keydown', 'keypress', 'keyup', 'input', 'textInput', // Intentionally camelCase
 'copy', 'cut', 'paste', 'click', 'change', 'contextmenu', 'reset', 'submit'];
 function isDiscreteEventThatRequiresHydration(eventType) {
-  return discreteReplayableEvents.indexOf(eventType) > -1;
+  return synchronouslyHydratedEvents.indexOf(eventType) > -1;
 }
 
 function createQueuedReplayableEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent) {
@@ -8052,7 +8185,8 @@ function createQueuedReplayableEvent(blockedOn, domEventName, eventSystemFlags, 
     nativeEvent: nativeEvent,
     targetContainers: [targetContainer]
   };
-}
+} // Resets the replaying for this type of continuous event to no event.
+
 
 function clearIfContinuousEvent(domEventName, nativeEvent) {
   switch (domEventName) {
@@ -8094,11 +8228,11 @@ function accumulateOrCreateContinuousQueuedReplayableEvent(existingQueuedEvent, 
     var queuedEvent = createQueuedReplayableEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent);
 
     if (blockedOn !== null) {
-      var _fiber2 = getInstanceFromNode(blockedOn);
+      var _fiber = getInstanceFromNode(blockedOn);
 
-      if (_fiber2 !== null) {
+      if (_fiber !== null) {
         // Attempt to increase the priority of this target.
-        attemptContinuousHydration(_fiber2);
+        attemptContinuousHydration(_fiber);
       }
     }
 
@@ -8245,19 +8379,17 @@ function attemptReplayContinuousQueuedEvent(queuedEvent) {
     var nextBlockedOn = findInstanceBlockingEvent(queuedEvent.domEventName, queuedEvent.eventSystemFlags, targetContainer, queuedEvent.nativeEvent);
 
     if (nextBlockedOn === null) {
-      {
-        var nativeEvent = queuedEvent.nativeEvent;
-        var nativeEventClone = new nativeEvent.constructor(nativeEvent.type, nativeEvent);
-        setReplayingEvent(nativeEventClone);
-        nativeEvent.target.dispatchEvent(nativeEventClone);
-        resetReplayingEvent();
-      }
+      var nativeEvent = queuedEvent.nativeEvent;
+      var nativeEventClone = new nativeEvent.constructor(nativeEvent.type, nativeEvent);
+      setReplayingEvent(nativeEventClone);
+      nativeEvent.target.dispatchEvent(nativeEventClone);
+      resetReplayingEvent();
     } else {
       // We're still blocked. Try again later.
-      var _fiber3 = getInstanceFromNode(nextBlockedOn);
+      var _fiber2 = getInstanceFromNode(nextBlockedOn);
 
-      if (_fiber3 !== null) {
-        attemptContinuousHydration(_fiber3);
+      if (_fiber2 !== null) {
+        attemptContinuousHydration(_fiber2);
       }
 
       queuedEvent.blockedOn = nextBlockedOn;
@@ -8278,8 +8410,7 @@ function attemptReplayContinuousQueuedEventInMap(queuedEvent, key, map) {
 }
 
 function replayUnblockedEvents() {
-  hasScheduledReplayAttempt = false;
-
+  hasScheduledReplayAttempt = false; // Next replay any continuous events.
 
   if (queuedFocus !== null && attemptReplayContinuousQueuedEvent(queuedFocus)) {
     queuedFocus = null;
@@ -8373,16 +8504,6 @@ function retryIfBlockedOn(unblocked) {
 }
 
 var ReactCurrentBatchConfig = ReactSharedInternals.ReactCurrentBatchConfig; // TODO: can we stop exporting these?
-
-var _enabled = true; // This is exported in FB builds for use by legacy FB layer infra.
-// We'd like to remove this but it's not clear if this is safe.
-
-function setEnabled(enabled) {
-  _enabled = !!enabled;
-}
-function isEnabled() {
-  return _enabled;
-}
 function createEventListenerWrapperWithPriority(targetContainer, domEventName, eventSystemFlags) {
   var eventPriority = getEventPriority(domEventName);
   var listenerWrapper;
@@ -8434,16 +8555,6 @@ function dispatchContinuousEvent(domEventName, eventSystemFlags, container, nati
 }
 
 function dispatchEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
-  if (!_enabled) {
-    return;
-  }
-
-  {
-    dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(domEventName, eventSystemFlags, targetContainer, nativeEvent);
-  }
-}
-
-function dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
   var blockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
 
   if (blockedOn === null) {
@@ -12849,7 +12960,6 @@ var SUSPENSE_END_DATA = '/$';
 var SUSPENSE_PENDING_START_DATA = '$?';
 var SUSPENSE_FALLBACK_START_DATA = '$!';
 var STYLE$1 = 'style';
-var eventsEnabled = null;
 var selectionInformation = null;
 function getRootHostContext(rootContainerInstance) {
   var type;
@@ -12900,17 +13010,12 @@ function getPublicInstance(instance) {
   return instance;
 }
 function prepareForCommit(containerInfo) {
-  eventsEnabled = isEnabled();
   selectionInformation = getSelectionInformation();
   var activeInstance = null;
-
-  setEnabled(false);
   return activeInstance;
 }
 function resetAfterCommit(containerInfo) {
   restoreSelection(selectionInformation);
-  setEnabled(eventsEnabled);
-  eventsEnabled = null;
   selectionInformation = null;
 }
 function createInstance(type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
@@ -30477,7 +30582,7 @@ identifierPrefix, onRecoverableError, transitionCallbacks) {
   return root;
 }
 
-var ReactVersion = '18.0.0-rc.3-de516ca5a-20220321';
+var ReactVersion = '18.0.0-fc46dba67-20220329';
 
 function createPortal(children, containerInfo, // TODO: figure out the API for cross-renderer implementation.
 implementation) {
@@ -30715,6 +30820,7 @@ function markRetryLaneIfNotHydrated(fiber, retryLane) {
     markRetryLaneImpl(alternate, retryLane);
   }
 }
+
 function attemptContinuousHydration$1(fiber) {
   if (fiber.tag !== SuspenseComponent) {
     // We ignore HostRoots here because we can't increase
@@ -31021,10 +31127,10 @@ function injectIntoDevTools(devToolsConfig) {
 
 var defaultOnRecoverableError = typeof reportError === 'function' ? // In modern browsers, reportError will dispatch an error event,
 // emulating an uncaught JavaScript error.
-reportError : function (error$1) {
+reportError : function (error) {
   // In older browsers and test environments, fallback to console.error.
-  // eslint-disable-next-line react-internal/no-production-logging, react-internal/warning-args
-  error(error$1);
+  // eslint-disable-next-line react-internal/no-production-logging
+  console['error'](error);
 };
 
 function ReactDOMRoot(internalRoot) {
@@ -31729,7 +31835,7 @@ if (
 ) {
   __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
 }
-          var ReactVersion = '18.0.0-rc.3-de516ca5a-20220321';
+          var ReactVersion = '18.0.0-fc46dba67-20220329';
 
 // ATTENTION
 // When adding new symbols to this file,
@@ -35675,11 +35781,12 @@ function remolAction(host, field, descr = Reflect.getOwnPropertyDescriptor(host,
             value: handler.name,
         });
     }
+    const temp = mol_wire_lib_1.$mol_wire_task.getter(orig);
     const fibers = new WeakMap();
     function value(...args) {
         var _a;
         (_a = fibers.get(this)) === null || _a === void 0 ? void 0 : _a.destructor();
-        const fiber = mol_wire_lib_1.$mol_wire_fiber.temp(this, orig, ...args);
+        const fiber = temp(this, args);
         if (mol_wire_lib_1.default.$mol_wire_auto())
             return fiber.sync();
         fibers.set(this, fiber);
@@ -35740,9 +35847,10 @@ function remolActionFactory(argsCount) {
         function value(...setup) {
             let prev;
             const handler = orig.call(this, ...setup);
+            const temp = mol_wire_lib_1.$mol_wire_task.getter(handler);
             return (...args) => {
                 prev === null || prev === void 0 ? void 0 : prev.destructor();
-                const fiber = mol_wire_lib_1.$mol_wire_fiber.temp(this, handler, ...args);
+                const fiber = temp(this, args);
                 if (mol_wire_lib_1.default.$mol_wire_auto())
                     return fiber.sync();
                 prev = fiber;
@@ -35781,7 +35889,7 @@ class RemolActionQueue extends object_1.RemolContextObject {
     constructor() {
         super(...arguments);
         this.tasks = [];
-        this.fiber = undefined;
+        this.task = undefined;
     }
     run(calculate) {
         const current = (0, mol_wire_lib_1.$mol_wire_auto)();
@@ -35809,12 +35917,12 @@ class RemolActionQueue extends object_1.RemolContextObject {
     async continue() {
         if (this.tasks.length === 0)
             return;
-        if (this.fiber)
+        if (this.task)
             return;
-        this.fiber = new mol_wire_lib_1.$mol_wire_fiber(this[Symbol.toStringTag] + '.up()', this.up, this);
+        this.task = new mol_wire_lib_1.$mol_wire_task(this[Symbol.toStringTag] + '.up()', this.up, this);
         await Promise.resolve();
         try {
-            await this.fiber.async();
+            await this.task.async();
         }
         catch (error) {
             console.error(error);
@@ -35829,7 +35937,7 @@ class RemolActionQueue extends object_1.RemolContextObject {
             this.tasks = this.tasks.slice(1);
             if (this.tasks.length === 0)
                 this.status(false);
-            this.fiber = undefined;
+            this.task = undefined;
             this.continue();
         }
         catch (err) {
@@ -35838,7 +35946,7 @@ class RemolActionQueue extends object_1.RemolContextObject {
                 this.status(true);
             }
             else {
-                this.fiber = undefined;
+                this.task = undefined;
                 this.status([error]);
             }
             (0, mol_wire_lib_1.$mol_fail_hidden)(error);
@@ -35846,8 +35954,8 @@ class RemolActionQueue extends object_1.RemolContextObject {
     }
     destructor() {
         var _a;
-        (_a = this.fiber) === null || _a === void 0 ? void 0 : _a.destructor();
-        this.fiber = undefined;
+        (_a = this.task) === null || _a === void 0 ? void 0 : _a.destructor();
+        this.task = undefined;
         this.tasks = [];
     }
 }
@@ -35957,7 +36065,7 @@ class RemolContext extends Object {
     static get instance() {
         var _a;
         const owner = (0, mol_wire_lib_1.$mol_wire_auto)();
-        if (owner instanceof mol_wire_lib_1.$mol_wire_fiber) {
+        if (owner instanceof mol_wire_lib_1.$mol_wire_atom) {
             const $ = owner.host.$;
             if ($)
                 return $;
@@ -36073,9 +36181,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.remolComponentCopy = exports.RemolWireFunc = exports.RemolWire = exports.remolMiddlewareAsync = exports.remolFuncName = exports.RemolError = exports.RemolContext = exports.action = exports.RemolActionQueue = exports.RemolContextObject = exports.RemolWireProps = exports.remolWaitTimeoutAsync = exports.remolWaitTimeout = exports.RemolObject = exports.remolCompareDeep = exports.remolAuto = exports.remolAsync = exports.remolSync = exports.field = exports.mem = exports.remolFail = void 0;
+exports.remolComponentCopy = exports.RemolWireFunc = exports.RemolWire = exports.remolMiddlewareAsync = exports.remolFuncName = exports.RemolError = exports.RemolContext = exports.action = exports.RemolActionQueue = exports.RemolContextObject = exports.RemolWireProps = exports.remolWaitTimeoutAsync = exports.remolWaitTimeout = exports.RemolObject = exports.remolCompareDeep = exports.remolAuto = exports.remolAsync = exports.remolSync = exports.field = exports.mem = exports.remolFail = exports.auto = void 0;
 const mol_wire_lib_1 = __importDefault(__webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js"));
 var mol_wire_lib_2 = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js");
+Object.defineProperty(exports, "auto", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_wire_auto; } }));
 Object.defineProperty(exports, "remolFail", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_fail_hidden; } }));
 Object.defineProperty(exports, "mem", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_wire_mem; } }));
 Object.defineProperty(exports, "field", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_wire_field; } }));
@@ -36275,7 +36384,7 @@ class RemolWireProps extends Object {
         const keys = Object.keys(next);
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
-            const fiber = (_a = this.fibers[key]) !== null && _a !== void 0 ? _a : (this.fibers[key] = new mol_wire_lib_1.$mol_wire_fiber(key, pass, null));
+            const fiber = (_a = this.fibers[key]) !== null && _a !== void 0 ? _a : (this.fibers[key] = new mol_wire_lib_1.$mol_wire_atom(key, pass, null));
             fiber.put(next[key]);
         }
         const fiber_keys = Object.keys(this.fibers);
@@ -36314,7 +36423,7 @@ const schedule_1 = __webpack_require__(/*! ../schedule/schedule */ "../core/-/sc
  * fiber -> forceUpdate -> render
  * react -> shoutComponentUpdate -> render
  */
-class RemolWire extends mol_wire_lib_1.$mol_wire_fiber {
+class RemolWire extends mol_wire_lib_1.$mol_wire_atom {
     constructor(host, id) {
         super(id, host.node, host);
     }
@@ -36341,6 +36450,7 @@ RemolWire.scheduler = new schedule_1.RemolSchedule();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
 const client_1 = __webpack_require__(/*! react-dom/client */ "../../node_modules/react-dom/client.js");
@@ -36358,6 +36468,8 @@ class RemolDemoFetchMockApp extends mock_1.RemolDemoFetchMock {
         return this.todos.data(pathname, method, body);
     }
 }
+_a = Symbol.toStringTag;
+RemolDemoFetchMockApp[_a] = id + '-mock';
 RemolDemoFetchMockApp.todos = new mock_2.RemolDemoTodoStoreMock();
 const $ = new core_1.RemolContext().set(fetch_1.RemolDemoFetch, RemolDemoFetchMockApp);
 root.render(react_1.default.createElement(react_2.Remol.Provide$, { value: $, children: react_1.default.createElement(page_1.RemolDemoPage, { id: id }) }));
@@ -37288,6 +37400,7 @@ class RemolDemoTodoSnippet extends react_1.Remol {
             React.createElement("input", { id: `${id}_editing`, ref: this.setFocusRef, className: css.edit, disabled: todo.pending, value: draft.title(), onBlur: this.submit, onInput: this.setTitle, onKeyDown: this.submitOrRestore })));
     }
     View({ id, todo } = this.props, css = theme.css) {
+        console.log('render, todo is pending=', todo.pending);
         return (React.createElement("li", { id: id, className: css.regular },
             React.createElement("input", { id: `${id}_toggle`, className: css.toggle, type: "checkbox", disabled: todo.pending, checked: todo.checked(), onChange: this.toggle }),
             React.createElement("label", { id: `${id}_beginEdit`, className: theme.label(todo.checked(), todo.pending), onDoubleClick: this.beginEdit }, todo.title()),
@@ -37589,7 +37702,8 @@ class RemolDemoTodoModel extends Object {
         return new core_1.RemolActionQueue();
     }
     toggle() {
-        this.checked(!this.checked());
+        const next = !this.checked();
+        setTimeout(() => this.checked(next), 0);
     }
     checked(next) {
         var _a;
@@ -37609,13 +37723,20 @@ class RemolDemoTodoModel extends Object {
         return next !== null && next !== void 0 ? next : {};
     }
     get pending() {
-        return this.status() === true;
+        const result = this.status() === true;
+        // console.log('pending', auto())
+        console.log('pending', result);
+        return result;
     }
     get error() {
         const v = this.status();
         return v instanceof Error ? v : undefined;
     }
     status(next) {
+        var _a;
+        console.log('status', (_a = (0, core_1.auto)()) === null || _a === void 0 ? void 0 : _a.sub_list);
+        if (next !== undefined)
+            console.log('set status', next);
         return next !== null && next !== void 0 ? next : false;
     }
     remove() {
@@ -37653,6 +37774,9 @@ __decorate([
 __decorate([
     (0, core_1.mem)(0)
 ], RemolDemoTodoModel.prototype, "status", null);
+__decorate([
+    (0, core_1.mem)(0)
+], RemolDemoTodoModel.prototype, "dto_safe", null);
 exports.RemolDemoTodoModel = RemolDemoTodoModel;
 
 
