@@ -1,6 +1,7 @@
 import $ from 'mol_wire_lib'
 
 export {
+  $mol_wire_auto as auto,
   $mol_fail_hidden as remolFail,
   $mol_wire_mem as mem,
   $mol_wire_field as field,

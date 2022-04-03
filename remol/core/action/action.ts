@@ -1,5 +1,5 @@
 import { boundMethod } from 'autobind-decorator'
-import $, { $mol_wire_fiber } from 'mol_wire_lib'
+import $, { $mol_wire_task } from 'mol_wire_lib'
 
 import { RemolSchedule } from '../schedule/schedule'
 import { remolActionFactory } from './factory'
@@ -26,11 +26,12 @@ export function remolAction<Host extends object, Args extends unknown[], Result>
     })
   }
 
-  const fibers = new WeakMap<Host, $mol_wire_fiber<Host, Args, Result>>()
+  const temp = $mol_wire_task.getter(orig)
+  const fibers = new WeakMap<Host, $mol_wire_task<Host, Args, Result>>()
 
   function value(this: Host, ...args: Args) {
     fibers.get(this)?.destructor()
-    const fiber = $mol_wire_fiber.temp(this, orig, ...args)
+    const fiber = temp(this, args)
 
     if ($.$mol_wire_auto()) return fiber.sync()
 

@@ -1,4 +1,4 @@
-import { $mol_wire_auto, $mol_wire_fiber } from 'mol_wire_lib'
+import { $mol_wire_atom, $mol_wire_auto } from 'mol_wire_lib'
 
 const hop = Object.prototype.hasOwnProperty
 
@@ -14,7 +14,7 @@ export class RemolWireProps<Props extends Record<string | symbol, unknown>> exte
 
   protected last: Props | undefined = undefined
   protected proxy: Props
-  protected fibers: Record<string | symbol, $mol_wire_fiber<null, unknown[], unknown> | undefined>
+  protected fibers: Record<string | symbol, $mol_wire_atom<null, unknown[], unknown> | undefined>
 
   get(t: Props, key: string | symbol) {
     const fiber = this.fibers[key]
@@ -34,7 +34,7 @@ export class RemolWireProps<Props extends Record<string | symbol, unknown>> exte
     const keys = Object.keys(next)
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
-      const fiber = this.fibers[key] ?? (this.fibers[key] = new $mol_wire_fiber(key, pass, null))
+      const fiber = this.fibers[key] ?? (this.fibers[key] = new $mol_wire_atom(key, pass, null))
       fiber.put(next[key])
     }
 

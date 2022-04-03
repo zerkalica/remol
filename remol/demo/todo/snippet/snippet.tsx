@@ -86,6 +86,8 @@ export class RemolDemoTodoSnippet extends Remol<{
   }
 
   View({ id, todo } = this.props, css = theme.css) {
+    console.log('render, todo is pending=', todo.pending)
+
     return (
       <li id={id} className={css.regular}>
         <input

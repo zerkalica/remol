@@ -1,4 +1,4 @@
-import { $mol_wire_auto, $mol_wire_fiber } from 'mol_wire_lib'
+import { $mol_wire_atom, $mol_wire_auto } from 'mol_wire_lib'
 
 type ReactLikeContext<V> = {
   _currentValue?: V
@@ -71,7 +71,7 @@ export class RemolContext extends Object {
   static get instance() {
     const owner = $mol_wire_auto()
 
-    if (owner instanceof $mol_wire_fiber) {
+    if (owner instanceof $mol_wire_atom) {
       const $ = (owner.host as { $?: RemolContext }).$
       if ($) return $
     }

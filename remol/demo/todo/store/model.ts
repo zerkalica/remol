@@ -1,4 +1,4 @@
-import { action, mem, RemolActionQueue, remolFail } from '@remol/core'
+import { action, auto, mem, RemolActionQueue, remolFail } from '@remol/core'
 
 export type RemolDemoTodoDTO = {
   id: string
@@ -27,7 +27,8 @@ export class RemolDemoTodoModel extends Object {
   }
 
   @action toggle() {
-    this.checked(!this.checked())
+    const next = !this.checked()
+    setTimeout(() => this.checked(next), 0)
   }
 
   checked(next?: RemolDemoTodoDTO['checked']) {
@@ -54,7 +55,10 @@ export class RemolDemoTodoModel extends Object {
   }
 
   get pending() {
-    return this.status() === true
+    const result = this.status() === true
+    // console.log('pending', auto())
+    console.log('pending', result)
+    return result
   }
 
   get error() {
@@ -64,6 +68,8 @@ export class RemolDemoTodoModel extends Object {
   }
 
   @mem(0) status(next?: boolean | Error) {
+    console.log('status', auto()?.sub_list)
+    if (next !== undefined) console.log('set status', next)
     return next ?? false
   }
 
@@ -71,7 +77,7 @@ export class RemolDemoTodoModel extends Object {
     this.dto_safe(null)
   }
 
-  dto_safe(next?: Partial<RemolDemoTodoDTO> | null) {
+  @mem(0) dto_safe(next?: Partial<RemolDemoTodoDTO> | null) {
     try {
       const dto = this.dto(next)
       this.status(false)

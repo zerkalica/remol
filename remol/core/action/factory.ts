@@ -1,5 +1,5 @@
 import { boundMethod } from 'autobind-decorator'
-import $, { $mol_wire_fiber, $mol_wire_mem } from 'mol_wire_lib'
+import $, { $mol_wire_mem, $mol_wire_task } from 'mol_wire_lib'
 
 export function remolActionFactory(argsCount: number) {
   return function remolActionFactoryDecorate<Host extends object, Setup extends unknown[], Args extends unknown[]>(
@@ -12,12 +12,14 @@ export function remolActionFactory(argsCount: number) {
     const orig = descr?.value ?? (host[field] as unknown as (...setup: Setup) => (this: Host, ...args: Args) => void)
 
     function value(this: Host, ...setup: Setup) {
-      let prev: undefined | $mol_wire_fiber<Host, Args, void>
+      let prev: undefined | $mol_wire_task<Host, Args, void>
+
       const handler = orig.call(this, ...setup)
+      const temp = $mol_wire_task.getter(handler)
 
       return (...args: Args) => {
         prev?.destructor()
-        const fiber = $mol_wire_fiber.temp(this, handler, ...args)
+        const fiber = temp(this, args)
         if ($.$mol_wire_auto()) return fiber.sync()
         prev = fiber
 

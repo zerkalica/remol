@@ -1,4 +1,4 @@
-import { $mol_fail_hidden, $mol_wire_auto, $mol_wire_fiber, $mol_wire_mem } from 'mol_wire_lib'
+import { $mol_fail_hidden, $mol_wire_auto, $mol_wire_mem, $mol_wire_task } from 'mol_wire_lib'
 
 import { RemolContextObject } from '../context/object'
 import { RemolError } from '../error/error'
@@ -36,17 +36,17 @@ export class RemolActionQueue extends RemolContextObject {
     return this.status() === false
   }
 
-  protected fiber: $mol_wire_fiber<any, unknown[], unknown> | undefined = undefined
+  protected task: $mol_wire_task<any, unknown[], unknown> | undefined = undefined
 
   async continue() {
     if (this.tasks.length === 0) return
-    if (this.fiber) return
-    this.fiber = new $mol_wire_fiber(this[Symbol.toStringTag] + '.up()', this.up, this)
+    if (this.task) return
+    this.task = new $mol_wire_task(this[Symbol.toStringTag] + '.up()', this.up, this)
 
     await Promise.resolve()
 
     try {
-      await this.fiber.async()
+      await this.task.async()
     } catch (error) {
       console.error(error)
     }
@@ -61,7 +61,7 @@ export class RemolActionQueue extends RemolContextObject {
       this.tasks = this.tasks.slice(1)
       if (this.tasks.length === 0) this.status(false)
 
-      this.fiber = undefined
+      this.task = undefined
       this.continue()
     } catch (err) {
       const error = RemolError.normalize(err)
@@ -69,7 +69,7 @@ export class RemolActionQueue extends RemolContextObject {
       if (error instanceof Promise) {
         this.status(true)
       } else {
-        this.fiber = undefined
+        this.task = undefined
         this.status([error])
       }
 
@@ -78,8 +78,8 @@ export class RemolActionQueue extends RemolContextObject {
   }
 
   destructor() {
-    this.fiber?.destructor()
-    this.fiber = undefined
+    this.task?.destructor()
+    this.task = undefined
     this.tasks = []
   }
 }

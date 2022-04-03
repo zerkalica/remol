@@ -1,4 +1,4 @@
-import { $mol_wire_fiber, $mol_wire_field } from 'mol_wire_lib'
+import { $mol_wire_atom, $mol_wire_field } from 'mol_wire_lib'
 
 import { RemolSchedule } from '../schedule/schedule'
 import { RemolWire } from './wire'
@@ -35,7 +35,7 @@ describe('RemolWire', () => {
     expect(wire.sync()).toEqual(124)
 
     RemolSchedule.schedule_sync()
-    await new $mol_wire_fiber(
+    await new $mol_wire_atom(
       'fiber',
       () => {
         TestMems.some++

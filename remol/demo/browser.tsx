@@ -14,6 +14,7 @@ const el = document.getElementById(id + '_main')!
 const root = createRoot(el)
 
 class RemolDemoFetchMockApp extends RemolDemoFetchMock {
+  static [Symbol.toStringTag] = id + '-mock'
   static todos = new RemolDemoTodoStoreMock()
   static data(pathname: string, method: string, body: any) {
     return this.todos.data(pathname, method, body)
