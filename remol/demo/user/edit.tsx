@@ -1,22 +1,22 @@
 import React from 'react'
 
-import { action, mem } from '@remol/core'
-import { Remol } from '@remol/react'
+import { action, solo } from '@remol/core'
+import { RemolView } from '@remol/react'
 
 import { RemolDemoUserStore } from './store'
 
-export class RemolDemoUserEdit extends Remol<{
-  id: string
-}> {
-  @mem(0) users() {
-    return new RemolDemoUserStore(this.$)
+export class RemolDemoUserEdit extends RemolView {
+  static view = (p: Partial<RemolDemoUserEdit>) => this.render(p)
+
+  @solo users() {
+    return new RemolDemoUserStore()
   }
 
-  @mem(0) userSelectedId(next?: number) {
+  @solo userSelectedId(next?: number) {
     return next ?? 1
   }
 
-  @mem(0) userSelected() {
+  @solo userSelected() {
     return this.users().user('' + this.userSelectedId())
   }
 
@@ -31,13 +31,13 @@ export class RemolDemoUserEdit extends Remol<{
     })
   }
 
-  @mem(0) userEditableName(next?: string) {
+  @solo userEditableName(next?: string) {
     return next ?? this.userSelected().first_name
   }
 
   errorCount = 0
 
-  sub(p = this.props) {
+  render() {
     if (this.errorCount > 0 && this.errorCount % 3 === 0) {
       const str = 'fake error ' + this.errorCount
       this.errorCount++
@@ -46,7 +46,7 @@ export class RemolDemoUserEdit extends Remol<{
 
     return (
       <div
-        id={p.id}
+        id={this.id()}
         style={{
           minHeight: 50,
           minWidth: 100,

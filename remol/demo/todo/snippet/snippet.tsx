@@ -1,41 +1,45 @@
 import * as React from 'react'
 
-import { action, mem } from '@remol/core'
-import { Remol } from '@remol/react'
+import { action, remolSyncRender, solo } from '@remol/core'
+import { RemolView } from '@remol/react'
 
 import { RemolDemoTodoModel } from '../store/model'
 import { RemolDemoTodoSnippetTheme } from './theme'
 
 const theme = new RemolDemoTodoSnippetTheme()
 
-export class RemolDemoTodoSnippet extends Remol<{
-  id: string
-  todo: RemolDemoTodoModel
-}> {
+export class RemolDemoTodoSnippet extends RemolView {
+  static view = (props: Partial<RemolDemoTodoSnippet>) => this.render(props)
+
+  todo() {
+    return new RemolDemoTodoModel()
+  }
+
   @action toggle() {
-    this.props.todo.toggle()
+    this.todo().toggle()
   }
 
   @action remove() {
-    this.props.todo.remove()
+    this.todo().remove()
   }
 
-  @mem(0) draft(next?: RemolDemoTodoModel | null) {
+  @solo draft(next?: RemolDemoTodoModel | null) {
     return next ?? null
   }
 
   @action beginEdit() {
-    const todo = this.props.todo
+    const todo = this.todo()
     if (this.draft()) return
     if (todo.pending) return
 
-    const draft = new RemolDemoTodoModel(`${this.props.id}.draft()`)
+    const draft = new RemolDemoTodoModel()
+    draft.id = () => `${this.id()}.draft()`
     draft.dto(todo.dto())
     this.draft(draft)
   }
 
   @action submit() {
-    const todo = this.props.todo
+    const todo = this.todo()
     const draft = this.draft()
 
     if (!draft) return
@@ -62,30 +66,35 @@ export class RemolDemoTodoSnippet extends Remol<{
     el?.focus()
   }
 
-  @action.sync setTitle(e: React.ChangeEvent<HTMLInputElement>) {
-    this.draft()?.title(e.target.value.trim())
+  @action setTitle(e: React.FormEvent<HTMLInputElement> & { target: { value?: string } }) {
+    remolSyncRender()
+    this.draft()?.title(e.target.value?.trim() ?? '')
   }
 
-  Form({ id, todo } = this.props, css = theme.css, draft = this.draft()) {
+  Form() {
+    const todo = this.todo()
+    const id = this.id()
+    const css = theme.css
+    const draft = this.draft()
     if (!draft) return null
 
     return (
       <li id={id} className={css.editing}>
         <input
           id={`${id}_editing`}
-          ref={this.setFocusRef}
+          ref={r => this.setFocusRef(r)}
           className={css.edit}
           disabled={todo.pending}
           value={draft.title()}
-          onBlur={this.submit}
-          onInput={this.setTitle}
-          onKeyDown={this.submitOrRestore}
+          onBlur={() => this.submit()}
+          onInput={e => this.setTitle(e)}
+          onKeyDown={e => this.submitOrRestore(e)}
         />
       </li>
     )
   }
 
-  View({ id, todo } = this.props, css = theme.css) {
+  View(id = this.id(), todo = this.todo(), css = theme.css) {
     console.log('render, todo is pending=', todo.pending)
 
     return (
@@ -96,18 +105,22 @@ export class RemolDemoTodoSnippet extends Remol<{
           type="checkbox"
           disabled={todo.pending}
           checked={todo.checked()}
-          onChange={this.toggle}
+          onChange={() => this.toggle()}
         />
-        <label id={`${id}_beginEdit`} className={theme.label(todo.checked(), todo.pending)} onDoubleClick={this.beginEdit}>
+        <label
+          id={`${id}_beginEdit`}
+          className={theme.label(todo.checked(), todo.pending)}
+          onDoubleClick={() => this.beginEdit()}
+        >
           {todo.title()}
         </label>
-        <button id={`${id}_destroy`} className={css.destroy} disabled={todo.pending} onClick={this.remove} />
+        <button id={`${id}_destroy`} className={css.destroy} disabled={todo.pending} onClick={() => this.remove()} />
       </li>
     )
   }
 
-  sub() {
+  override render() {
     if (this.draft()) return this.Form()
-    else return this.View()
+    return this.View()
   }
 }

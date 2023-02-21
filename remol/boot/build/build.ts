@@ -7,7 +7,7 @@ import { IncomingMessage, ServerResponse } from 'http'
 import path from 'path'
 import serveStatic from 'serve-static'
 // @ts-ignore
-import TscWatchClient from 'tsc-watch/client'
+import { TscWatchClient } from 'tsc-watch/client'
 import { promisify } from 'util'
 import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'

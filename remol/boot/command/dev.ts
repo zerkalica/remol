@@ -1,4 +1,4 @@
-import type { Argv } from 'yargs'
+import type { Argv, CommandModule } from 'yargs'
 import { RemolBootBuild } from '../build/build'
 import { RemolBootServer } from '../server/server'
 import { RemolBootCommandContext } from './context'
@@ -30,4 +30,4 @@ remolBootCommandDev.yargs = {
       default: 8081,
       description: 'Dev server port',
     }),
-}
+} as CommandModule<{}, Parameters<typeof remolBootCommandDev>[0]>

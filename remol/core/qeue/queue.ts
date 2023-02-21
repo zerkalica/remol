@@ -1,25 +1,28 @@
-import { $mol_fail_hidden, $mol_wire_auto, $mol_wire_mem, $mol_wire_task } from 'mol_wire_lib'
+import { $mol_fail_hidden, $mol_wire_auto, $mol_wire_solo, $mol_wire_task } from 'mol_wire_lib'
 
-import { RemolContextObject } from '../context/object'
-import { RemolError } from '../error/error'
+import { remolFuncName } from '../func/name'
+import { RemolObject } from '../object/object'
 
-export class RemolActionQueue extends RemolContextObject {
+export class RemolQueue extends RemolObject {
   protected tasks = [] as (() => unknown)[]
 
   run(calculate: () => void) {
     const current = $mol_wire_auto()
 
-    if (!calculate.name && current) {
-      Object.defineProperty(calculate, 'name', {
-        value: (current as unknown as { [Symbol.toStringTag]: string })[Symbol.toStringTag] + '#task',
-      })
-    }
-
-    this.tasks.push(calculate)
+    this.tasks.push(
+      remolFuncName(
+        calculate,
+        (
+          current as unknown as {
+            [Symbol.toStringTag]: string
+          }
+        )[Symbol.toStringTag] + '#task'
+      )
+    )
     this.continue()
   }
 
-  @$mol_wire_mem(0) status(next?: [Error] | boolean) {
+  @$mol_wire_solo status(next?: [Error] | boolean) {
     return next ?? false
   }
 
@@ -64,7 +67,7 @@ export class RemolActionQueue extends RemolContextObject {
       this.task = undefined
       this.continue()
     } catch (err) {
-      const error = RemolError.normalize(err)
+      const error = err instanceof Error ? err : new Error(String(err), { cause: err })
 
       if (error instanceof Promise) {
         this.status(true)

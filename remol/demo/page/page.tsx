@@ -1,10 +1,11 @@
-import '@remol/react/fallback.css'
+import '@remol/react/css'
 
 import React from 'react'
 import { stylesheet } from 'typestyle'
 
-import { Remol } from '@remol/react'
+import { RemolView } from '@remol/react'
 
+import { RemolDemoCounter } from '../counter/counter'
 import { RemolDemoTodoPage } from '../todo/page/page'
 
 const css = stylesheet({
@@ -15,15 +16,14 @@ const css = stylesheet({
   },
 })
 
-export class RemolDemoPage extends Remol<{ id: string }> {
-  sub(p = this.props) {
+export class RemolDemoPage extends RemolView {
+  static view = (props: Partial<RemolDemoPage>) => this.render(props)
+  render() {
+    const id = this.id()
     return (
-      <div id={p.id} className={css.app}>
-        {/* <RemolDemoList id={`${p.id}_list`} /> */}
-        {/* <RemolDemoCounterFunc id={`${p.id}_counter-func`} /> */}
-        {/* <RemolDemoCounterKlass id={`${p.id}_counter-klass`} /> */}
-        {/* <RemolDemoUserEdit id={`${p.id}_user-edit`} /> */}
-        <RemolDemoTodoPage id={`${p.id}_todo`} />
+      <div id={id} className={css.app}>
+        <RemolDemoCounter.view id={() => `${id}_counter`} />
+        <RemolDemoTodoPage.view id={() => `${id}_todo`} />
       </div>
     )
   }

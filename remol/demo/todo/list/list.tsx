@@ -1,7 +1,7 @@
 import React from 'react'
 import { stylesheet } from 'typestyle'
 
-import { Remol } from '@remol/react'
+import { RemolView } from '@remol/react'
 
 import { RemolDemoTodoSnippet } from '../snippet/snippet'
 import { RemolDemoTodoStore } from '../store/store'
@@ -14,12 +14,16 @@ const css = stylesheet({
   },
 })
 
-export class RemolDemoTodoList extends Remol<{ id: string }> {
-  sub({ id } = this.props, store = this.$.get(RemolDemoTodoStore.instance)) {
+export class RemolDemoTodoList extends RemolView {
+  static view = (props: Partial<RemolDemoTodoList>) => this.render(props)
+
+  render(store = this.ctx(RemolDemoTodoStore.single())) {
+    const id = this.id()
+
     return (
       <ul id={id} className={css.todoList}>
         {store.filteredTodos.map(todo => (
-          <RemolDemoTodoSnippet id={`${id}_todo["${todo.id()}"]`} key={todo.id()} todo={todo} />
+          <RemolDemoTodoSnippet.view id={() => `${id}_todo["${todo.id()}"]`} key={todo.id()} todo={() => todo} />
         ))}
       </ul>
     )

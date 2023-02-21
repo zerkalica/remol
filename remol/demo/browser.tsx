@@ -2,7 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { RemolContext } from '@remol/core'
-import { Remol } from '@remol/react'
+import { RemolContextProvide } from '@remol/react'
 
 import { RemolDemoFetch } from './fetch/fetch'
 import { RemolDemoFetchMock } from './fetch/mock'
@@ -22,4 +22,4 @@ class RemolDemoFetchMockApp extends RemolDemoFetchMock {
 }
 
 const $ = new RemolContext().set(RemolDemoFetch, RemolDemoFetchMockApp)
-root.render(<Remol.Provide$ value={$} children={<RemolDemoPage id={id} />} />)
+root.render(<RemolContextProvide value={$} children={<RemolDemoPage.view id={() => id} />} />)

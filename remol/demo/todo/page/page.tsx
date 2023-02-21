@@ -1,8 +1,8 @@
 import React from 'react'
 import { stylesheet } from 'typestyle'
 
-import { field, mem } from '@remol/core'
-import { Remol } from '@remol/react'
+import { field, solo } from '@remol/core'
+import { RemolView } from '@remol/react'
 
 import { RemolDemoTodoFooter } from '../footer/footer'
 import { RemolDemoTodoHeader } from '../header/header'
@@ -17,21 +17,25 @@ const css = stylesheet({
   },
 })
 
-export class RemolDemoTodoPage extends Remol<{ id: string }> {
-  @mem(0) store() {
-    return new RemolDemoTodoStore(this.context)
+export class RemolDemoTodoPage extends RemolView {
+  static view = (p: Partial<RemolDemoTodoPage>) => this.render(p)
+
+  @solo store() {
+    return new RemolDemoTodoStore()
   }
 
-  @field get $() {
-    return super.$.clone().set(RemolDemoTodoStore.instance, this.store())
+  @field get _() {
+    return super._.clone().set(RemolDemoTodoStore.single(), this.store())
   }
 
-  sub({ id } = this.props) {
+  render() {
+    const id = this.id()
+
     return (
       <div id={id} className={css.todoapp}>
-        <RemolDemoTodoHeader id={`${id}_header`} />
-        {this.store().filteredTodos.length ? <RemolDemoTodoList id={`${id}_list`} /> : null}
-        <RemolDemoTodoFooter id={`${id}_footer`} />
+        <RemolDemoTodoHeader.view id={() => `${id}_header`} />
+        {this.store().filteredTodos.length > 0 ? <RemolDemoTodoList.view id={() => `${id}_list`} /> : null}
+        <RemolDemoTodoFooter.view id={() => `${id}_footer`} />
       </div>
     )
   }

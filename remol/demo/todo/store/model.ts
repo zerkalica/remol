@@ -1,4 +1,4 @@
-import { action, auto, mem, RemolActionQueue, remolFail } from '@remol/core'
+import { action, plex, remolFail, RemolObject, RemolQueue, solo } from '@remol/core'
 
 export type RemolDemoTodoDTO = {
   id: string
@@ -10,20 +10,13 @@ declare var crypto: {
   randomUUID(): string
 }
 
-export class RemolDemoTodoModel extends Object {
-  static instance = new RemolDemoTodoModel()
-
-  constructor(id = 'RemolDemoTodo') {
-    super()
-    this[Symbol.toStringTag] = id
-  }
-
+export class RemolDemoTodoModel extends RemolObject {
   title(next?: RemolDemoTodoDTO['title']) {
     return this.dto_pick('title', next) ?? 'test'
   }
 
-  @mem(0) pipe() {
-    return new RemolActionQueue()
+  @solo pipe() {
+    return new RemolQueue()
   }
 
   @action toggle() {
@@ -35,22 +28,20 @@ export class RemolDemoTodoModel extends Object {
     return this.dto_pick('checked', next) ?? false
   }
 
-  [Symbol.toStringTag]: string
-
-  @mem(0) id(next?: string) {
+  @solo id(next?: string) {
     return this.dto_pick('id', next)
   }
 
-  @mem(1) dto_pick<Field extends keyof RemolDemoTodoDTO>(field: Field, value?: RemolDemoTodoDTO[Field]) {
+  @plex dto_pick<Field extends keyof RemolDemoTodoDTO>(field: Field, value?: RemolDemoTodoDTO[Field]) {
     const prev = this.dto_safe()
-    if (value === undefined) return prev[field]
+    if (value === undefined) return prev?.[field]
 
     const next = this.dto_safe({ ...prev, [field]: value })
 
-    return next[field]
+    return next?.[field]
   }
 
-  @mem(0) dto(next?: Partial<RemolDemoTodoDTO> | null) {
+  @solo dto(next?: Partial<RemolDemoTodoDTO> | null) {
     return next ?? {}
   }
 
@@ -67,8 +58,7 @@ export class RemolDemoTodoModel extends Object {
     return v instanceof Error ? v : undefined
   }
 
-  @mem(0) status(next?: boolean | Error) {
-    console.log('status', auto()?.sub_list)
+  @solo status(next?: boolean | Error) {
     if (next !== undefined) console.log('set status', next)
     return next ?? false
   }
@@ -77,7 +67,7 @@ export class RemolDemoTodoModel extends Object {
     this.dto_safe(null)
   }
 
-  @mem(0) dto_safe(next?: Partial<RemolDemoTodoDTO> | null) {
+  @solo dto_safe(next?: Partial<RemolDemoTodoDTO> | null) {
     try {
       const dto = this.dto(next)
       this.status(false)

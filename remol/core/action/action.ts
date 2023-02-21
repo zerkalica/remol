@@ -1,58 +1,12 @@
 import { boundMethod } from 'autobind-decorator'
-import $, { $mol_wire_task } from 'mol_wire_lib'
+import { $mol_wire_method } from 'mol_wire_lib'
 
-import { RemolSchedule } from '../schedule/schedule'
-import { remolActionFactory } from './factory'
-
-export function remolAction<Host extends object, Args extends unknown[], Result>(
+function bound<Host extends object, Args extends readonly any[]>(
   host: Host,
-  field: keyof Host & (string | symbol),
-  descr = Reflect.getOwnPropertyDescriptor(host, field) as
-    | undefined
-    | TypedPropertyDescriptor<(this: Host, ...args: Args) => any>,
-  isSync?: boolean
+  field: PropertyKey & (symbol | string),
+  descr?: TypedPropertyDescriptor<(...args: Args) => any>
 ) {
-  const handler = descr?.value ?? (host[field] as unknown as (this: Host, ...e: Args) => Result)
-  let orig = handler
-
-  if (isSync) {
-    orig = function (this: Host, ...e: Args): Result {
-      const result = handler.call(this, ...e)
-      RemolSchedule.schedule_sync()
-      return result
-    }
-    Object.defineProperty(orig, 'name', {
-      value: handler.name,
-    })
-  }
-
-  const temp = $mol_wire_task.getter(orig)
-  const fibers = new WeakMap<Host, $mol_wire_task<Host, Args, Result>>()
-
-  function value(this: Host, ...args: Args) {
-    fibers.get(this)?.destructor()
-    const fiber = temp(this, args)
-
-    if ($.$mol_wire_auto()) return fiber.sync()
-
-    fibers.set(this, fiber)
-
-    return fiber.async() as unknown as Result
-  }
-
-  const descr2 = { ...descr, value }
-
-  return boundMethod(host, field, descr2)
+  return boundMethod(host, field, $mol_wire_method<Host, Args>(host, field, descr))
 }
 
-function remolActionSync<Host extends object, Args extends unknown[], Result>(
-  host: Host,
-  field: keyof Host & (string | symbol),
-  descr = Reflect.getOwnPropertyDescriptor(host, field) as undefined | TypedPropertyDescriptor<(this: Host, ...args: Args) => any>
-) {
-  return remolAction(host, field, descr, true)
-}
-
-remolAction.sync = remolActionSync
-
-remolAction.factory = remolActionFactory(1)
+export const action = Object.assign($mol_wire_method, { bound })

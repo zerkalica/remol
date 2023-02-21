@@ -1,26 +1,21 @@
-export class RemolError extends Error {
-  cause?: any
+import { $mol_fail_hidden } from 'mol_wire_lib'
 
-  static errorMap = new WeakMap<Object, Error>()
-
-  static normalize(error: unknown) {
-    if (error instanceof Error || error instanceof Promise) return error
-
-    const isObject = error !== null && typeof error === 'object'
-    let normalized = isObject ? this.errorMap.get(error) : undefined
-
-    if (!normalized) {
-      const code = (isObject ? (error as RemolError).code : undefined) ?? 'unknown'
-      const message = (isObject ? (error as RemolError).message : undefined) ?? String(error)
-      normalized = new RemolError(code, message, { cause: error })
-      if (isObject) this.errorMap.set(error, normalized)
-    }
-
-    return normalized
+export class RemolError {
+  static errorMap = new WeakMap<Error, () => void>()
+  static get(e: Error) {
+    return this.errorMap.get(e)
   }
+  static retry<V>(fetch: () => V, retry: () => void) {
+    try {
+      return fetch()
+    } catch (e) {
+      if (e instanceof Promise) return $mol_fail_hidden(e)
 
-  constructor(readonly code: string, message?: string, props?: { cause?: unknown }) {
-    super(message ?? code)
-    this.cause = props?.cause
+      const error = e instanceof Error ? e : new Error(String(e), { cause: e })
+
+      this.errorMap.set(error, retry)
+
+      return $mol_fail_hidden(error)
+    }
   }
 }

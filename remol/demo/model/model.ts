@@ -1,4 +1,4 @@
-import { action, mem, RemolContext, remolFail } from '@remol/core'
+import { action, plex, remolFail, RemolObject, solo } from '@remol/core'
 
 import { RemolDemoFetch } from '../fetch/fetch'
 
@@ -6,24 +6,20 @@ declare var crypto: {
   randomUUID(): string
 }
 
-export abstract class RemolModel<DTO extends Object = Object> extends Object {
-  constructor(protected $ = RemolContext.instance) {
-    super()
-  }
-
+export abstract class RemolModel<DTO extends Object = Object> extends RemolObject {
   @action static createId() {
     return crypto.randomUUID() || remolFail(new Error('Crypto.randomUUID() not supported, update your browser'))
   }
 
   get fetcher() {
-    return this.$.get(RemolDemoFetch)
+    return this.ctx(RemolDemoFetch)
   }
 
-  @mem(0) id(next?: string) {
+  @solo id(next?: string) {
     return next ?? RemolModel.createId()
   }
 
-  @mem(1) dto_pick<Field extends keyof DTO>(field: Field, next?: DTO[Field]) {
+  @plex dto_pick<Field extends keyof DTO>(field: Field, next?: DTO[Field]) {
     return this.dto(next === undefined ? undefined : { ...this.dto(), [field]: next })[field]
   }
 
@@ -41,7 +37,7 @@ export abstract class RemolModel<DTO extends Object = Object> extends Object {
     return v instanceof Error ? v : undefined
   }
 
-  @mem(0) patching(next?: unknown) {
+  @solo patching(next?: unknown) {
     return next ?? null
   }
 

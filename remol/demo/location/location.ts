@@ -1,25 +1,18 @@
-import { mem, RemolContext } from '@remol/core'
+import { plex } from '@remol/core'
+import { RemolViewObject } from '@remol/react'
 
-export class RemolDemoLocation extends Object {
-  constructor(protected $ = RemolContext.instance) {
-    super()
-  }
-
-  static instance = new RemolDemoLocation()
-
+export class RemolDemoLocation extends RemolViewObject {
   protected get history() {
-    return this.$.get(globalThis.history)
+    return this.ctx(globalThis.history)
   }
 
   protected get location() {
-    return this.$.get(globalThis.location)
+    return this.ctx(globalThis.location)
   }
 
   ns() {
     return 'app'
   }
-
-  [Symbol.toStringTag]: string
 
   protected params() {
     return new URLSearchParams(this.location.search)
@@ -53,7 +46,7 @@ export class RemolDemoLocation extends Object {
     this.history.pushState(null, this.ns(), this.paramsToString(params))
   }
 
-  @mem(1) value<V extends string>(key: string, next?: V | null): V | null {
+  @plex value<V extends string>(key: string, next?: V | null): V | null {
     const params = this.params()
     if (next === undefined) return params.get(key) as V | null
 

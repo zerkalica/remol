@@ -1,4 +1,4 @@
-import { action, field, mem, RemolContextObject, remolFail } from '@remol/core'
+import { action, field, plex, RemolObject, solo } from '@remol/core'
 
 import { RemolDemoFetch } from '../../fetch/fetch'
 import { RemolDemoLocation } from '../../location/location'
@@ -12,35 +12,33 @@ export enum TODO_FILTER {
   ACTIVE = 'active',
 }
 
-export class RemolDemoTodoStore extends RemolContextObject {
-  static instance = new RemolDemoTodoStore()
-
+export class RemolDemoTodoStore extends RemolObject {
   get fetcher() {
-    return this.$.get(RemolDemoFetch)
+    return this.ctx(RemolDemoFetch)
   }
 
-  @mem(0) reset(next?: null) {
+  @solo reset(next?: null) {
     return new Date().getTime()
   }
 
-  @mem(0) list() {
+  @solo list() {
     this.reset()
     const list = this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
     return list
   }
 
-  @mem(0) ids() {
+  @solo ids() {
     return this.list().data.ids
   }
 
-  @mem(0) prefetched() {
+  @solo prefetched() {
     const ids = this.ids()
     this.reset()
 
     return this.fetcher.batch<RemolDemoTodoDTO>('/todo?id=' + ids.join(','))
   }
 
-  @mem(1) dto(id: string, next?: Partial<RemolDemoTodoDTO> | null) {
+  @plex dto(id: string, next?: Partial<RemolDemoTodoDTO> | null) {
     if (next !== undefined) {
       // throw new Error('test')
       const updated = this.fetcher.batch<RemolDemoTodoDTO>('/todo', {
@@ -60,13 +58,14 @@ export class RemolDemoTodoStore extends RemolContextObject {
     )
   }
 
-  @mem(1) item(id: string) {
-    const todo = new RemolDemoTodoModel(`${this[Symbol.toStringTag]}.item("${id}")`)
+  @plex item(id: string) {
+    const todo = new RemolDemoTodoModel()
+    todo.id = () => `${this[Symbol.toStringTag]}.item("${id}")`
     todo.dto = this.dto.bind(this, id)
     return todo
   }
 
-  @mem(0) items() {
+  @solo items() {
     return this.ids().map(id => this.item(id))
   }
 
@@ -77,7 +76,7 @@ export class RemolDemoTodoStore extends RemolContextObject {
   }
 
   get location() {
-    return this.$.get(RemolDemoLocation.instance)
+    return this.ctx(RemolDemoLocation.single())
   }
 
   @field get activeTodoCount2() {
@@ -85,7 +84,7 @@ export class RemolDemoTodoStore extends RemolContextObject {
     return count
   }
 
-  @mem(0) activeTodoCount() {
+  @solo activeTodoCount() {
     const count = this.list().data.activeCount
     return count
   }

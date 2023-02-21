@@ -1,22 +1,29 @@
 import React from 'react'
 
-import { action, mem, RemolActionQueue } from '@remol/core'
-import { Remol } from '@remol/react'
+import { action, field, RemolQueue, remolSyncRender, solo } from '@remol/core'
+import { RemolView } from '@remol/react'
 
 import { RemolModel } from '../../model/model'
 import { RemolDemoTodoStore } from '../store/store'
 import { remolDemoTodoTheme } from './theme'
 
-export class RemolDemoTodoHeader extends Remol<{ id: string }> {
+export class RemolDemoTodoHeader extends RemolView {
+  static view = (p: Partial<RemolDemoTodoHeader>) => this.render(p)
+
   get store() {
-    return this.$.get(RemolDemoTodoStore.instance)
+    return this.ctx(RemolDemoTodoStore.single())
   }
 
-  @mem(0) title(next?: string) {
+  @solo title(next?: string) {
     return next ?? ''
   }
 
-  @action.sync setTitle(e: React.ChangeEvent<HTMLInputElement>) {
+  @action setTitle(
+    e: React.FormEvent<HTMLInputElement> & {
+      target: { value?: string }
+    }
+  ) {
+    remolSyncRender()
     this.title(e.target.value)
   }
 
@@ -24,32 +31,30 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
     ref?.focus()
   }
 
-  @mem(0) submitStatus() {
-    return new RemolActionQueue()
+  @field get submitStatus() {
+    return new RemolQueue()
   }
 
   @action submit(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key !== 'Enter' || !this.title()) return
-    this.submitStatus().run(() => {
+    this.submitStatus.run(() => {
       this.store.item(RemolModel.createId()).title(this.title())
       this.title('')
     })
   }
 
-  @mem(0) toggleAllStatus() {
-    return new RemolActionQueue()
+  @field get toggleAllStatus() {
+    return new RemolQueue()
   }
 
-  @action.factory toggleAll() {
-    return (e: React.ChangeEvent<HTMLInputElement>) => {
-      this.toggleAllStatus().run(() => {
-        this.store.toggleAll()
-      })
-    }
+  @action toggleAll() {
+    this.toggleAllStatus.run(() => {
+      this.store.toggleAll()
+    })
   }
 
-  sub({ id } = this.props) {
-    // const checked = this.store.activeTodoCount2 === 0
+  rebder() {
+    const id = this.id()
     const checked = this.store.activeTodoCount() === 0
 
     return (
@@ -57,20 +62,20 @@ export class RemolDemoTodoHeader extends Remol<{ id: string }> {
         <input
           id={`${id}_toggleAll`}
           className={remolDemoTodoTheme.toggleAll}
-          disabled={this.toggleAllStatus().pending}
+          disabled={this.toggleAllStatus.pending}
           type="checkbox"
-          onChange={this.toggleAll()}
+          onChange={() => this.toggleAll()}
           checked={checked}
         />
         <input
           id={`${id}_input`}
           className={remolDemoTodoTheme.newTodo}
           placeholder="What needs to be done?"
-          onInput={this.setTitle}
-          ref={this.setRef}
-          disabled={this.submitStatus().pending}
+          onInput={e => this.setTitle(e)}
+          ref={r => this.setRef(r)}
+          disabled={this.submitStatus.pending}
           value={this.title()}
-          onKeyDown={this.submit}
+          onKeyDown={e => this.submit(e)}
         />
       </header>
     )
