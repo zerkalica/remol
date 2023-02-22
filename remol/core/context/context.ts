@@ -1,4 +1,4 @@
-import { $mol_object, $mol_wire_atom, $mol_wire_auto } from 'mol_wire_lib'
+import { RemolObject } from '../object/object'
 
 type ReactLikeContext<V> = {
   _currentValue?: V
@@ -14,16 +14,15 @@ function isReactContext<V>(v: any): v is ReactLikeContext<V> {
   return typeof v === 'object' && typeof v.$$typeof === 'symbol' && typeof v.Provider === 'function'
 }
 
-export class RemolContext extends $mol_object {
-  constructor(protected registry = new Map<RemolContextValue, unknown>(), id = RemolContext.id) {
+export class RemolContext extends RemolObject {
+  constructor(protected registry = new Map<RemolContextValue, unknown>()) {
     super()
-    this[Symbol.toStringTag] = id ?? this.constructor.name
   }
 
-  [Symbol.toStringTag]!: string
-
   clone(id?: string) {
-    return new RemolContext(new Map(this.registry), id)
+    const ctx = new RemolContext(new Map(this.registry))
+    if (id) ctx[Symbol.toStringTag] = id
+    return ctx
   }
 
   set<V extends RemolContextValue>(p: V, v: RemolContextKey<V>) {
@@ -51,23 +50,6 @@ export class RemolContext extends $mol_object {
 
     return p
   }
-
-  protected static $$: RemolContext | undefined = undefined
-
-  static get instance() {
-    const owner = $mol_wire_auto()
-
-    if (owner instanceof $mol_wire_atom) {
-      const $ = (owner.host as { $$?: RemolContext }).$$
-      if ($ instanceof RemolContext) return $
-    }
-
-    if (!this.$$) this.$$ = new RemolContext()
-
-    return this.$$
-  }
-
-  static get id() {
-    return $mol_wire_auto()?.toString() + '#'
-  }
 }
+
+RemolObject.$ = RemolContext.single()

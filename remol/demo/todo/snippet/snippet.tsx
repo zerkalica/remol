@@ -11,7 +11,7 @@ const theme = new RemolDemoTodoSnippetTheme()
 export class RemolDemoTodoSnippet extends RemolView {
   static view = (props: Partial<RemolDemoTodoSnippet>) => this.render(props)
 
-  todo() {
+  @solo todo() {
     return new RemolDemoTodoModel()
   }
 

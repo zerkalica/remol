@@ -5,7 +5,7 @@ import { RemolContext } from './context'
 
 const store = new AsyncLocalStorage<RemolContext>()
 
-export function useRemolContextNode(def = RemolContext.instance) {
+export function useRemolContextNode(def = RemolContext.single()) {
   return store.getStore() ?? def
 }
 

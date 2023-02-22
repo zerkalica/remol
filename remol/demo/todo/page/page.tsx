@@ -24,8 +24,8 @@ export class RemolDemoTodoPage extends RemolView {
     return new RemolDemoTodoStore()
   }
 
-  @field get _() {
-    return super._.clone().set(RemolDemoTodoStore.single(), this.store())
+  @field get $() {
+    return super.$.clone().set(RemolDemoTodoStore.single(), this.store())
   }
 
   render() {

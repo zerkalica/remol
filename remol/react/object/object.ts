@@ -1,11 +1,13 @@
 import React from 'react'
 
-import { RemolObject } from '@remol/core'
+import { RemolContext, RemolObject } from '@remol/core'
 
 import { useRemolContext } from '../context/context'
 
 interface Make {
-  make<Instance>(config: Partial<Instance>): Instance
+  make<Instance>(config: Partial<Instance>): Instance & {
+    $: RemolContext
+  }
 }
 
 export class RemolViewObject extends RemolObject {
@@ -16,14 +18,15 @@ export class RemolViewObject extends RemolObject {
     config: Partial<Instance>
   ): Instance {
     // eslint-disable-next-line
-    const _ = useRemolContext()
+    const $ = useRemolContext()
     // eslint-disable-next-line
     return React.useMemo(
-      () =>
-        (this as unknown as Make).make<Instance>({
-          _,
-          ...config,
-        }),
+      () => {
+        const obj = (this as unknown as Make).make<Instance>(config)
+        obj.$ = $
+
+        return obj
+      },
       // eslint-disable-next-line
       []
     )

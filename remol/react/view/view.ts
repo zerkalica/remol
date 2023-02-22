@@ -1,7 +1,7 @@
 /* @global document */
 import React from 'react'
 
-import { RemolAtom, RemolBoxProps, RemolError } from '@remol/core'
+import { RemolAtom, RemolBoxProps, RemolError, remolFuncName } from '@remol/core'
 
 import { RemolViewBox } from '../box/box'
 import { RemolContextProvide } from '../context/context'
@@ -54,9 +54,8 @@ export class RemolView extends RemolViewObject {
       fallback: Fallback,
       children: h(React.Suspense, { fallback: h(Fallback), children: h(Component) }),
     })
-    const value = this._
 
-    return value === this.__ ? children : h(RemolContextProvide, { value, children })
+    return this.$changed ? h(RemolContextProvide, { value: this.$, children }) : children
   }
 
   protected component() {
@@ -67,14 +66,7 @@ export class RemolView extends RemolViewObject {
   private _Component: undefined | (() => React.ReactElement | null) = undefined
   private get Component() {
     if (this._Component) return this._Component
-
-    const component = () => this.component()
-    this._Component = component
-    Object.defineProperty(component, 'name', {
-      value: `${this.id()}`,
-    })
-
-    return component
+    return (this._Component = remolFuncName(() => this.component(), this.id()))
   }
 
   protected get dom() {
@@ -127,7 +119,7 @@ export class RemolView extends RemolViewObject {
   }
 
   errorTitle() {
-    return this.error ? this.error.message + (this.errorRetry ? ' ,click to retry' : '') : undefined
+    return this.error ? this.error.message + (this.errorRetry ? ', click to retry' : '') : undefined
   }
 
   protected get errorRetry() {
@@ -171,13 +163,8 @@ export class RemolView extends RemolViewObject {
   private get Fallback() {
     if (this._Fallback) return this._Fallback
 
-    const fallback: typeof this['fallback'] = props => this.fallback(props)
-    this._Fallback = fallback
-    Object.defineProperty(fallback, 'name', {
-      value: `${this.id()}#fallback`,
-    })
-
-    return fallback
+    const fallback: typeof this['fallback'] = remolFuncName(props => this.fallback(props), `${this.id()}#fallback`)
+    return (this._Fallback = fallback)
   }
 
   static render<Instance>(

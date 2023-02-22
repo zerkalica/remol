@@ -1,6 +1,7 @@
 import $ from 'mol_wire_lib'
 
 export {
+  $mol_ambient_ref as ambientRef,
   $mol_fail_hidden as remolFail,
   $mol_wire_solo as solo,
   $mol_wire_plex as plex,
