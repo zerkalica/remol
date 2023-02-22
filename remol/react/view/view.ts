@@ -35,7 +35,7 @@ export class RemolView extends RemolViewObject {
   }
 
   render(): React.ReactElement | null {
-    return RemolView.h('div', null, 'RemolView')
+    return RemolView.h('div', null, `Forgot override render in ${this.toString()}`)
   }
 
   width() {
@@ -163,7 +163,7 @@ export class RemolView extends RemolViewObject {
   private get Fallback() {
     if (this._Fallback) return this._Fallback
 
-    const fallback: typeof this['fallback'] = remolFuncName(props => this.fallback(props), `${this.id()}#fallback`)
+    const fallback: typeof this['fallback'] = remolFuncName(props => this.fallback(props), `${this.id()}.Fallback`)
     return (this._Fallback = fallback)
   }
 

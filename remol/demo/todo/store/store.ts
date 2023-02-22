@@ -45,7 +45,7 @@ export class RemolDemoTodoStore extends RemolObject {
         method: 'PATCH',
         body: JSON.stringify({ [id]: next }),
       })[id]
-
+      this.reset(null)
       return updated ?? {}
     }
 

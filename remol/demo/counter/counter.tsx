@@ -11,19 +11,18 @@ export class RemolDemoCounter extends RemolView {
   }
 
   @solo computed() {
-    return 'val: ' + this.value()
+    return 'computed: ' + this.value()
   }
 
-  @action add() {
+  @action.bound add() {
     this.value(this.value() + 1)
   }
 
   render() {
     return (
       <div id={this.id()}>
-        <h3>RemolDemoCounterKlass</h3>
-        {this.computed()}
-        <button id={`${this.id()}_add`} onClick={() => this.add()}>
+        <div>{this.computed()}</div>
+        <button id={`${this.id()}_add`} onClick={this.add}>
           Add
         </button>
       </div>

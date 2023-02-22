@@ -53,7 +53,7 @@ export class RemolDemoTodoHeader extends RemolView {
     })
   }
 
-  rebder() {
+  override render() {
     const id = this.id()
     const checked = this.store.activeTodoCount() === 0
 

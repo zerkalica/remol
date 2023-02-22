@@ -10,9 +10,9 @@ import { RemolDemoTodoPage } from '../todo/page/page'
 
 const css = stylesheet({
   app: {
-    display: 'grid',
-    gridGap: '1rem',
-    gridTemplateColumns: '1fr',
+    display: 'flex',
+    gap: '2rem',
+    flexDirection: 'column',
   },
 })
 
@@ -22,8 +22,14 @@ export class RemolDemoPage extends RemolView {
     const id = this.id()
     return (
       <div id={id} className={css.app}>
-        <RemolDemoCounter.view id={() => `${id}_counter`} />
-        <RemolDemoTodoPage.view id={() => `${id}_todo`} />
+        <div>
+          <h3>Counter</h3>
+          <RemolDemoCounter.view id={() => `${id}_counter`} />
+        </div>
+        <div>
+          <h3>Todomvc with "server" sync</h3>
+          <RemolDemoTodoPage.view id={() => `${id}_todo`} />
+        </div>
       </div>
     )
   }

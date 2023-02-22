@@ -67,15 +67,15 @@ export class RemolQueue extends RemolObject {
       this.task = undefined
       this.continue()
     } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err), { cause: err })
-
-      if (error instanceof Promise) {
+      if (err instanceof Promise) {
         this.status(true)
-      } else {
-        this.task = undefined
-        this.status([error])
+
+        return $mol_fail_hidden(err)
       }
 
+      this.task = undefined
+      const error = err instanceof Error ? err : new Error(String(err), { cause: err })
+      this.status([error])
       $mol_fail_hidden(error)
     }
   }
