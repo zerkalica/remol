@@ -1,6 +1,6 @@
 {
   "name": "@remol/core",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "mol wire bindings",
   "type": "module",
   "exports": {
@@ -41,6 +41,6 @@
     "mol_wire_lib": "^1.0.485"
   },
   "devDependencies": {
-    "@remol/boot": "^2.1.0"
+    "@remol/boot": "^2.1.1"
   }
 }

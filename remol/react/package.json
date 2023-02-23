@@ -1,6 +1,6 @@
 {
   "name": "@remol/react",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "mol wire react bindings",
   "type": "module",
   "exports": {
@@ -28,12 +28,12 @@
     "dev": "NODE_OPTIONS=--experimental-vm-modules tsc-watch --build --noClear --onSuccess jest"
   },
   "devDependencies": {
-    "@remol/boot": "^2.1.0",
+    "@remol/boot": "^2.1.1",
     "@remol/core": "^2.0.0",
     "@types/react": "^18.0.28"
   },
   "dependencies": {
-    "@remol/core": "^2.1.0"
+    "@remol/core": "^2.1.1"
   },
   "peerDependencies": {
     "react": "^16 || ^17 || ^18 || ^18.0.0-rc.0"
