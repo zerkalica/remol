@@ -2,11 +2,10 @@
   "name": "@remol/core",
   "version": "2.0.0",
   "description": "mol wire bindings",
-  "_typings": "./-/index.d.ts",
-  "_module": "./-/index.js",
+  "type": "module",
   "exports": {
     ".": "./-/index.js",
-    "./*": "./-/*.js"
+    "./*": "./-/*"
   },
   "files": [
     "*.map",
@@ -32,8 +31,8 @@
   "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
-    "build": "tsc --build && jest",
-    "dev": "tsc-watch --build --noClear --onSuccess jest"
+    "build": "tsc --build && NODE_OPTIONS=--experimental-vm-modules jest",
+    "dev": "NODE_OPTIONS=--experimental-vm-modules tsc-watch --build --noClear --onSuccess jest"
   },
   "dependencies": {
     "autobind-decorator": "^2.4.0",

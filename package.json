@@ -7,7 +7,7 @@
   "author": "Stefan Zerkalica <zerkalica@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "postinstall": "npm --workspace=@remol/boot run build",
+    "postinstall": "rm -rf node_modules/copy-webpack-plugin/types ; npm --workspace=@remol/boot run build",
     "clean": "npm --workspaces run clean",
     "build": "npm --workspaces run build",
     "up": "npm-check-updates -u && npx --workspaces npm-check-updates -u && npm --workspaces run clean && npm install",

@@ -1,1 +1,1 @@
-export { remolContextNode, useRemolContextNode } from './context/context.node'
+export { remolContextNode, useRemolContextNode } from './context/context.node.js'

@@ -3,8 +3,8 @@ import { stylesheet } from 'typestyle'
 
 import { RemolView } from '@remol/react'
 
-import { RemolDemoTodoSnippet } from '../snippet/snippet'
-import { RemolDemoTodoStore } from '../store/store'
+import { RemolDemoTodoSnippet } from '../snippet/snippet.js'
+import { RemolDemoTodoStore } from '../store/store.js'
 
 const css = stylesheet({
   todoList: {

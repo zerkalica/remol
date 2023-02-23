@@ -4,10 +4,10 @@ import { createRoot } from 'react-dom/client'
 import { RemolContext } from '@remol/core'
 import { RemolContextProvide } from '@remol/react'
 
-import { RemolDemoFetch } from './fetch/fetch'
-import { RemolDemoFetchMock } from './fetch/mock'
-import { RemolDemoPage } from './page/page'
-import { RemolDemoTodoStoreMock } from './todo/store/mock'
+import { RemolDemoFetch } from './fetch/fetch.js'
+import { RemolDemoFetchMock } from './fetch/mock.js'
+import { RemolDemoPage } from './page/page.js'
+import { RemolDemoTodoStoreMock } from './todo/store/mock.js'
 
 const id = 'remol_demo'
 const el = document.getElementById(id + '_main')!

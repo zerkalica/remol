@@ -1,1 +1,3 @@
-module.exports = require('@remol/boot/swcConfigCreate').remolBootSwcConfigCreate(__dirname)
+import { remolBootSwcConfigCreate } from '@remol/boot/swcConfigCreate'
+
+export default remolBootSwcConfigCreate(import.meta.url)

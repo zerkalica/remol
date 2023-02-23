@@ -1,6 +1,6 @@
-import { RemolDemoStoreMock } from '../../model/mock'
+import { RemolDemoStoreMock } from '../../model/mock.js'
 
-import type { RemolDemoTodoDTO } from './model'
+import type { RemolDemoTodoDTO } from './model.js'
 
 export class RemolDemoTodoStoreMock extends RemolDemoStoreMock<RemolDemoTodoDTO> {
   max() {

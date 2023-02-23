@@ -1,6 +1,6 @@
 import { $mol_fail_hidden, $mol_wire_atom, $mol_wire_auto } from 'mol_wire_lib'
 
-import type { RemolContext, RemolContextValue } from '../context/context'
+import type { RemolContext, RemolContextValue } from '../context/context.js'
 
 const remolContextInheritedRef = Symbol('remolContextInheritedRef')
 const remolContextExplicitRef = Symbol('remolContextExplicitRef')

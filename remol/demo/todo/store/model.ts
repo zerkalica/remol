@@ -1,4 +1,4 @@
-import { action, plex, remolFail, RemolObject, RemolQueue, solo } from '@remol/core'
+import { action, failHidden, plex, RemolObject, RemolQueue, solo } from '@remol/core'
 
 export type RemolDemoTodoDTO = {
   id: string
@@ -74,7 +74,7 @@ export class RemolDemoTodoModel extends RemolObject {
       return dto
     } catch (error) {
       this.status(error instanceof Promise ? true : (error as Error))
-      remolFail(error)
+      failHidden(error)
     }
   }
 }

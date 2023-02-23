@@ -5,9 +5,9 @@ import { stylesheet } from 'typestyle'
 
 import { RemolView } from '@remol/react'
 
-import { RemolDemoCounter } from '../counter/counter'
-import { RemolDemoPomodoro } from '../pomodoro/pomodoro'
-import { RemolDemoTodoPage } from '../todo/page/page'
+import { RemolDemoCounter } from '../counter/counter.js'
+import { RemolDemoPomodoro } from '../pomodoro/pomodoro.js'
+import { RemolDemoTodoPage } from '../todo/page/page.js'
 
 const css = stylesheet({
   app: {

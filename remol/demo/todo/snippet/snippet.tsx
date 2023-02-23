@@ -3,8 +3,8 @@ import * as React from 'react'
 import { action, remolSyncRender, solo } from '@remol/core'
 import { RemolView } from '@remol/react'
 
-import { RemolDemoTodoModel } from '../store/model'
-import { RemolDemoTodoSnippetTheme } from './theme'
+import { RemolDemoTodoModel } from '../store/model.js'
+import { RemolDemoTodoSnippetTheme } from './theme.js'
 
 const theme = new RemolDemoTodoSnippetTheme()
 

@@ -1,10 +1,10 @@
 import { action, field, plex, RemolObject, solo } from '@remol/core'
 
-import { RemolDemoFetch } from '../../fetch/fetch'
-import { RemolDemoLocation } from '../../location/location'
-import { RemolDemoTodoDTO, RemolDemoTodoModel } from './model'
+import { RemolDemoFetch } from '../../fetch/fetch.js'
+import { RemolDemoLocation } from '../../location/location.js'
+import { RemolDemoTodoDTO, RemolDemoTodoModel } from './model.js'
 
-import type { RemolDemoTodoStoreMock } from './mock'
+import type { RemolDemoTodoStoreMock } from './mock.js'
 
 export enum TODO_FILTER {
   ALL = 'all',

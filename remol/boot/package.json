@@ -2,9 +2,10 @@
   "name": "@remol/boot",
   "version": "2.0.0",
   "description": "Typescript based projects build scripts",
+  "type": "module",
   "exports": {
     ".": "./-/index.js",
-    "./*": "./-/*.js"
+    "./*": "./-/*"
   },
   "publishConfig": {
     "access": "public"
@@ -20,12 +21,12 @@
   "homepage": "https://github.com/zerkalica/remol/boot/tree/master/#readme",
   "license": "ISC",
   "bin": {
-    "remol-boot": "./bin/remol-boot"
+    "remol-boot": "./bin/remol-boot.js"
   },
   "scripts": {
     "clean": "rm -rf - *.log",
-    "build": "tsc --build && jest --passWithNoTests",
-    "dev": "tsc-watch --build --noClear --onSuccess 'jest --passWithNoTests'"
+    "build": "tsc --build && NODE_OPTIONS=--experimental-vm-modules jest",
+    "dev": "NODE_OPTIONS=--experimental-vm-modules tsc-watch --build --noClear --onSuccess jest"
   },
   "dependencies": {
     "@types/jest": "^29.4.0",
@@ -39,7 +40,6 @@
     "jest": "^29.4.3",
     "serve-static": "^1.15.0",
     "source-map-loader": "^4.0.1",
-    "source-map-support": "^0.5.21",
     "tsc-watch": "^6.0.0",
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "^4.8.0",

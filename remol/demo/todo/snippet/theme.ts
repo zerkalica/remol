@@ -1,6 +1,6 @@
 import { style, stylesheet } from 'typestyle'
 
-import type { NestedCSSProperties } from 'typestyle/lib/types'
+import type { NestedCSSProperties } from 'typestyle/lib/types.js'
 
 export class RemolDemoTodoSnippetTheme {
   css = this.getCss()

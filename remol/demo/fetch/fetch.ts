@@ -1,6 +1,6 @@
-import { action, remolSync } from '@remol/core'
+import { action, sync } from '@remol/core'
 
-import { RemoDemoFetchBatch } from './batch'
+import { RemoDemoFetchBatch } from './batch.js'
 
 export class RemolDemoFetch {
   static fetch(input: RequestInfo, init: RequestInit = {}) {
@@ -25,9 +25,9 @@ export class RemolDemoFetch {
   }
 
   @action static response(input: RequestInfo, init?: RequestInit) {
-    const response = remolSync(this).request(input, init)
+    const response = sync(this).request(input, init)
 
-    if (Math.floor(response.status / 100) === 2) return remolSync(response)
+    if (Math.floor(response.status / 100) === 2) return sync(response)
 
     throw new Error(response.statusText || `HTTP Error ${response.status}`)
   }

@@ -1,4 +1,4 @@
-import { css } from './css'
+import { css } from './css.js'
 
 css(`
 [wire_view_error]:not([wire_view_error="Promise"]) {

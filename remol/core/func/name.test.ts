@@ -1,4 +1,4 @@
-import { remolFuncName } from './name'
+import { remolFuncName } from './name.js'
 
 describe('remolFuncName', () => {
   it('copy name to displayName', () => {

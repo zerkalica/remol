@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'async_hooks'
 
-import { remolMiddlewareAsync } from '../middleware/async'
-import { RemolContext } from './context'
+import { remolMiddlewareAsync } from '../middleware/async.js'
+import { RemolContext } from './context.js'
 
 const store = new AsyncLocalStorage<RemolContext>()
 

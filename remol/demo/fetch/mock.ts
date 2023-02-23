@@ -1,4 +1,4 @@
-import { RemolDemoFetch } from './fetch'
+import { RemolDemoFetch } from './fetch.js'
 
 export class RemolDemoFetchMock extends RemolDemoFetch {
   static timeout() {

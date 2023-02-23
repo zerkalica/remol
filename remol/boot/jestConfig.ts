@@ -1,19 +1,16 @@
 import path from 'path'
-
-import { remolBootInfoTsConfig } from './info/tsConfig'
+import url from 'url'
+import { remolBootInfoTsConfig } from './info/tsConfig.js'
 
 import type { Config } from '@jest/types'
 
-const resolver = path.join(__dirname, 'resolver.js')
-
-export function jestConfig(pkgDir = process.cwd(), { tsConfigJson = 'tsconfig.json', outDir = '-' } = {}) {
+export function jestConfig(metaUrl: string, { tsConfigJson = 'tsconfig.json', outDir = '-' } = {}) {
+  const pkgDir = url.fileURLToPath(new URL('.', metaUrl))
   const t = remolBootInfoTsConfig(path.join(pkgDir, tsConfigJson))
   const roots = t.projectReferences?.map(ref => path.join(ref.path, outDir)) ?? []
   roots.push(path.join(pkgDir, outDir))
   const config: Config.InitialOptions = {
     roots,
-    // https://github.com/facebook/jest/issues/9771#issuecomment-841624042
-    resolver,
   }
 
   return config

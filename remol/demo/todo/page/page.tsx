@@ -4,10 +4,10 @@ import { stylesheet } from 'typestyle'
 import { field, solo } from '@remol/core'
 import { RemolView } from '@remol/react'
 
-import { RemolDemoTodoFooter } from '../footer/footer'
-import { RemolDemoTodoHeader } from '../header/header'
-import { RemolDemoTodoList } from '../list/list'
-import { RemolDemoTodoStore } from '../store/store'
+import { RemolDemoTodoFooter } from '../footer/footer.js'
+import { RemolDemoTodoHeader } from '../header/header.js'
+import { RemolDemoTodoList } from '../list/list.js'
+import { RemolDemoTodoStore } from '../store/store.js'
 
 const css = stylesheet({
   todoapp: {

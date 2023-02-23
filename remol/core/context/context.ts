@@ -1,4 +1,4 @@
-import { RemolObject } from '../object/object'
+import { RemolObject } from '../object/object.js'
 
 type ReactLikeContext<V> = {
   _currentValue?: V

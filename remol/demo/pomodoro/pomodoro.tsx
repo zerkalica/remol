@@ -5,7 +5,7 @@ import React from 'react'
 import { action, AfterTimeout, solo } from '@remol/core'
 import { RemolView } from '@remol/react'
 
-import { beep } from './beep'
+import { beep } from './beep.js'
 
 function leadZero(val: number) {
   return val < 10 ? `0${val}` : val

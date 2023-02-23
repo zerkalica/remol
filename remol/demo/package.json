@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "description": "mol wire react bindings",
+  "type": "module",
   "exports": {
     ".": "./-/index.js",
     "./*": "./-/*.js"
@@ -12,8 +13,8 @@
   "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
-    "build": "tsc --build && jest && remol-boot bundle --publicUrl=/remol/",
-    "dev": "tsc --build && remol-boot dev"
+    "build": "tsc --build && NODE_OPTIONS=--experimental-vm-modules jest && remol-boot bundle --publicUrl=/remol/",
+    "dev": "tsc --build && NODE_OPTIONS=--experimental-vm-modules remol-boot dev"
   },
   "dependencies": {
     "@remol/core": "^2.0.0",

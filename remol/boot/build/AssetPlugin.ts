@@ -3,7 +3,7 @@ import path from 'path'
 import { callbackify, promisify } from 'util'
 import webpack from 'webpack'
 
-import { RemolBootBuildTemplate } from './Template'
+import { RemolBootBuildTemplate } from './Template.js'
 
 export class RemolBootBuildAssetPlugin {
   meta() {

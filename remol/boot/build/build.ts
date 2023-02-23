@@ -2,20 +2,21 @@ import child_process from 'child_process'
 // @ts-ignore
 import CircularDependencyPlugin from 'circular-dependency-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
+// @ts-ignore
 import CopyWebpackPlugin from 'copy-webpack-plugin'
+import { readFile, readFileSync } from 'fs'
 import { IncomingMessage, ServerResponse } from 'http'
 import path from 'path'
 import serveStatic from 'serve-static'
 // @ts-ignore
-import { TscWatchClient } from 'tsc-watch/client'
+import { TscWatchClient } from 'tsc-watch/client.js'
 import { promisify } from 'util'
 import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import webpackDevMiddleware from 'webpack-dev-middleware'
 
-import { remolServerMdlCombine, RemolServerMiddleware } from '../server/mdlCombine'
-import { RemolBootBuildAssetPlugin } from './AssetPlugin'
-import { RemolBootBuildTemplate } from './Template'
+import { remolServerMdlCombine, RemolServerMiddleware } from '../server/mdlCombine.js'
+import { RemolBootBuildAssetPlugin } from './AssetPlugin.js'
+import { RemolBootBuildTemplate } from './Template.js'
 
 export class RemolBootBuild {
   protected isDevOverrided = false
@@ -39,7 +40,9 @@ export class RemolBootBuild {
   }
 
   pkgName() {
-    return require(path.join(this.projectRoot(), 'package.json')).name.replace(/[\/]/g, '_').replace(/@/g, '')
+    return JSON.parse('' + readFileSync(path.join(this.projectRoot(), 'package.json')))
+      .name.replace(/[\/]/g, '_')
+      .replace(/@/g, '')
   }
 
   distRoot() {

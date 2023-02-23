@@ -1,6 +1,6 @@
 import type { Argv, CommandModule } from 'yargs'
-import { RemolBootBuild } from '../build/build'
-import { RemolBootCommandContext } from './context'
+import { RemolBootBuild } from '../build/build.js'
+import { RemolBootCommandContext } from './context.js'
 
 export async function remolBootCommandBundle({ dev, distRoot, publicUrl }: RemolBootCommandContext) {
   const build = new RemolBootBuild()

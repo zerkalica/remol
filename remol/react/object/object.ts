@@ -2,7 +2,7 @@ import React from 'react'
 
 import { RemolContext, RemolObject } from '@remol/core'
 
-import { useRemolContext } from '../context/context'
+import { useRemolContext } from '../context/context.js'
 
 interface Make {
   make<Instance>(config: Partial<Instance>): Instance & {

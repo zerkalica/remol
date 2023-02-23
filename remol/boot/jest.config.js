@@ -1,1 +1,3 @@
-module.exports = require('./-/jestConfig').jestConfig(__dirname)
+import { jestConfig } from './-/jestConfig.js'
+
+export default jestConfig(import.meta.url)

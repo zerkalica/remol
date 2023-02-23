@@ -1,9 +1,10 @@
 import path from 'path'
 import yargs, { Argv } from 'yargs'
+import { hideBin } from 'yargs/helpers'
 
-import { remolBootCommandBundle } from './bundle'
-import { RemolBootCommandContext } from './context'
-import { remolBootCommandDev } from './dev'
+import { remolBootCommandBundle } from './bundle.js'
+import { RemolBootCommandContext } from './context.js'
+import { remolBootCommandDev } from './dev.js'
 
 export async function remolBootCommand() {
   const yargs = await commandYargs()
@@ -11,14 +12,14 @@ export async function remolBootCommand() {
   const commands = yargs.command(remolBootCommandBundle.yargs).command(remolBootCommandDev.yargs).help()
 
   const argv = await commands.parse()
-  console.log(argv._[0], argv.lib ? 'library' : 'application', argv.projectDir)
   if (argv._.length === 0) commands.showHelp()
+  commands.scriptName
 }
 
 async function commandYargs() {
   const context: RemolBootCommandContext = { distRoot: path.join(process.cwd(), '-'), dev: true, publicUrl: '/' }
 
-  return addContextOptions(yargs, context)
+  return addContextOptions(yargs(hideBin(process.argv), process.cwd()), context)
 }
 
 function addContextOptions(yargs: Argv, p: RemolBootCommandContext): Argv<RemolBootCommandContext> {

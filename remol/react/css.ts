@@ -1,1 +1,1 @@
-import './css/fallback.css'
+import './css/fallback.css.js'

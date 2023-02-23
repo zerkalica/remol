@@ -1,8 +1,9 @@
 import path from 'path'
-
+import url from 'url'
 // import type { BundleInput } from '@swc/core/spack'
 
-export function remolBootSwcConfigCreate(projectRoot = process.cwd()) {
+export function remolBootSwcConfigCreate(metaUrl: string) {
+  const projectRoot = url.fileURLToPath(new URL('.', metaUrl))
   return {
     entry: {
       web: path.join(projectRoot, 'browser.tsx'),

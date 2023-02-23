@@ -1,7 +1,7 @@
 import { $mol_fail_hidden, $mol_wire_auto, $mol_wire_solo, $mol_wire_task } from 'mol_wire_lib'
 
-import { remolFuncName } from '../func/name'
-import { RemolObject } from '../object/object'
+import { remolFuncName } from '../func/name.js'
+import { RemolObject } from '../object/object.js'
 
 export class RemolQueue extends RemolObject {
   protected tasks = [] as (() => unknown)[]

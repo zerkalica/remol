@@ -1,5 +1,8 @@
+import { RemolBootBuild } from './build.js'
+
 describe('build', () => {
   it('dummy', () => {
-    expect(1).toEqual(1)
+    const build = new RemolBootBuild()
+    expect(build).toBeInstanceOf(RemolBootBuild)
   })
 })

@@ -3,10 +3,10 @@ import React from 'react'
 
 import { RemolAtom, RemolBoxProps, RemolError, remolFuncName } from '@remol/core'
 
-import { RemolViewBox } from '../box/box'
-import { RemolContextProvide } from '../context/context'
-import { RemolViewObject } from '../object/object'
-import { RemolViewError } from './error'
+import { RemolViewBox } from '../box/box.js'
+import { RemolContextProvide } from '../context/context.js'
+import { RemolViewObject } from '../object/object.js'
+import { RemolViewError } from './error.js'
 
 function normalizeName(name: string) {
   return name.trim().replace(/(-\w)/g, (_, part) => part.substring(1).toUpperCase())

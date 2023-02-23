@@ -1,6 +1,6 @@
 import { plex, RemolContext, RemolObject } from '@remol/core'
 
-import { RemolDemoFetch } from '../fetch/fetch'
+import { RemolDemoFetch } from '../fetch/fetch.js'
 
 export interface RemolDemoUserDTO {
   first_name: string

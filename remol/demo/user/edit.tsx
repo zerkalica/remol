@@ -3,7 +3,7 @@ import React from 'react'
 import { action, solo } from '@remol/core'
 import { RemolView } from '@remol/react'
 
-import { RemolDemoUserStore } from './store'
+import { RemolDemoUserStore } from './store.js'
 
 export class RemolDemoUserEdit extends RemolView {
   static view = (p: Partial<RemolDemoUserEdit>) => this.render(p)

@@ -2,6 +2,7 @@
   "name": "@remol/react",
   "version": "2.0.0",
   "description": "mol wire react bindings",
+  "type": "module",
   "exports": {
     ".": "./-/index.js",
     "./*": "./-/*.js"
@@ -21,12 +22,12 @@
   "license": "ISC",
   "scripts": {
     "clean": "rm -rf - *.log",
-    "build": "tsc --build && jest --passWithNoTests",
-    "dev": "tsc-watch --build --noClear --onSuccess 'jest --passWithNoTests'"
+    "build": "tsc --build && NODE_OPTIONS=--experimental-vm-modules jest",
+    "dev": "NODE_OPTIONS=--experimental-vm-modules tsc-watch --build --noClear --onSuccess jest"
   },
   "devDependencies": {
     "@remol/boot": "^2.0.0",
-    "@remol/core": "^1.0.0",
+    "@remol/core": "^2.0.0",
     "@types/react": "^18.0.28"
   },
   "dependencies": {

@@ -3,9 +3,9 @@ import * as React from 'react'
 import { action, field, RemolQueue } from '@remol/core'
 import { RemolView } from '@remol/react'
 
-import { RemolDemoLocation } from '../../location/location'
-import { RemolDemoTodoStore, TODO_FILTER } from '../store/store'
-import { RemolTodoFooterTheme } from './theme'
+import { RemolDemoLocation } from '../../location/location.js'
+import { RemolDemoTodoStore, TODO_FILTER } from '../store/store.js'
+import { RemolTodoFooterTheme } from './theme.js'
 
 export class RemolDemoTodoFooter extends RemolView {
   static view = (p: Partial<RemolDemoTodoFooter>) => this.render(p)

@@ -1,7 +1,7 @@
 import http, { IncomingMessage, ServerResponse } from 'http'
 import serveStatic from 'serve-static'
 
-import { RemolServerMiddleware } from './mdlCombine'
+import { RemolServerMiddleware } from './mdlCombine.js'
 
 export class RemolBootServer {
   port() {
@@ -62,7 +62,7 @@ export class RemolBootServer {
   protected ready() {
     console.log(
       `Server listening on \x1b[42m\x1b[1mhttp://localhost:` +
-        `${this.port()}\x1b[0m in \x1b[41m` +
+        `${this.port()}\x1b[0m, NODE_ENV: \x1b[41m` +
         `${process.env.NODE_ENV ?? 'empty'}\x1b[0m 🌎...`
     )
   }

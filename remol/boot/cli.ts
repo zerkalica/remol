@@ -1,5 +1,3 @@
-import 'source-map-support/register'
-
-import { remolBootCommand } from './command/command'
+import { remolBootCommand } from './command/command.js'
 
 remolBootCommand()
