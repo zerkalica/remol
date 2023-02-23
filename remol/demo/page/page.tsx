@@ -6,6 +6,7 @@ import { stylesheet } from 'typestyle'
 import { RemolView } from '@remol/react'
 
 import { RemolDemoCounter } from '../counter/counter'
+import { RemolDemoPomodoro } from '../pomodoro/pomodoro'
 import { RemolDemoTodoPage } from '../todo/page/page'
 
 const css = stylesheet({
@@ -25,6 +26,10 @@ export class RemolDemoPage extends RemolView {
         <div>
           <h3>Counter</h3>
           <RemolDemoCounter.view id={() => `${id}_counter`} />
+        </div>
+        <div>
+          <h3>Pomodoro</h3>
+          <RemolDemoPomodoro.view id={() => `${id}_pomodoro`} />
         </div>
         <div>
           <h3>Todomvc with "server" sync</h3>

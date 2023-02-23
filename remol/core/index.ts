@@ -1,6 +1,10 @@
 import $ from 'mol_wire_lib'
 
 export {
+  $mol_guid as guid,
+  $mol_after_frame as AfterFrame,
+  $mol_after_timeout as AfterTimeout,
+  $mol_state_time as StateTime,
   $mol_ambient_ref as ambientRef,
   $mol_fail_hidden as remolFail,
   $mol_wire_solo as solo,
@@ -10,8 +14,8 @@ export {
   $mol_wire_async as remolAsync,
   $mol_compare_deep as remolCompareDeep,
 } from 'mol_wire_lib'
-export const remolWaitTimeout = $.$mol_wait_timeout.bind($)
-export const remolWaitTimeoutAsync = $.$mol_wait_timeout_async.bind($)
+export const delay = $.$mol_wait_timeout.bind($)
+export const delayAsync = $.$mol_wait_timeout_async.bind($)
 
 export { RemolObject } from './object/object'
 export { RemolQueue } from './qeue/queue'

@@ -5,10 +5,6 @@ export function remolSyncRender() {
 }
 
 export class RemolAtom<Host, Args extends readonly unknown[], Result> extends $mol_wire_atom<Host, Args, Result> {
-  emitCb: undefined | (() => void) = undefined
-  protected scheduled = false
-  static syncRender = false
-
   emit(q: $mol_wire_cursor) {
     super.emit(q)
     if (this.scheduled) return
@@ -21,20 +17,24 @@ export class RemolAtom<Host, Args extends readonly unknown[], Result> extends $m
     Promise.resolve().then(() => this.run())
   }
 
-  subscribe(emit: () => void) {
-    this.emitCb = emit
+  protected update: undefined | (() => void) = undefined
+  protected scheduled = false
+  static syncRender = false
+
+  subscribe(update: () => void) {
+    this.update = update
 
     return () => this.scheduleDestructor()
   }
 
   scheduleDestructor() {
-    this.emitCb = undefined
+    this.update = undefined
     this.scheduled = false
     Promise.resolve().then(() => this.destructor())
   }
 
   destructor() {
-    if (this.emitCb) return
+    if (this.update) return
     super.destructor()
   }
 
@@ -45,7 +45,7 @@ export class RemolAtom<Host, Args extends readonly unknown[], Result> extends $m
     $mol_wire_auto(null)
 
     try {
-      this.emitCb?.()
+      this.update?.()
     } finally {
       this.scheduled = false
       $mol_wire_auto(prev)
