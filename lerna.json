@@ -16,7 +16,7 @@
         "hotfix/*",
         "feature/*"
       ],
-      "message": "chore(release): %s [ci skip]"
+      "message": "chore(release): %v [ci skip]"
     }
   },
   "version": "independent"
