@@ -7,6 +7,8 @@
     ".": "./-/index.js",
     "./*": "./-/*"
   },
+  "types": "./-/index.d.ts",
+  "main": "./-/index.js",
   "files": [
     "*.map",
     "*.js",

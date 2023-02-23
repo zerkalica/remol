@@ -8,6 +8,8 @@
     ".": "./-/index.js",
     "./*": "./-/*.js"
   },
+  "types": "./-/index.d.ts",
+  "main": "./-/index.js",
   "author": "Stefan Zerkalica <zerkalica@gmail.com>",
   "repository": "https://github.com/zerkalica/remol",
   "license": "ISC",

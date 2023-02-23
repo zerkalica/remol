@@ -11,7 +11,7 @@
     "clean": "npm --workspaces run clean",
     "build": "npm --workspaces run build",
     "up": "npm-check-updates -u && npx --workspaces npm-check-updates -u && npm --workspaces run clean && npm install",
-    "release": "lerna publish minor"
+    "release": "lerna publish patch"
   },
   "workspaces": [
     "remol/*"
