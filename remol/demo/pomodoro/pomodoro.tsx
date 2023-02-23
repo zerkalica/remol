@@ -1,4 +1,4 @@
-import './pomodoro.css'
+import './pomodoro.css.js'
 
 import React from 'react'
 
