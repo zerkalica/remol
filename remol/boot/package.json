@@ -1,6 +1,6 @@
 {
   "name": "@remol/boot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Typescript based projects build scripts",
   "exports": {
     ".": "./-/index.js",
