@@ -1,11 +1,11 @@
-import { $mol_wire_atom, $mol_wire_auto, $mol_wire_cursor } from 'mol_wire_lib'
+import { $, $mol_wire_atom, $mol_wire_auto } from '../stub.js'
 
 export function remolSyncRender() {
   RemolAtom.syncRender = true
 }
 
 export class RemolAtom<Host, Args extends readonly unknown[], Result> extends $mol_wire_atom<Host, Args, Result> {
-  emit(q: $mol_wire_cursor) {
+  emit(q: $.$mol_wire_cursor) {
     super.emit(q)
     if (this.scheduled) return
     this.scheduled = true

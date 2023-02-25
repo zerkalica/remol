@@ -1,4 +1,4 @@
-import { $mol_fail_hidden } from 'mol_wire_lib'
+import { $mol_fail_hidden } from '../stub.js'
 
 export class RemolError {
   static errorMap = new WeakMap<Error, () => void>()

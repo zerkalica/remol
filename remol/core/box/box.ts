@@ -1,4 +1,4 @@
-import { $mol_object, $mol_wire_plex, $mol_wire_solo } from 'mol_wire_lib'
+import { $mol_object, $mol_wire_plex, $mol_wire_solo } from '../stub.js'
 
 const solo = $mol_wire_solo
 const plex = $mol_wire_plex

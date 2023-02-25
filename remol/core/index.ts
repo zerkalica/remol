@@ -1,4 +1,17 @@
-import $ from 'mol_wire_lib'
+import {
+  $,
+  $mol_after_frame,
+  $mol_after_timeout,
+  $mol_compare_deep,
+  $mol_fail_hidden,
+  $mol_guid,
+  $mol_state_time,
+  $mol_wire_async,
+  $mol_wire_field,
+  $mol_wire_plex,
+  $mol_wire_solo,
+  $mol_wire_sync,
+} from './stub.js'
 
 export {
   $mol_guid as guid,
@@ -12,7 +25,7 @@ export {
   $mol_wire_sync as sync,
   $mol_wire_async as rAsync,
   $mol_compare_deep as compareDeep,
-} from 'mol_wire_lib'
+}
 export const delay = $.$mol_wait_timeout.bind($)
 export const delayAsync = $.$mol_wait_timeout_async.bind($)
 

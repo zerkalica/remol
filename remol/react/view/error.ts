@@ -1,44 +1,33 @@
 import React from 'react'
 
-interface RemolErrorViewProps {
+interface WireErrorViewProps {
   error?: Error
   fallback: (props: { error?: Error }) => React.ReactElement
   children: React.ReactNode
 }
 
-export class RemolViewError extends React.Component<RemolErrorViewProps, { error?: Error }> {
-  constructor(props: RemolErrorViewProps) {
+type State = { ref: { error?: Error } }
+
+export class RemolViewError extends React.Component<WireErrorViewProps, State> {
+  constructor(props: WireErrorViewProps) {
     super(props)
-    this.state = { error: undefined }
+    this.state = { ref: { error: undefined } }
   }
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(error: any): State {
     if (!(error instanceof Error)) error = new Error(String(error), { cause: error })
-    return { error }
+
+    return { ref: { error } }
   }
 
   componentDidCatch(error: Error, errorInfo: {}) {}
 
-  refresh = () => this.setState({ error: undefined })
-
-  private static errorMap = new WeakMap<Error, { refresh(): void }>()
-  private static attach(e: Error, view: { refresh(): void }) {
-    this.errorMap.set(e, view)
-  }
-
-  static getRefresh(e: Error) {
-    return this.errorMap.get(e)
-  }
-
-  static refresh(e: Error) {
-    this.getRefresh(e)?.refresh()
-  }
-
   render() {
-    const error = this.state.error
+    const error = this.state.ref.error
     if (error) {
-      RemolViewError.attach(error, this)
-      return this.props.fallback(this.state)
+      // eslint-disable-next-line
+      this.state.ref.error = undefined
+      return this.props.fallback({ error })
     }
 
     return this.props.children

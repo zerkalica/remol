@@ -1,7 +1,6 @@
-import { $mol_fail_hidden, $mol_wire_auto, $mol_wire_solo, $mol_wire_task } from 'mol_wire_lib'
-
 import { remolFuncName } from '../func/name.js'
 import { RemolObject } from '../object/object.js'
+import { $, $mol_fail_hidden, $mol_wire_auto, $mol_wire_solo, $mol_wire_task } from '../stub.js'
 
 export class RemolQueue extends RemolObject {
   protected tasks = [] as (() => unknown)[]
@@ -39,7 +38,7 @@ export class RemolQueue extends RemolObject {
     return this.status() === false
   }
 
-  protected task: $mol_wire_task<any, unknown[], unknown> | undefined = undefined
+  protected task: $.$mol_wire_task<any, unknown[], unknown> | undefined = undefined
 
   async continue() {
     if (this.tasks.length === 0) return

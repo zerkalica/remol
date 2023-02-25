@@ -1,4 +1,4 @@
-import { $mol_fail_hidden, $mol_wire_atom, $mol_wire_auto } from 'mol_wire_lib'
+import { $, $mol_fail_hidden, $mol_wire_auto } from '../stub.js'
 
 import type { RemolContext, RemolContextValue } from '../context/context.js'
 
@@ -8,7 +8,7 @@ const cursorMap = new WeakMap<{}, [number]>()
 
 export class RemolObject {
   constructor() {
-    const atom = $mol_wire_auto() as undefined | $mol_wire_atom<RemolObject, unknown[], unknown>
+    const atom = $mol_wire_auto() as undefined | $.$mol_wire_atom<RemolObject, unknown[], unknown>
     let id = this.constructor.name
     if (atom) {
       let ref = cursorMap.get(atom)
