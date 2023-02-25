@@ -1,6 +1,6 @@
 {
   "name": "@remol/demo",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "description": "mol wire react bindings",
   "type": "module",
@@ -19,8 +19,8 @@
     "dev": "tsc --build && NODE_OPTIONS=--experimental-vm-modules remol-boot dev"
   },
   "dependencies": {
-    "@remol/core": "^2.1.1",
-    "@remol/react": "^2.1.1",
+    "@remol/core": "^2.1.2",
+    "@remol/react": "^2.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typestyle": "^2.4.0"

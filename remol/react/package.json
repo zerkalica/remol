@@ -1,6 +1,6 @@
 {
   "name": "@remol/react",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "mol wire react bindings",
   "type": "module",
   "exports": {
@@ -33,7 +33,7 @@
     "@types/react": "^18.0.28"
   },
   "dependencies": {
-    "@remol/core": "^2.1.1"
+    "@remol/core": "^2.1.2"
   },
   "peerDependencies": {
     "react": "^16 || ^17 || ^18 || ^18.0.0-rc.0"
