@@ -2,7 +2,7 @@ import './pomodoro.css.js'
 
 import React from 'react'
 
-import { action, AfterTimeout, solo } from '@remol/core'
+import { action, AfterTimeout, delay, solo } from '@remol/core'
 import { RemolView } from '@remol/react'
 
 import { beep } from './beep.js'
@@ -18,65 +18,92 @@ export class RemolDemoPomodoro extends RemolView {
   }
 
   @solo paused(next = true) {
-    this.work_minutes()
-    this.break_minutes() // set pause to true if interval changed
+    this.work_limit_min()
+    this.break_limit_min() // set pause to true if interval changed
 
     return next
   }
 
-  @solo work_minutes(val = 25) {
+  @solo work_limit_min(val = 25) {
     return val
   }
 
-  @solo break_minutes(val = 5) {
+  @solo break_limit_min(val = 5) {
     return val
   }
 
   @solo limit_sec() {
-    const val = this.status() === 'work' ? this.work_minutes() : this.break_minutes()
+    const val = this.status() === 'work' ? this.work_limit_min() : this.break_limit_min()
 
     return val * 60
   }
 
-  @action.bound pause_toggle() {
-    this.paused(!this.paused())
+  @solo elapsed_sec(next = 0) {
+    return next
   }
 
-  @action.bound decrement() {
+  left_sec() {
+    return this.limit_sec() - this.elapsed_sec()
+  }
+
+  @action.bound elapsed_inc() {
     if (this.paused()) return
-    const next = Math.max(0, this.remain_sec() - 1)
-    this.remain_sec(next === 0 ? null : next)
+    const next = this.elapsed_sec() + 1
+    this.elapsed_sec(next)
 
-    if (next > 0) return
-
-    beep(this.status() === 'work' ? 1000 : 600)
-
-    this.to_next_status()
+    let left_sec = this.left_sec()
+    if (left_sec > 0) return
+    if (left_sec === 0) {
+      return this.status() === 'work' ? this.remind_work_end() : this.remind_break_end()
+    }
+    if (!(left_sec % 60)) this.remind_overdue()
   }
 
-  @solo remain_sec(next?: null | number) {
-    return next ?? this.limit_sec()
+  @action remind_overdue() {
+    beep(440)
   }
 
-  @solo time() {
-    const sec = this.remain_sec()
-    const timer = this.paused() ? undefined : new AfterTimeout(1000, this.decrement)
-
-    return { min: Math.floor(sec / 60), sec: Math.floor(sec % 60), destructor: () => timer?.destructor() }
+  @action remind_work_end() {
+    beep(2000)
+    delay(500)
+    beep(2000)
   }
 
-  to_next_status() {
-    this.status(this.status() === 'work' ? 'break' : 'work')
+  @action remind_break_end() {
+    beep(600)
+    delay(500)
+    beep(600)
   }
 
-  @action.bound next() {
-    this.to_next_status()
-    this.paused(true)
+  @solo left_time() {
+    let sec = this.left_sec()
+    const negative = sec < 0
+    if (negative) sec = Math.abs(sec)
+    const timer = this.paused() ? undefined : new AfterTimeout(1000, this.elapsed_inc)
+
+    return {
+      negative,
+      min: Math.floor(sec / 60),
+      sec: Math.floor(sec % 60),
+      destructor: () => timer?.destructor(),
+    }
+  }
+
+  @action.bound break() {
+    this.status('break')
+    this.elapsed_sec(0)
+    this.paused(false)
+  }
+
+  @action.bound work() {
+    this.status('work')
+    this.elapsed_sec(0)
+    this.paused(false)
   }
 
   override render() {
     const id = this.id()
-    const time = this.time()
+    const time = this.left_time()
     const status = this.status()
 
     return (
@@ -88,40 +115,38 @@ export class RemolDemoPomodoro extends RemolView {
         }}
       >
         <h2 id={`${id}_time`} className="remol_demo_pomodoro_time">
-          {leadZero(time.min)}:{leadZero(time.sec)}
+          {time.negative ? '-' : ''} {leadZero(time.min)}:{leadZero(time.sec)}
         </h2>
         <div className="remol_demo_pomodoro_buttons">
-          <button id={`${id}_button_work`} onClick={this.next}>
-            {status === 'break' ? 'Work' : 'Break'}
+          <button id={`${id}_button_work`} onClick={this.work}>
+            Work
           </button>
-          <button id={`${id}_button_pause`} onClick={this.pause_toggle}>
-            {this.paused() ? 'Continue' : 'Pause'}
+          <button id={`${id}_button_break`} onClick={this.break}>
+            Break
           </button>
         </div>
         <div className="remol_demo_interval_controls">
           <label>
-            Work{' '}
             <input
               type="number"
               id={`${id}_control_work`}
               min="1"
               max="300"
               step="10"
-              value={this.work_minutes()}
-              onChange={e => this.work_minutes(e.currentTarget.valueAsNumber || 1)}
+              value={this.work_limit_min()}
+              onChange={e => this.work_limit_min(e.currentTarget.valueAsNumber || 1)}
             />{' '}
             min
           </label>
           <label>
-            Break{' '}
             <input
               id={`${id}_control_break`}
               type="number"
               min="1"
               max="60"
               step="5"
-              value={this.break_minutes()}
-              onChange={e => this.break_minutes(e.currentTarget.valueAsNumber || 1)}
+              value={this.break_limit_min()}
+              onChange={e => this.break_limit_min(e.currentTarget.valueAsNumber || 1)}
             />{' '}
             min
           </label>
