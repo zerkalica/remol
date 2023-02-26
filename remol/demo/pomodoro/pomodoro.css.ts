@@ -10,6 +10,15 @@ css(`
   flex-direction: column;
   gap: 1rem;
   max-width: 400px;
+  font-size: 18px;
+}
+
+.remol_demo_pomodoro[data-status="work"] {
+  background: rgb(186, 73, 73);
+}
+
+.remol_demo_pomodoro[data-status="break"] {
+  background: rgb(56, 133, 138);
 }
 
 .remol_demo_pomodoro_time {
@@ -22,7 +31,7 @@ css(`
 
 .remol_demo_interval_controls > label > input {
   font-size: 1rem;
-  padding: .1rem;
+  padding: .25rem;
   border: none;
   border-radius: 0.25rem;
 }
@@ -31,6 +40,7 @@ css(`
 .remol_demo_pomodoro_buttons {
   display: flex;
   gap: 1rem;
+  align-items: baseline;
   justify-content: space-between;
 }
 
@@ -38,6 +48,14 @@ css(`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  width: 100%;
+}
+
+.remol_demo_pomodoro_total {
+  font-size: 48px;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .remol_demo_pomodoro_buttons > button {
@@ -46,11 +64,16 @@ css(`
   border: none;
   width: 100%;
   border-radius: 0.25rem;
-  background: white;
+  background: lightgray;
+}
+
+.remol_demo_pomodoro_buttons > button[data-status="break"],
+.remol_demo_pomodoro_buttons > button[data-status="work"] {
+  background-color: white;
 }
 
 .remol_demo_pomodoro_buttons > button:hover {
-  background-color: lightgray;
+  background-color: white;
   cursor: pointer;
 }
 

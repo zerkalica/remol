@@ -20,7 +20,6 @@ export class RemolDemoPomodoro extends RemolView {
   @solo paused(next = true) {
     this.work_limit_min()
     this.break_limit_min() // set pause to true if interval changed
-
     return next
   }
 
@@ -46,17 +45,22 @@ export class RemolDemoPomodoro extends RemolView {
     return this.limit_sec() - this.elapsed_sec()
   }
 
-  @action.bound elapsed_inc() {
+  @action.bound elapsed_increment() {
     if (this.paused()) return
     const next = this.elapsed_sec() + 1
     this.elapsed_sec(next)
 
     let left_sec = this.left_sec()
     if (left_sec > 0) return
+    if (this.muted()) return
     if (left_sec === 0) {
       return this.status() === 'work' ? this.remind_work_end() : this.remind_break_end()
     }
     if (!(left_sec % 60)) this.remind_overdue()
+  }
+
+  @solo muted(next = true) {
+    return next
   }
 
   @action remind_overdue() {
@@ -79,7 +83,7 @@ export class RemolDemoPomodoro extends RemolView {
     let sec = this.left_sec()
     const negative = sec < 0
     if (negative) sec = Math.abs(sec)
-    const timer = this.paused() ? undefined : new AfterTimeout(1000, this.elapsed_inc)
+    const timer = this.paused() ? undefined : new AfterTimeout(1000, this.elapsed_increment)
 
     return {
       negative,
@@ -89,6 +93,10 @@ export class RemolDemoPomodoro extends RemolView {
     }
   }
 
+  @solo pomodoro_total(next = 0) {
+    return next
+  }
+
   @action.bound break() {
     this.status('break')
     this.elapsed_sec(0)
@@ -96,6 +104,7 @@ export class RemolDemoPomodoro extends RemolView {
   }
 
   @action.bound work() {
+    if (!this.paused()) this.pomodoro_total(this.pomodoro_total() + 1)
     this.status('work')
     this.elapsed_sec(0)
     this.paused(false)
@@ -107,21 +116,16 @@ export class RemolDemoPomodoro extends RemolView {
     const status = this.status()
 
     return (
-      <div
-        id={this.id()}
-        className="remol_demo_pomodoro"
-        style={{
-          backgroundColor: status === 'break' ? 'rgb(56, 133, 138)' : 'rgb(186, 73, 73)',
-        }}
-      >
+      <div id={this.id()} className="remol_demo_pomodoro" data-status={this.paused() ? undefined : status}>
         <h2 id={`${id}_time`} className="remol_demo_pomodoro_time">
           {time.negative ? '-' : ''} {leadZero(time.min)}:{leadZero(time.sec)}
         </h2>
+        <div className="remol_demo_pomodoro_total">{this.pomodoro_total()} completed</div>
         <div className="remol_demo_pomodoro_buttons">
-          <button id={`${id}_button_work`} onClick={this.work}>
+          <button id={`${id}_button_work`} onClick={this.work} data-status={status === 'work' ? status : undefined}>
             Work
           </button>
-          <button id={`${id}_button_break`} onClick={this.break}>
+          <button id={`${id}_button_break`} onClick={this.break} data-status={status === 'break' ? status : undefined}>
             Break
           </button>
         </div>
@@ -135,20 +139,30 @@ export class RemolDemoPomodoro extends RemolView {
               step="10"
               value={this.work_limit_min()}
               onChange={e => this.work_limit_min(e.currentTarget.valueAsNumber || 1)}
-            />{' '}
-            min
+            />
           </label>
           <label>
             <input
               id={`${id}_control_break`}
               type="number"
+              placeholder="Break, min"
               min="1"
               max="60"
               step="5"
               value={this.break_limit_min()}
               onChange={e => this.break_limit_min(e.currentTarget.valueAsNumber || 1)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            <input
+              id={`${id}_control_break_long`}
+              type="checkbox"
+              checked={this.muted()}
+              onChange={e => this.muted(!this.muted())}
             />{' '}
-            min
+            Mute
           </label>
         </div>
       </div>
