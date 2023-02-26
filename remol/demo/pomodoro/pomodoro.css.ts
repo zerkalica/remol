@@ -29,14 +29,14 @@ css(`
   margin: 0;
 }
 
-.remol_demo_interval_controls > label > input {
+.remol_demo_pomodoro_controls > label > input {
   font-size: 1rem;
   padding: .25rem;
   border: none;
   border-radius: 0.25rem;
 }
 
-.remol_demo_interval_controls,
+.remol_demo_pomodoro_controls,
 .remol_demo_pomodoro_buttons {
   display: flex;
   gap: 1rem;
@@ -44,7 +44,7 @@ css(`
   justify-content: space-between;
 }
 
-.remol_demo_interval_controls > label {
+.remol_demo_pomodoro_controls > label {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;

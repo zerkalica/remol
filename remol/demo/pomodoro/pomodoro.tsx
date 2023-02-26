@@ -129,7 +129,7 @@ export class RemolDemoPomodoro extends RemolView {
             Break
           </button>
         </div>
-        <div className="remol_demo_interval_controls">
+        <div className="remol_demo_pomodoro_controls">
           <label>
             <input
               type="number"
