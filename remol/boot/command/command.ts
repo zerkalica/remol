@@ -17,7 +17,11 @@ export async function remolBootCommand() {
 }
 
 async function commandYargs() {
-  const context: RemolBootCommandContext = { distRoot: path.join(process.cwd(), '-'), dev: true, publicUrl: '/' }
+  const context: RemolBootCommandContext = {
+    distRoot: path.join(process.cwd(), '-'),
+    dev: process.env.NODE_ENV !== 'production',
+    publicUrl: '/',
+  }
 
   return addContextOptions(yargs(hideBin(process.argv), process.cwd()), context)
 }

@@ -1,7 +1,7 @@
-import { action, field, plex, RemolObject, solo } from '@remol/core'
+import { action, field, plex, solo } from '@remol/core'
 
-import { RemolDemoFetch } from '../../fetch/fetch.js'
 import { RemolDemoLocation } from '../../location/location.js'
+import { RemolDemoModelRepo } from '../../model/repo.js'
 import { RemolDemoTodoDTO, RemolDemoTodoModel } from './model.js'
 
 import type { RemolDemoTodoStoreMock } from './mock.js'
@@ -12,50 +12,27 @@ export enum TODO_FILTER {
   ACTIVE = 'active',
 }
 
-export class RemolDemoTodoStore extends RemolObject {
-  get fetcher() {
-    return this.ctx(RemolDemoFetch)
-  }
-
-  @solo reset(next?: null) {
-    return new Date().getTime()
-  }
-
-  @solo list() {
-    this.reset()
-    const list = this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>
-    return list
-  }
-
-  @solo ids() {
-    return this.list().data.ids
-  }
-
-  @solo prefetched() {
-    const ids = this.ids()
-    this.reset()
-
+export class RemolDemoTodoStore extends RemolDemoModelRepo<RemolDemoTodoDTO> {
+  protected get(ids: readonly string[]) {
     return this.fetcher.batch<RemolDemoTodoDTO>('/todo?id=' + ids.join(','))
   }
 
-  @plex dto(id: string, next?: Partial<RemolDemoTodoDTO> | null) {
-    if (next !== undefined) {
-      // throw new Error('test')
-      const updated = this.fetcher.batch<RemolDemoTodoDTO>('/todo', {
-        method: 'PATCH',
-        body: JSON.stringify({ [id]: next }),
-      })[id]
-      this.reset(null)
-      return updated ?? {}
-    }
+  protected patch(rec: Record<string, Partial<RemolDemoTodoDTO> | null>) {
+    return this.fetcher.batch<RemolDemoTodoDTO>('/todo', {
+      method: 'PATCH',
+      body: JSON.stringify(rec),
+    })
+  }
 
-    return (
-      this.prefetched()[id] ?? {
-        id,
-        title: '',
-        checked: false,
-      }
-    )
+  @solo summary(next?: ReturnType<RemolDemoTodoStoreMock['list']>) {
+    const list = next ?? (this.fetcher.response('/todos').json() as ReturnType<RemolDemoTodoStoreMock['list']>)
+    this.prefetch(list.ids)
+
+    return list
+  }
+
+  @solo items() {
+    return this.summary().ids.map(id => this.item(id))
   }
 
   @plex item(id: string) {
@@ -65,14 +42,16 @@ export class RemolDemoTodoStore extends RemolObject {
     return todo
   }
 
-  @solo items() {
-    return this.ids().map(id => this.item(id))
-  }
+  @action add(dto: RemolDemoTodoDTO) {
+    this.dto(dto.id, dto)
 
-  fetch(url: string, init: RequestInit) {
-    const res = this.fetcher.response(url, init).json() as { data: { ids: string[] } }
-    this.reset(null)
-    return res
+    const prev = this.summary()
+
+    this.summary({
+      ...prev,
+      activeCount: prev.activeCount + 1,
+      ids: [dto.id, ...prev.ids],
+    })
   }
 
   get location() {
@@ -80,17 +59,17 @@ export class RemolDemoTodoStore extends RemolObject {
   }
 
   @field get activeTodoCount2() {
-    const count = this.list().data.activeCount
+    const count = this.summary().activeCount
     return count
   }
 
   @solo activeTodoCount() {
-    const count = this.list().data.activeCount
+    const count = this.summary().activeCount
     return count
   }
 
   @field get completedCount() {
-    return this.list().data.completedCount
+    return this.summary().completedCount
   }
 
   filter(next?: TODO_FILTER) {

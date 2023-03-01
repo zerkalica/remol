@@ -4,7 +4,7 @@ import CircularDependencyPlugin from 'circular-dependency-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 // @ts-ignore
 import CopyWebpackPlugin from 'copy-webpack-plugin'
-import { readFile, readFileSync } from 'fs'
+import { readFileSync } from 'fs'
 import { IncomingMessage, ServerResponse } from 'http'
 import path from 'path'
 import serveStatic from 'serve-static'
@@ -14,7 +14,7 @@ import { promisify } from 'util'
 import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 
-import { remolServerMdlCombine, RemolServerMiddleware } from '../server/mdlCombine.js'
+import { remolServerMdlCombine } from '../server/mdlCombine.js'
 import { RemolBootBuildAssetPlugin } from './AssetPlugin.js'
 import { RemolBootBuildTemplate } from './Template.js'
 
@@ -39,10 +39,14 @@ export class RemolBootBuild {
     return process.cwd()
   }
 
-  pkgName() {
+  pkgJson(): {
+    name: string
+  } {
     return JSON.parse('' + readFileSync(path.join(this.projectRoot(), 'package.json')))
-      .name.replace(/[\/]/g, '_')
-      .replace(/@/g, '')
+  }
+
+  pkgName() {
+    return this.pkgJson().name.replace(/[\/]/g, '_').replace(/@/g, '')
   }
 
   distRoot() {
@@ -84,7 +88,7 @@ export class RemolBootBuild {
     const outDir = this.publicDir()
     const browserEntry = this.browserEntry()
     const pkgName = this.pkgName()
-
+    const mode = isDev ? 'development' : 'production'
     return {
       name: path.basename(browserEntry),
       entry: {
@@ -97,7 +101,7 @@ export class RemolBootBuild {
       //   },
       // },
       devtool: 'source-map',
-      mode: isDev ? 'development' : 'production',
+      mode,
       stats: 'normal',
       performance: {
         maxAssetSize: 400000,
@@ -262,10 +266,10 @@ export class RemolBootBuild {
     const browserEntry = this.browserEntry()
     const pkgName = this.pkgName()
     const version = this.version()
-
-    const compiler = webpack(this.wpc())
+    const config = this.wpc()
+    const compiler = webpack(config)
     const run = promisify(compiler.run.bind(compiler))
-    this.log({ browserEntry, outDir, pkgName, version })
+    this.log({ browserEntry, outDir, pkgName, version, mode: config.mode })
 
     return (this.compilerCached = { compiler, run })
   }

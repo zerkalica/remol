@@ -1,7 +1,3 @@
-declare var crypto: {
-  randomUUID(): string
-}
-
 export abstract class RemolDemoStoreMock<DTO extends { id: string }> extends Object {
   protected cache = undefined as Record<string, DTO> | undefined
 
@@ -25,7 +21,7 @@ export abstract class RemolDemoStoreMock<DTO extends { id: string }> extends Obj
   abstract create(id: string): DTO
 
   list(filter?: unknown) {
-    return { data: { ids: Object.keys(this.items) } }
+    return { ids: Object.keys(this.items) }
   }
 
   get(ids: readonly string[]) {

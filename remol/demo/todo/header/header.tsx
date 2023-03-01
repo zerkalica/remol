@@ -38,7 +38,11 @@ export class RemolDemoTodoHeader extends RemolView {
   @action submit(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key !== 'Enter' || !this.title()) return
     this.submitStatus.run(() => {
-      this.store.item(RemolModel.createId()).title(this.title())
+      this.store.add({
+        id: RemolModel.createId(),
+        title: this.title(),
+        checked: false,
+      })
       this.title('')
     })
   }

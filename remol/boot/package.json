@@ -9,9 +9,6 @@
   },
   "types": "./-/index.d.ts",
   "main": "./-/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
   "author": "Stefan Zerkalica <zerkalica@gmail.com>",
   "repository": {
     "type": "git",
@@ -25,6 +22,9 @@
   "bin": {
     "remol-boot": "./bin/remol-boot.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "clean": "rm -rf - *.log",
     "build": "tsc --build && NODE_OPTIONS=--experimental-vm-modules jest",
@@ -32,20 +32,15 @@
   },
   "dependencies": {
     "@types/jest": "^29.4.0",
-    "@types/serve-static": "^1.15.0",
     "@types/webpack-bundle-analyzer": "^4.6.0",
-    "abortcontroller-polyfill": "^1.7.5",
     "circular-dependency-plugin": "^5.2.2",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
-    "enhanced-resolve": "^5.12.0",
     "jest": "^29.4.3",
-    "serve-static": "^1.15.0",
     "source-map-loader": "^4.0.1",
     "tsc-watch": "^6.0.0",
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "^4.8.0",
-    "webpack-dev-middleware": "^6.0.1",
     "yargs": "^17.7.0"
   },
   "devDependencies": {

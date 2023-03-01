@@ -35,11 +35,9 @@ export class RemolDemoTodoStoreMock extends RemolDemoStoreMock<RemolDemoTodoDTO>
     }
 
     return {
-      data: {
-        ids,
-        activeCount,
-        completedCount: todos.length - activeCount,
-      },
+      ids,
+      activeCount,
+      completedCount: todos.length - activeCount,
     }
   }
 
