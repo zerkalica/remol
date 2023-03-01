@@ -1,1925 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "../../node_modules/mol_wire_lib/web.js":
-/*!**********************************************!*\
-  !*** ../../node_modules/mol_wire_lib/web.js ***!
-  \**********************************************/
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-"use strict";
-/* module decorator */ module = __webpack_require__.nmd(module);
-
-function require( path ){ return $node[ path ] };
-"use strict"
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	else for (var i = decorators.length - 1; i >= 0; i--) if ((d = decorators[i])) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-var $ = (  true ) ? ( module['export'+'s'] = globalThis ) : 0
-$.$$ = $
-
-;
-
-var $node = $node || {}
-void function( module ) { var exports = module.exports = this; function require( id ) { return $node[ id.replace( /^.\// , "../" ) ] }; 
-;
-"use strict";
-Error.stackTraceLimit = 50;
-var $;
-(function ($) {
-})($ || ($ = {}));
-module.exports = $;
-//mam.ts
-;
-
-$node[ "../mam.ts" ] = $node[ "../mam.ts" ] = module.exports }.call( {} , {} )
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_fail(error) {
-        throw error;
-    }
-    $.$mol_fail = $mol_fail;
-})($ || ($ = {}));
-//mol/fail/fail.ts
-;
-"use strict";
-var $;
-(function ($) {
-    let $mol_wire_cursor;
-    (function ($mol_wire_cursor) {
-        $mol_wire_cursor[$mol_wire_cursor["stale"] = -1] = "stale";
-        $mol_wire_cursor[$mol_wire_cursor["doubt"] = -2] = "doubt";
-        $mol_wire_cursor[$mol_wire_cursor["fresh"] = -3] = "fresh";
-        $mol_wire_cursor[$mol_wire_cursor["final"] = -4] = "final";
-    })($mol_wire_cursor = $.$mol_wire_cursor || ($.$mol_wire_cursor = {}));
-})($ || ($ = {}));
-//mol/wire/cursor/cursor.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wire_pub extends Object {
-        data = [];
-        static get [Symbol.species]() {
-            return Array;
-        }
-        sub_from = 0;
-        get sub_list() {
-            const res = [];
-            for (let i = this.sub_from; i < this.data.length; i += 2) {
-                res.push(this.data[i]);
-            }
-            return res;
-        }
-        get sub_empty() {
-            return this.sub_from === this.data.length;
-        }
-        sub_on(sub, pub_pos) {
-            const pos = this.data.length;
-            this.data.push(sub, pub_pos);
-            return pos;
-        }
-        sub_off(sub_pos) {
-            if (!(sub_pos < this.data.length)) {
-                $mol_fail(new Error(`Wrong pos ${sub_pos}`));
-            }
-            const end = this.data.length - 2;
-            if (sub_pos !== end) {
-                this.peer_move(end, sub_pos);
-            }
-            this.data.pop();
-            this.data.pop();
-            if (this.data.length === this.sub_from)
-                this.reap();
-        }
-        reap() { }
-        promote() {
-            $mol_wire_auto()?.track_next(this);
-        }
-        fresh() { }
-        complete() { }
-        emit(quant = $mol_wire_cursor.stale) {
-            for (let i = this.sub_from; i < this.data.length; i += 2) {
-                ;
-                this.data[i].absorb(quant);
-            }
-        }
-        peer_move(from_pos, to_pos) {
-            const peer = this.data[from_pos];
-            const self_pos = this.data[from_pos + 1];
-            this.data[to_pos] = peer;
-            this.data[to_pos + 1] = self_pos;
-            peer.peer_repos(self_pos, to_pos);
-        }
-        peer_repos(peer_pos, self_pos) {
-            this.data[peer_pos + 1] = self_pos;
-        }
-    }
-    $.$mol_wire_pub = $mol_wire_pub;
-})($ || ($ = {}));
-//mol/wire/pub/pub.ts
-;
-"use strict";
-//mol/wire/sub/sub.ts
-;
-"use strict";
-var $;
-(function ($) {
-    let auto = null;
-    function $mol_wire_auto(next = auto) {
-        return auto = next;
-    }
-    $.$mol_wire_auto = $mol_wire_auto;
-    $.$mol_wire_affected = [];
-})($ || ($ = {}));
-//mol/wire/wire.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $['devtoolsFormatters'] = $['devtoolsFormatters'] || [];
-    function $mol_dev_format_register(config) {
-        $['devtoolsFormatters'].push(config);
-    }
-    $.$mol_dev_format_register = $mol_dev_format_register;
-    $.$mol_dev_format_head = Symbol('$mol_dev_format_head');
-    $.$mol_dev_format_body = Symbol('$mol_dev_format_body');
-    $mol_dev_format_register({
-        header: (val, config = false) => {
-            if (config)
-                return null;
-            if (!val)
-                return null;
-            if ($.$mol_dev_format_head in val) {
-                return val[$.$mol_dev_format_head]();
-            }
-            if (typeof val === 'function') {
-                return $mol_dev_format_native(val);
-            }
-            return null;
-        },
-        hasBody: val => val[$.$mol_dev_format_body],
-        body: val => val[$.$mol_dev_format_body](),
-    });
-    function $mol_dev_format_native(obj) {
-        if (typeof obj === 'undefined')
-            return $.$mol_dev_format_shade('undefined');
-        if (typeof obj !== 'object' && typeof obj !== 'function')
-            return obj;
-        return [
-            'object',
-            {
-                object: obj,
-                config: true,
-            },
-        ];
-    }
-    $.$mol_dev_format_native = $mol_dev_format_native;
-    function $mol_dev_format_auto(obj) {
-        if (obj == null)
-            return $.$mol_dev_format_shade(String(obj));
-        if (typeof obj === 'object' && $.$mol_dev_format_head in obj) {
-            return obj[$.$mol_dev_format_head]();
-        }
-        return [
-            'object',
-            {
-                object: obj,
-                config: false,
-            },
-        ];
-    }
-    $.$mol_dev_format_auto = $mol_dev_format_auto;
-    function $mol_dev_format_element(element, style, ...content) {
-        const styles = [];
-        for (let key in style)
-            styles.push(`${key} : ${style[key]}`);
-        return [
-            element,
-            {
-                style: styles.join(' ; '),
-            },
-            ...content,
-        ];
-    }
-    $.$mol_dev_format_element = $mol_dev_format_element;
-    function $mol_dev_format_span(style, ...content) {
-        return $mol_dev_format_element('span', {
-            'vertical-align': '8%',
-            ...style,
-        }, ...content);
-    }
-    $.$mol_dev_format_span = $mol_dev_format_span;
-    $.$mol_dev_format_div = $mol_dev_format_element.bind(null, 'div');
-    $.$mol_dev_format_ol = $mol_dev_format_element.bind(null, 'ol');
-    $.$mol_dev_format_li = $mol_dev_format_element.bind(null, 'li');
-    $.$mol_dev_format_table = $mol_dev_format_element.bind(null, 'table');
-    $.$mol_dev_format_tr = $mol_dev_format_element.bind(null, 'tr');
-    $.$mol_dev_format_td = $mol_dev_format_element.bind(null, 'td');
-    $.$mol_dev_format_accent = $mol_dev_format_span.bind(null, {
-        'color': 'magenta',
-    });
-    $.$mol_dev_format_strong = $mol_dev_format_span.bind(null, {
-        'font-weight': 'bold',
-    });
-    $.$mol_dev_format_string = $mol_dev_format_span.bind(null, {
-        'color': 'green',
-    });
-    $.$mol_dev_format_shade = $mol_dev_format_span.bind(null, {
-        'color': 'gray',
-    });
-    $.$mol_dev_format_indent = $.$mol_dev_format_div.bind(null, {
-        'margin-left': '13px'
-    });
-})($ || ($ = {}));
-//mol/dev/format/format.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wire_pub_sub extends $mol_wire_pub {
-        pub_from = 0;
-        cursor = $mol_wire_cursor.stale;
-        get pub_list() {
-            const res = [];
-            const max = this.cursor >= 0 ? this.cursor : this.sub_from;
-            for (let i = this.pub_from; i < max; i += 2) {
-                if (this.data[i])
-                    res.push(this.data[i]);
-            }
-            return res;
-        }
-        track_on() {
-            this.cursor = this.pub_from;
-            const sub = $mol_wire_auto();
-            $mol_wire_auto(this);
-            return sub;
-        }
-        promote() {
-            if (this.cursor >= this.pub_from) {
-                $mol_fail(new Error('Circular subscription'));
-            }
-            super.promote();
-        }
-        track_next(pub) {
-            if (this.cursor < 0)
-                $mol_fail(new Error('Promo to non begun sub'));
-            if (this.cursor < this.sub_from) {
-                const next = this.data[this.cursor];
-                if (pub === undefined)
-                    return next ?? null;
-                if (next === pub) {
-                    this.cursor += 2;
-                    return next;
-                }
-                if (next) {
-                    if (this.sub_from < this.data.length) {
-                        this.peer_move(this.sub_from, this.data.length);
-                    }
-                    this.peer_move(this.cursor, this.sub_from);
-                    this.sub_from += 2;
-                }
-            }
-            else {
-                if (pub === undefined)
-                    return null;
-                if (this.sub_from < this.data.length) {
-                    this.peer_move(this.sub_from, this.data.length);
-                }
-                this.sub_from += 2;
-            }
-            this.data[this.cursor] = pub;
-            this.data[this.cursor + 1] = pub.sub_on(this, this.cursor);
-            this.cursor += 2;
-            return pub;
-        }
-        track_off(sub) {
-            $mol_wire_auto(sub);
-            if (this.cursor < 0) {
-                $mol_fail(new Error('End of non begun sub'));
-            }
-            for (let cursor = this.pub_from; cursor < this.cursor; cursor += 2) {
-                const pub = this.data[cursor];
-                pub.fresh();
-            }
-            this.cursor = $mol_wire_cursor.fresh;
-        }
-        pub_off(sub_pos) {
-            this.data[sub_pos] = undefined;
-            this.data[sub_pos + 1] = undefined;
-        }
-        destructor() {
-            for (let cursor = this.data.length - 2; cursor >= this.sub_from; cursor -= 2) {
-                const sub = this.data[cursor];
-                const pos = this.data[cursor + 1];
-                sub.pub_off(pos);
-                this.data.pop();
-                this.data.pop();
-            }
-            this.cursor = this.pub_from;
-            this.track_cut();
-            this.cursor = $mol_wire_cursor.final;
-        }
-        track_cut() {
-            if (this.cursor < this.pub_from) {
-                $mol_fail(new Error('Cut of non begun sub'));
-            }
-            let tail = 0;
-            for (let cursor = this.cursor; cursor < this.sub_from; cursor += 2) {
-                const pub = this.data[cursor];
-                pub?.sub_off(this.data[cursor + 1]);
-                if (this.sub_from < this.data.length) {
-                    this.peer_move(this.data.length - 2, cursor);
-                    this.data.pop();
-                    this.data.pop();
-                }
-                else {
-                    ++tail;
-                }
-            }
-            for (; tail; --tail) {
-                this.data.pop();
-                this.data.pop();
-            }
-            this.sub_from = this.cursor;
-        }
-        complete() { }
-        complete_pubs() {
-            const limit = this.cursor < 0 ? this.sub_from : this.cursor;
-            for (let cursor = this.pub_from; cursor < limit; cursor += 2) {
-                const pub = this.data[cursor];
-                pub?.complete();
-            }
-        }
-        absorb(quant = $mol_wire_cursor.stale) {
-            if (this.cursor === $mol_wire_cursor.final)
-                return;
-            if (this.cursor >= quant)
-                return;
-            this.cursor = quant;
-            this.emit($mol_wire_cursor.doubt);
-        }
-        [$mol_dev_format_head]() {
-            return $mol_dev_format_native(this);
-        }
-        get pub_empty() {
-            return this.sub_from === this.pub_from;
-        }
-    }
-    $.$mol_wire_pub_sub = $mol_wire_pub_sub;
-})($ || ($ = {}));
-//mol/wire/pub/sub/sub.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_ambient_ref = Symbol('$mol_ambient_ref');
-    function $mol_ambient(overrides) {
-        return Object.setPrototypeOf(overrides, this || $);
-    }
-    $.$mol_ambient = $mol_ambient;
-})($ || ($ = {}));
-//mol/ambient/ambient.ts
-;
-"use strict";
-var $;
-(function ($) {
-    const instances = new WeakSet();
-    function $mol_delegate(proto, target) {
-        const proxy = new Proxy(proto, {
-            get: (_, field) => {
-                const obj = target();
-                let val = Reflect.get(obj, field);
-                if (typeof val === 'function') {
-                    val = val.bind(obj);
-                }
-                return val;
-            },
-            has: (_, field) => Reflect.has(target(), field),
-            set: (_, field, value) => Reflect.set(target(), field, value),
-            getOwnPropertyDescriptor: (_, field) => Reflect.getOwnPropertyDescriptor(target(), field),
-            ownKeys: () => Reflect.ownKeys(target()),
-            getPrototypeOf: () => Reflect.getPrototypeOf(target()),
-            setPrototypeOf: (_, donor) => Reflect.setPrototypeOf(target(), donor),
-            isExtensible: () => Reflect.isExtensible(target()),
-            preventExtensions: () => Reflect.preventExtensions(target()),
-            apply: (_, self, args) => Reflect.apply(target(), self, args),
-            construct: (_, args, retarget) => Reflect.construct(target(), args, retarget),
-            defineProperty: (_, field, descr) => Reflect.defineProperty(target(), field, descr),
-            deleteProperty: (_, field) => Reflect.deleteProperty(target(), field),
-        });
-        instances.add(proxy);
-        return proxy;
-    }
-    $.$mol_delegate = $mol_delegate;
-    Reflect.defineProperty($mol_delegate, Symbol.hasInstance, {
-        value: (obj) => instances.has(obj),
-    });
-})($ || ($ = {}));
-//mol/delegate/delegate.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_owning_map = new WeakMap();
-    function $mol_owning_allow(having) {
-        try {
-            if (!having)
-                return false;
-            if (typeof having !== 'object')
-                return false;
-            if (having instanceof $mol_delegate)
-                return false;
-            if (typeof having['destructor'] !== 'function')
-                return false;
-            return true;
-        }
-        catch {
-            return false;
-        }
-    }
-    $.$mol_owning_allow = $mol_owning_allow;
-    function $mol_owning_get(having, Owner) {
-        if (!$mol_owning_allow(having))
-            return null;
-        while (true) {
-            const owner = $.$mol_owning_map.get(having);
-            if (!owner)
-                return owner;
-            if (!Owner)
-                return owner;
-            if (owner instanceof Owner)
-                return owner;
-            having = owner;
-        }
-    }
-    $.$mol_owning_get = $mol_owning_get;
-    function $mol_owning_check(owner, having) {
-        if (!$mol_owning_allow(having))
-            return false;
-        if ($.$mol_owning_map.get(having) !== owner)
-            return false;
-        return true;
-    }
-    $.$mol_owning_check = $mol_owning_check;
-    function $mol_owning_catch(owner, having) {
-        if (!$mol_owning_allow(having))
-            return false;
-        if ($.$mol_owning_map.get(having))
-            return false;
-        $.$mol_owning_map.set(having, owner);
-        return true;
-    }
-    $.$mol_owning_catch = $mol_owning_catch;
-})($ || ($ = {}));
-//mol/owning/owning.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_fail_hidden(error) {
-        throw error;
-    }
-    $.$mol_fail_hidden = $mol_fail_hidden;
-})($ || ($ = {}));
-//mol/fail/hidden/hidden.ts
-;
-"use strict";
-//mol/type/writable/writable.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_object2 {
-        static $ = $;
-        [$mol_ambient_ref] = null;
-        get $() {
-            if (this[$mol_ambient_ref])
-                return this[$mol_ambient_ref];
-            const owner = $mol_owning_get(this);
-            return this[$mol_ambient_ref] = owner?.$ || $mol_object2.$;
-        }
-        set $(next) {
-            if (this[$mol_ambient_ref])
-                $mol_fail_hidden(new Error('Context already defined'));
-            this[$mol_ambient_ref] = next;
-        }
-        static create(init) {
-            const obj = new this;
-            if (init)
-                init(obj);
-            return obj;
-        }
-        static [Symbol.toPrimitive]() {
-            return this.toString();
-        }
-        static toString() {
-            if (Symbol.toStringTag in this)
-                return this[Symbol.toStringTag];
-            return this.name;
-        }
-        destructor() { }
-        toString() {
-            return this[Symbol.toStringTag] || this.constructor.name + '()';
-        }
-        toJSON() {
-            return this.toString();
-        }
-    }
-    $.$mol_object2 = $mol_object2;
-})($ || ($ = {}));
-//mol/object2/object2.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_after_frame extends $mol_object2 {
-        task;
-        static _promise = null;
-        static get promise() {
-            if (this._promise)
-                return this._promise;
-            return this._promise = new Promise(done => {
-                const complete = () => {
-                    this._promise = null;
-                    done();
-                };
-                if (typeof requestAnimationFrame === 'function') {
-                    requestAnimationFrame(complete);
-                }
-                else {
-                    setTimeout(complete, 16);
-                }
-            });
-        }
-        cancelled = false;
-        promise;
-        constructor(task) {
-            super();
-            this.task = task;
-            this.promise = $mol_after_frame.promise.then(() => {
-                if (this.cancelled)
-                    return;
-                task();
-            });
-        }
-        destructor() {
-            this.cancelled = true;
-        }
-    }
-    $.$mol_after_frame = $mol_after_frame;
-})($ || ($ = {}));
-//mol/after/frame/frame.web.ts
-;
-"use strict";
-var $;
-(function ($) {
-    const handled = new WeakSet();
-    class $mol_wire_fiber extends $mol_wire_pub_sub {
-        task;
-        host;
-        static warm = true;
-        static planning = new Set();
-        static reaping = new Set();
-        static plan_task = null;
-        static plan() {
-            if (this.plan_task)
-                return;
-            this.plan_task = new $mol_after_frame(() => {
-                try {
-                    this.sync();
-                }
-                finally {
-                    $mol_wire_fiber.plan_task = null;
-                }
-            });
-        }
-        static sync() {
-            while (this.planning.size) {
-                for (const fiber of this.planning) {
-                    this.planning.delete(fiber);
-                    if (fiber.cursor >= 0)
-                        continue;
-                    if (fiber.cursor === $mol_wire_cursor.final)
-                        continue;
-                    fiber.fresh();
-                }
-            }
-            while (this.reaping.size) {
-                const fibers = this.reaping;
-                this.reaping = new Set;
-                for (const fiber of fibers) {
-                    if (!fiber.sub_empty)
-                        continue;
-                    fiber.destructor();
-                }
-            }
-        }
-        cache = undefined;
-        get args() {
-            return this.data.slice(0, this.pub_from);
-        }
-        result() {
-            if (this.cache instanceof Promise)
-                return;
-            if (this.cache instanceof Error)
-                return;
-            return this.cache;
-        }
-        field() {
-            return this.task.name + '()';
-        }
-        constructor(id, task, host, args) {
-            super();
-            this.task = task;
-            this.host = host;
-            if (args)
-                this.data.push(...args);
-            this.pub_from = this.sub_from = args?.length ?? 0;
-            this[Symbol.toStringTag] = id;
-        }
-        plan() {
-            $mol_wire_fiber.planning.add(this);
-            $mol_wire_fiber.plan();
-        }
-        reap() {
-            $mol_wire_fiber.reaping.add(this);
-            $mol_wire_fiber.plan();
-        }
-        toString() {
-            return this[Symbol.toStringTag];
-        }
-        toJSON() {
-            return this[Symbol.toStringTag];
-        }
-        [$mol_dev_format_head]() {
-            const cursor = {
-                [$mol_wire_cursor.stale]: '🔴',
-                [$mol_wire_cursor.doubt]: '🟡',
-                [$mol_wire_cursor.fresh]: '🟢',
-                [$mol_wire_cursor.final]: '🔵',
-            }[this.cursor] ?? this.cursor.toString();
-            return $mol_dev_format_div({}, $mol_dev_format_native(this), $mol_dev_format_shade(cursor + ' '), $mol_dev_format_auto(this.cache));
-        }
-        get $() {
-            return (this.host ?? this.task)['$'];
-        }
-        emit(quant = $mol_wire_cursor.stale) {
-            if (this.sub_empty)
-                this.plan();
-            else
-                super.emit(quant);
-        }
-        fresh() {
-            if (this.cursor === $mol_wire_cursor.fresh)
-                return;
-            if (this.cursor === $mol_wire_cursor.final)
-                return;
-            check: if (this.cursor === $mol_wire_cursor.doubt) {
-                for (let i = this.pub_from; i < this.sub_from; i += 2) {
-                    ;
-                    this.data[i]?.fresh();
-                    if (this.cursor !== $mol_wire_cursor.doubt)
-                        break check;
-                }
-                this.cursor = $mol_wire_cursor.fresh;
-                return;
-            }
-            const bu = this.track_on();
-            let result;
-            try {
-                switch (this.pub_from) {
-                    case 0:
-                        result = this.task.call(this.host);
-                        break;
-                    case 1:
-                        result = this.task.call(this.host, this.data[0]);
-                        break;
-                    default:
-                        result = this.task.call(this.host, ...this.args);
-                        break;
-                }
-                if (result instanceof Promise) {
-                    const put = (res) => {
-                        if (this.cache === result)
-                            this.put(res);
-                        return res;
-                    };
-                    result = Object.assign(result.then(put, put), {
-                        destructor: result['destructor'] ?? (() => { })
-                    });
-                    handled.add(result);
-                }
-            }
-            catch (error) {
-                if (error instanceof Error || error instanceof Promise) {
-                    result = error;
-                }
-                else {
-                    result = new Error(String(error), { cause: error });
-                }
-                if (result instanceof Promise && !handled.has(result)) {
-                    result = Object.assign(result.finally(() => {
-                        if (this.cache === result)
-                            this.absorb();
-                    }), {
-                        destructor: result['destructor'] ?? (() => { })
-                    });
-                    handled.add(result);
-                }
-            }
-            if (!(result instanceof Promise)) {
-                this.track_cut();
-            }
-            this.track_off(bu);
-            this.put(result);
-        }
-        refresh() {
-            this.cursor = $mol_wire_cursor.stale;
-            this.fresh();
-        }
-        sync() {
-            if (!$mol_wire_fiber.warm) {
-                return this.result();
-            }
-            this.promote();
-            this.fresh();
-            if (this.cache instanceof Error) {
-                return $mol_fail_hidden(this.cache);
-            }
-            if (this.cache instanceof Promise) {
-                return $mol_fail_hidden(this.cache);
-            }
-            return this.cache;
-        }
-        async async() {
-            while (true) {
-                this.fresh();
-                if (this.cache instanceof Error) {
-                    $mol_fail_hidden(this.cache);
-                }
-                if (!(this.cache instanceof Promise))
-                    return this.cache;
-                await this.cache;
-                if (this.cursor === $mol_wire_cursor.final) {
-                    await new Promise(() => { });
-                }
-            }
-        }
-    }
-    $.$mol_wire_fiber = $mol_wire_fiber;
-})($ || ($ = {}));
-//mol/wire/fiber/fiber.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_compare_deep_cache = new WeakMap();
-    function $mol_compare_deep(left, right) {
-        if (Object.is(left, right))
-            return true;
-        if (left === null)
-            return false;
-        if (right === null)
-            return false;
-        if (typeof left !== 'object')
-            return false;
-        if (typeof right !== 'object')
-            return false;
-        const left_proto = Reflect.getPrototypeOf(left);
-        const right_proto = Reflect.getPrototypeOf(right);
-        if (left_proto !== right_proto)
-            return false;
-        if (left instanceof Boolean)
-            return Object.is(left.valueOf(), right['valueOf']());
-        if (left instanceof Number)
-            return Object.is(left.valueOf(), right['valueOf']());
-        if (left instanceof String)
-            return Object.is(left.valueOf(), right['valueOf']());
-        if (left instanceof Date)
-            return Object.is(left.valueOf(), right['valueOf']());
-        if (left instanceof RegExp)
-            return left.source === right['source'] && left.flags === right['flags'];
-        if (left instanceof Error)
-            return left.message === right['message'] && left.stack === right['stack'];
-        let left_cache = $.$mol_compare_deep_cache.get(left);
-        if (left_cache) {
-            const right_cache = left_cache.get(right);
-            if (typeof right_cache === 'boolean')
-                return right_cache;
-        }
-        else {
-            left_cache = new WeakMap([[right, true]]);
-            $.$mol_compare_deep_cache.set(left, left_cache);
-        }
-        let result;
-        try {
-            if (left_proto && !Reflect.getPrototypeOf(left_proto))
-                result = compare_pojo(left, right);
-            else if (Array.isArray(left))
-                result = compare_array(left, right);
-            else if (left instanceof Set)
-                result = compare_set(left, right);
-            else if (left instanceof Map)
-                result = compare_map(left, right);
-            else if (ArrayBuffer.isView(left))
-                result = compare_buffer(left, right);
-            else if (Symbol.toPrimitive in left)
-                result = compare_primitive(left, right);
-            else
-                result = false;
-        }
-        finally {
-            left_cache.set(right, result);
-        }
-        return result;
-    }
-    $.$mol_compare_deep = $mol_compare_deep;
-    function compare_array(left, right) {
-        const len = left.length;
-        if (len !== right.length)
-            return false;
-        for (let i = 0; i < len; ++i) {
-            if (!$mol_compare_deep(left[i], right[i]))
-                return false;
-        }
-        return true;
-    }
-    function compare_buffer(left, right) {
-        const len = left.byteLength;
-        if (len !== right.byteLength)
-            return false;
-        for (let i = 0; i < len; ++i) {
-            if (left[i] !== right[i])
-                return false;
-        }
-        return true;
-    }
-    function compare_iterator(left, right) {
-        while (true) {
-            const left_next = left.next();
-            const right_next = right.next();
-            if (left_next.done !== right_next.done)
-                return false;
-            if (left_next.done)
-                break;
-            if (!$mol_compare_deep(left_next.value, right_next.value))
-                return false;
-        }
-        return true;
-    }
-    function compare_set(left, right) {
-        if (left.size !== right.size)
-            return false;
-        return compare_iterator(left.values(), right.values());
-    }
-    function compare_map(left, right) {
-        if (left.size !== right.size)
-            return false;
-        return compare_iterator(left.keys(), right.keys())
-            && compare_iterator(left.values(), right.values());
-    }
-    function compare_pojo(left, right) {
-        const left_keys = Object.getOwnPropertyNames(left);
-        const right_keys = Object.getOwnPropertyNames(right);
-        if (left_keys.length !== right_keys.length)
-            return false;
-        for (let key of left_keys) {
-            if (!$mol_compare_deep(left[key], Reflect.get(right, key)))
-                return false;
-        }
-        return true;
-    }
-    function compare_primitive(left, right) {
-        return Object.is(left[Symbol.toPrimitive]('default'), right[Symbol.toPrimitive]('default'));
-    }
-})($ || ($ = {}));
-//mol/compare/deep/deep.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wire_task extends $mol_wire_fiber {
-        static getter(task) {
-            return function $mol_wire_task_get(host, args) {
-                const sub = $mol_wire_auto();
-                const existen = sub?.track_next();
-                reuse: if (existen) {
-                    if (!(existen instanceof $mol_wire_task))
-                        break reuse;
-                    if (existen.host !== host)
-                        break reuse;
-                    if (existen.task !== task)
-                        break reuse;
-                    if (!$mol_compare_deep(existen.args, args))
-                        break reuse;
-                    return existen;
-                }
-                return new $mol_wire_task(`${host?.[Symbol.toStringTag] ?? host}.${task.name}(#)`, task, host, args);
-            };
-        }
-        complete() {
-            if (this.cache instanceof Promise)
-                return;
-            this.destructor();
-        }
-        put(next) {
-            const prev = this.cache;
-            this.cache = next;
-            if (next instanceof Promise) {
-                this.cursor = $mol_wire_cursor.fresh;
-                if (next !== prev)
-                    this.emit();
-                return next;
-            }
-            this.cursor = $mol_wire_cursor.final;
-            if (this.sub_empty)
-                this.destructor();
-            else if (next !== prev)
-                this.emit();
-            return next;
-        }
-    }
-    $.$mol_wire_task = $mol_wire_task;
-})($ || ($ = {}));
-//mol/wire/task/task.ts
-;
-"use strict";
-var $;
-(function ($) {
-    const named = new WeakSet();
-    function $mol_func_name(func) {
-        let name = func.name;
-        if (name?.length > 1)
-            return name;
-        if (named.has(func))
-            return name;
-        for (let key in this) {
-            try {
-                if (this[key] !== func)
-                    continue;
-                name = key;
-                Object.defineProperty(func, 'name', { value: name });
-                break;
-            }
-            catch { }
-        }
-        named.add(func);
-        return name;
-    }
-    $.$mol_func_name = $mol_func_name;
-    function $mol_func_name_from(target, source) {
-        Object.defineProperty(target, 'name', { value: source.name });
-        return target;
-    }
-    $.$mol_func_name_from = $mol_func_name_from;
-})($ || ($ = {}));
-//mol/func/name/name.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_guid(length = 8, exists = () => false) {
-        for (;;) {
-            let id = Math.random().toString(36).substring(2, length + 2).toUpperCase();
-            if (exists(id))
-                continue;
-            return id;
-        }
-    }
-    $.$mol_guid = $mol_guid;
-})($ || ($ = {}));
-//mol/guid/guid.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_key_store = new WeakMap();
-    function $mol_key(value) {
-        if (!value)
-            return JSON.stringify(value);
-        if (typeof value !== 'object' && typeof value !== 'function')
-            return JSON.stringify(value);
-        return JSON.stringify(value, (field, value) => {
-            if (!value)
-                return value;
-            if (typeof value !== 'object' && typeof value !== 'function')
-                return value;
-            if (Array.isArray(value))
-                return value;
-            const proto = Reflect.getPrototypeOf(value);
-            if (!proto)
-                return value;
-            if (Reflect.getPrototypeOf(proto) === null)
-                return value;
-            if ('toJSON' in value)
-                return value;
-            if (value instanceof RegExp)
-                return value.toString();
-            let key = $.$mol_key_store.get(value);
-            if (key)
-                return key;
-            key = $mol_guid();
-            $.$mol_key_store.set(value, key);
-            return key;
-        });
-    }
-    $.$mol_key = $mol_key;
-})($ || ($ = {}));
-//mol/key/key.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_method(host, field, descr) {
-        if (!descr)
-            descr = Reflect.getOwnPropertyDescriptor(host, field);
-        const orig = descr?.value ?? host[field];
-        const sup = Reflect.getPrototypeOf(host);
-        if (typeof sup[field] === 'function') {
-            Object.defineProperty(orig, 'name', { value: sup[field].name });
-        }
-        const temp = $mol_wire_task.getter(orig);
-        const value = function (...args) {
-            const fiber = temp(this ?? null, args);
-            return fiber.sync();
-        };
-        Object.defineProperty(value, 'name', { value: orig.name + ' ' });
-        Object.assign(value, { orig });
-        const descr2 = { ...descr, value };
-        Reflect.defineProperty(host, field, descr2);
-        return descr2;
-    }
-    $.$mol_wire_method = $mol_wire_method;
-})($ || ($ = {}));
-//mol/wire/method/method.ts
-;
-"use strict";
-//mol/type/tail/tail.ts
-;
-"use strict";
-//mol/type/foot/foot.ts
-;
-"use strict";
-var $;
-(function ($) {
-    const catched = new WeakMap();
-    function $mol_fail_catch(error) {
-        if (typeof error !== 'object')
-            return false;
-        if (error instanceof Promise)
-            $mol_fail_hidden(error);
-        if (catched.get(error))
-            return false;
-        catched.set(error, true);
-        return true;
-    }
-    $.$mol_fail_catch = $mol_fail_catch;
-})($ || ($ = {}));
-//mol/fail/catch/catch.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_fail_log(error) {
-        if (error instanceof Promise)
-            return false;
-        if (!$mol_fail_catch(error))
-            return false;
-        console.error(error);
-        return true;
-    }
-    $.$mol_fail_log = $mol_fail_log;
-})($ || ($ = {}));
-//mol/fail/log/log.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wire_atom extends $mol_wire_fiber {
-        static solo(host, task) {
-            const field = task.name + '()';
-            const existen = Object.getOwnPropertyDescriptor(host ?? task, field)?.value;
-            if (existen)
-                return existen;
-            const prefix = host?.[Symbol.toStringTag] ?? (host instanceof Function ? $$.$mol_func_name(host) : host);
-            const key = `${prefix}.${field}`;
-            const fiber = new $mol_wire_atom(key, task, host, []);
-            (host ?? task)[field] = fiber;
-            return fiber;
-        }
-        static plex(host, task, key) {
-            const field = task.name + '()';
-            let dict = Object.getOwnPropertyDescriptor(host ?? task, field)?.value;
-            const prefix = host?.[Symbol.toStringTag] ?? (host instanceof Function ? $$.$mol_func_name(host) : host);
-            const id = `${prefix}.${task.name}(${$mol_key(key)})`;
-            if (dict) {
-                const existen = dict.get(id);
-                if (existen)
-                    return existen;
-            }
-            else {
-                dict = (host ?? task)[field] = new Map();
-            }
-            const fiber = new $mol_wire_atom(id, task, host, [key]);
-            dict.set(id, fiber);
-            return fiber;
-        }
-        static watching = new Set();
-        static watch() {
-            new $mol_after_frame($mol_wire_atom.watch);
-            for (const atom of $mol_wire_atom.watching) {
-                if (atom.cursor === $mol_wire_cursor.final) {
-                    $mol_wire_atom.watching.delete(atom);
-                }
-                else {
-                    atom.cursor = $mol_wire_cursor.stale;
-                    atom.fresh();
-                }
-            }
-        }
-        watch() {
-            $mol_wire_atom.watching.add(this);
-        }
-        resync(args) {
-            return this.put(this.task.call(this.host, ...args));
-        }
-        once() {
-            return this.sync();
-        }
-        channel() {
-            return Object.assign((next) => {
-                if (next !== undefined)
-                    return this.resync([...this.args, next]);
-                if (!$mol_wire_fiber.warm)
-                    return this.result();
-                if ($mol_wire_auto() instanceof $mol_wire_task) {
-                    return this.once();
-                }
-                else {
-                    return this.sync();
-                }
-            }, { atom: this });
-        }
-        destructor() {
-            super.destructor();
-            const prev = this.cache;
-            if ($mol_owning_check(this, prev)) {
-                prev.destructor();
-            }
-            if (this.pub_from === 0) {
-                ;
-                (this.host ?? this.task)[this.field()] = null;
-            }
-            else {
-                ;
-                (this.host ?? this.task)[this.field()].delete(this[Symbol.toStringTag]);
-            }
-        }
-        put(next) {
-            const prev = this.cache;
-            update: if (next !== prev) {
-                try {
-                    if ($mol_compare_deep(prev, next))
-                        break update;
-                }
-                catch (error) {
-                    $mol_fail_log(error);
-                }
-                if ($mol_owning_check(this, prev)) {
-                    prev.destructor();
-                }
-                if ($mol_owning_catch(this, next)) {
-                    try {
-                        next[Symbol.toStringTag] = this[Symbol.toStringTag];
-                    }
-                    catch {
-                        Object.defineProperty(next, Symbol.toStringTag, { value: this[Symbol.toStringTag] });
-                    }
-                }
-                if (!this.sub_empty)
-                    this.emit();
-            }
-            this.cache = next;
-            this.cursor = $mol_wire_cursor.fresh;
-            if (next instanceof Promise)
-                return next;
-            this.complete_pubs();
-            return next;
-        }
-    }
-    __decorate([
-        $mol_wire_method
-    ], $mol_wire_atom.prototype, "resync", null);
-    __decorate([
-        $mol_wire_method
-    ], $mol_wire_atom.prototype, "once", null);
-    $.$mol_wire_atom = $mol_wire_atom;
-    $mol_wire_atom.watch();
-})($ || ($ = {}));
-//mol/wire/atom/atom.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_probe(task, next) {
-        const warm = $mol_wire_fiber.warm;
-        try {
-            $mol_wire_fiber.warm = false;
-            return task();
-        }
-        finally {
-            $mol_wire_fiber.warm = warm;
-        }
-    }
-    $.$mol_wire_probe = $mol_wire_probe;
-})($ || ($ = {}));
-//mol/wire/probe/probe.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_solid() {
-        const current = $mol_wire_auto();
-        if (current.reap !== nothing) {
-            current?.sub_on(sub, sub.data.length);
-        }
-        current.reap = nothing;
-    }
-    $.$mol_wire_solid = $mol_wire_solid;
-    const nothing = () => { };
-    const sub = new $mol_wire_pub_sub;
-})($ || ($ = {}));
-//mol/wire/solid/solid.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_watch() {
-        const atom = $mol_wire_auto();
-        if (atom instanceof $mol_wire_atom) {
-            atom.watch();
-        }
-        else {
-            $mol_fail(new Error('Atom is required for watching'));
-        }
-    }
-    $.$mol_wire_watch = $mol_wire_watch;
-})($ || ($ = {}));
-//mol/wire/watch/watch.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_sync(obj) {
-        return new Proxy(obj, {
-            get(obj, field) {
-                const val = obj[field];
-                if (typeof val !== 'function')
-                    return val;
-                const temp = $mol_wire_task.getter(val);
-                return function $mol_wire_sync(...args) {
-                    const fiber = temp(obj, args);
-                    return fiber.sync();
-                };
-            },
-            apply(obj, self, args) {
-                const temp = $mol_wire_task.getter(obj);
-                const fiber = temp(self, args);
-                return fiber.sync();
-            },
-        });
-    }
-    $.$mol_wire_sync = $mol_wire_sync;
-})($ || ($ = {}));
-//mol/wire/sync/sync.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_async(obj) {
-        let fiber;
-        const temp = $mol_wire_task.getter(obj);
-        return new Proxy(obj, {
-            get(obj, field) {
-                const val = obj[field];
-                if (typeof val !== 'function')
-                    return val;
-                let fiber;
-                const temp = $mol_wire_task.getter(val);
-                return function $mol_wire_async(...args) {
-                    fiber?.destructor();
-                    fiber = temp(obj, args);
-                    return fiber.async();
-                };
-            },
-            apply(obj, self, args) {
-                fiber?.destructor();
-                fiber = temp(self, args);
-                return fiber.async();
-            },
-        });
-    }
-    $.$mol_wire_async = $mol_wire_async;
-})($ || ($ = {}));
-//mol/wire/async/async.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_race(...tasks) {
-        const results = tasks.map(task => {
-            try {
-                return task();
-            }
-            catch (error) {
-                return error;
-            }
-        });
-        const promises = results.filter(res => res instanceof Promise);
-        if (promises.length)
-            $mol_fail(Promise.race(promises));
-        const error = results.find(res => res instanceof Error);
-        if (error)
-            $mol_fail(error);
-        return results;
-    }
-    $.$mol_wire_race = $mol_wire_race;
-})($ || ($ = {}));
-//mol/wire/race/race.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_solo(host, field, descr) {
-        if (!descr)
-            descr = Reflect.getOwnPropertyDescriptor(host, field);
-        const orig = descr?.value ?? host[field];
-        const sup = Reflect.getPrototypeOf(host);
-        if (typeof sup[field] === 'function') {
-            Object.defineProperty(orig, 'name', { value: sup[field].name });
-        }
-        const descr2 = {
-            ...descr,
-            value: function (...args) {
-                let atom = $mol_wire_atom.solo(this, orig);
-                if ((args.length === 0) || (args[0] === undefined)) {
-                    if (!$mol_wire_fiber.warm)
-                        return atom.result();
-                    if ($mol_wire_auto() instanceof $mol_wire_task) {
-                        return atom.once();
-                    }
-                    else {
-                        return atom.sync();
-                    }
-                }
-                return atom.resync(args);
-            }
-        };
-        Reflect.defineProperty(descr2.value, 'name', { value: orig.name + ' ' });
-        Object.assign(descr2.value, { orig });
-        Reflect.defineProperty(host, field, descr2);
-        return descr2;
-    }
-    $.$mol_wire_solo = $mol_wire_solo;
-})($ || ($ = {}));
-//mol/wire/solo/solo.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_plex(host, field, descr) {
-        if (!descr)
-            descr = Reflect.getOwnPropertyDescriptor(host, field);
-        const orig = descr?.value ?? host[field];
-        const sup = Reflect.getPrototypeOf(host);
-        if (typeof sup[field] === 'function') {
-            Object.defineProperty(orig, 'name', { value: sup[field].name });
-        }
-        const descr2 = {
-            ...descr,
-            value: function (...args) {
-                let atom = $mol_wire_atom.plex(this, orig, args[0]);
-                if ((args.length === 1) || (args[1] === undefined)) {
-                    if (!$mol_wire_fiber.warm)
-                        return atom.result();
-                    if ($mol_wire_auto() instanceof $mol_wire_task) {
-                        return atom.once();
-                    }
-                    else {
-                        return atom.sync();
-                    }
-                }
-                return atom.resync(args);
-            }
-        };
-        Reflect.defineProperty(descr2.value, 'name', { value: orig.name + ' ' });
-        Object.assign(descr2.value, { orig });
-        Reflect.defineProperty(host, field, descr2);
-        return descr2;
-    }
-    $.$mol_wire_plex = $mol_wire_plex;
-})($ || ($ = {}));
-//mol/wire/plex/plex.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_const(value) {
-        var getter = (() => value);
-        getter['()'] = value;
-        getter[Symbol.toStringTag] = value;
-        return getter;
-    }
-    $.$mol_const = $mol_const;
-})($ || ($ = {}));
-//mol/const/const.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_field(host, field, descr) {
-        if (!descr)
-            descr = Reflect.getOwnPropertyDescriptor(host, field);
-        const _get = descr?.get || $mol_const(descr?.value);
-        const _set = descr?.set || function (next) {
-            $mol_wire_atom.solo(this, _get).put(next);
-        };
-        const sup = Reflect.getPrototypeOf(host);
-        const sup_descr = Reflect.getOwnPropertyDescriptor(sup, field);
-        Object.defineProperty(_get, 'name', { value: sup_descr?.get?.name ?? field });
-        Object.defineProperty(_set, 'name', { value: sup_descr?.set?.name ?? field });
-        function get() {
-            return $mol_wire_atom.solo(this, _get).sync();
-        }
-        const temp = $mol_wire_task.getter(_set);
-        function set(next) {
-            temp(this, [next]).sync();
-        }
-        Object.defineProperty(get, 'name', { value: _get.name + '$' });
-        Object.defineProperty(set, 'name', { value: _set.name + '@' });
-        Object.assign(get, { orig: _get });
-        Object.assign(set, { orig: _set });
-        const { value, writable, ...descr2 } = { ...descr, get, set };
-        Reflect.defineProperty(host, field, descr2);
-        return descr2;
-    }
-    $.$mol_wire_field = $mol_wire_field;
-})($ || ($ = {}));
-//mol/wire/field/field.ts
-;
-"use strict";
-var $;
-(function ($_1) {
-    let $$;
-    (function ($$) {
-        let $;
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-    $_1.$mol_object_field = Symbol('$mol_object_field');
-    class $mol_object extends $mol_object2 {
-        static make(config) {
-            return super.create(obj => {
-                for (let key in config)
-                    obj[key] = config[key];
-            });
-        }
-    }
-    $_1.$mol_object = $mol_object;
-})($ || ($ = {}));
-//mol/object/object.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_mem = $mol_wire_solo;
-    $.$mol_mem_key = $mol_wire_plex;
-})($ || ($ = {}));
-//mol/mem/mem.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_after_timeout extends $mol_object2 {
-        delay;
-        task;
-        id;
-        constructor(delay, task) {
-            super();
-            this.delay = delay;
-            this.task = task;
-            this.id = setTimeout(task, delay);
-        }
-        destructor() {
-            clearTimeout(this.id);
-        }
-    }
-    $.$mol_after_timeout = $mol_after_timeout;
-})($ || ($ = {}));
-//mol/after/timeout/timeout.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_state_time extends $mol_object {
-        static task(precision, reset) {
-            if (precision) {
-                return new $mol_after_timeout(precision, () => this.task(precision, null));
-            }
-            else {
-                return new $mol_after_frame(() => this.task(precision, null));
-            }
-        }
-        static now(precision) {
-            this.task(precision);
-            return Date.now();
-        }
-    }
-    __decorate([
-        $mol_mem_key
-    ], $mol_state_time, "task", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_state_time, "now", null);
-    $.$mol_state_time = $mol_state_time;
-})($ || ($ = {}));
-//mol/state/time/time.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_easing(next) {
-        const atom = $mol_wire_auto();
-        if (!(atom instanceof $mol_wire_atom))
-            $mol_fail(new Error('Allowed only inside atom'));
-        const prev = atom.result() ?? next;
-        if (typeof prev !== 'number')
-            return next;
-        const current = (prev * 2 + next) / 3;
-        const diff = Math.abs(current - next);
-        if (diff < 1)
-            return next;
-        $mol_state_time.now(0);
-        return current;
-    }
-    $.$mol_wire_easing = $mol_wire_easing;
-})($ || ($ = {}));
-//mol/wire/easing/easing.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_patch(obj) {
-        for (const field of Reflect.ownKeys(obj)) {
-            const descr = Reflect.getOwnPropertyDescriptor(obj, field);
-            if (!descr.configurable)
-                continue;
-            if (!descr.get)
-                continue;
-            const get = descr.get ?? (() => descr.value);
-            const set = descr.set ?? (next => descr.value = next);
-            Reflect.defineProperty(obj, field, {
-                configurable: true,
-                enumerable: descr.enumerable,
-                get() {
-                    const atom = $mol_wire_atom.solo(obj, get);
-                    atom.watch();
-                    return atom.sync();
-                },
-                set(next) {
-                    const atom = $mol_wire_atom.solo(obj, get);
-                    set.call(this, next);
-                    atom.refresh();
-                },
-            });
-        }
-    }
-    $.$mol_wire_patch = $mol_wire_patch;
-})($ || ($ = {}));
-//mol/wire/patch/patch.ts
-;
-"use strict";
-//mol/type/result/result.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_let(host) {
-        for (const field of Object.keys(host)) {
-            host[field] = new $mol_wire_atom(field, host[field], host).channel();
-        }
-        return host;
-    }
-    $.$mol_wire_let = $mol_wire_let;
-})($ || ($ = {}));
-//mol/wire/let/let.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wire_set extends Set {
-        pub = new $mol_wire_pub;
-        has(value) {
-            this.pub.promote();
-            return super.has(value);
-        }
-        entries() {
-            this.pub.promote();
-            return super.entries();
-        }
-        keys() {
-            this.pub.promote();
-            return super.keys();
-        }
-        values() {
-            this.pub.promote();
-            return super.values();
-        }
-        forEach(task, self) {
-            this.pub.promote();
-            super.forEach(task, self);
-        }
-        [Symbol.iterator]() {
-            this.pub.promote();
-            return super[Symbol.iterator]();
-        }
-        get size() {
-            this.pub.promote();
-            return super.size;
-        }
-        add(value) {
-            if (super.has(value))
-                return this;
-            super.add(value);
-            this.pub.emit();
-            return this;
-        }
-        delete(value) {
-            const res = super.delete(value);
-            if (res)
-                this.pub.emit();
-            return res;
-        }
-        clear() {
-            if (!super.size)
-                return;
-            super.clear();
-            this.pub.emit();
-        }
-        item(val, next) {
-            if (next === undefined)
-                return this.has(val);
-            if (next)
-                this.add(val);
-            else
-                this.delete(val);
-            return next;
-        }
-    }
-    $.$mol_wire_set = $mol_wire_set;
-})($ || ($ = {}));
-//mol/wire/set/set.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wire_dict extends Map {
-        pub = new $mol_wire_pub;
-        has(key) {
-            this.pub.promote();
-            return super.has(key);
-        }
-        get(key) {
-            this.pub.promote();
-            return super.get(key);
-        }
-        entries() {
-            this.pub.promote();
-            return super.entries();
-        }
-        keys() {
-            this.pub.promote();
-            return super.keys();
-        }
-        values() {
-            this.pub.promote();
-            return super.values();
-        }
-        forEach(task, self) {
-            this.pub.promote();
-            super.forEach(task, self);
-        }
-        [Symbol.iterator]() {
-            this.pub.promote();
-            return super[Symbol.iterator]();
-        }
-        get size() {
-            this.pub.promote();
-            return super.size;
-        }
-        set(key, value) {
-            if (super.get(key) === value)
-                return this;
-            super.set(key, value);
-            this.pub.emit();
-            return this;
-        }
-        delete(key) {
-            const res = super.delete(key);
-            if (res)
-                this.pub.emit();
-            return res;
-        }
-        clear() {
-            if (!super.size)
-                return;
-            super.clear();
-            this.pub.emit();
-        }
-        item(key, next) {
-            if (next === undefined)
-                return this.get(key) ?? null;
-            if (next === null)
-                this.delete(key);
-            else
-                this.set(key, next);
-            return next;
-        }
-    }
-    $.$mol_wire_dict = $mol_wire_dict;
-})($ || ($ = {}));
-//mol/wire/dict/dict.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_promise() {
-        let done;
-        let fail;
-        const promise = new Promise((d, f) => {
-            done = d;
-            fail = f;
-        });
-        return Object.assign(promise, {
-            done,
-            fail,
-        });
-    }
-    $.$mol_promise = $mol_promise;
-})($ || ($ = {}));
-//mol/promise/promise.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wait_timeout_async(timeout) {
-        const promise = $mol_promise();
-        const task = new this.$mol_after_timeout(timeout, () => promise.done());
-        return Object.assign(promise, {
-            destructor: () => task.destructor()
-        });
-    }
-    $.$mol_wait_timeout_async = $mol_wait_timeout_async;
-    function $mol_wait_timeout(timeout) {
-        return this.$mol_wire_sync(this).$mol_wait_timeout_async(timeout);
-    }
-    $.$mol_wait_timeout = $mol_wait_timeout;
-})($ || ($ = {}));
-//mol/wait/timeout/timeout.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_log3_area_lazy(event) {
-        const self = this;
-        const stack = self.$mol_log3_stack;
-        const deep = stack.length;
-        let logged = false;
-        stack.push(() => {
-            logged = true;
-            self.$mol_log3_area.call(self, event);
-        });
-        return () => {
-            if (logged)
-                self.console.groupEnd();
-            if (stack.length > deep)
-                stack.length = deep;
-        };
-    }
-    $.$mol_log3_area_lazy = $mol_log3_area_lazy;
-    $.$mol_log3_stack = [];
-})($ || ($ = {}));
-//mol/log3/log3.ts
-;
-"use strict";
-//mol/type/keys/extract/extract.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_log3_web_make(level, color) {
-        return function $mol_log3_logger(event) {
-            const pending = this.$mol_log3_stack.pop();
-            if (pending)
-                pending();
-            let tpl = '%c';
-            const chunks = Object.values(event);
-            for (let i = 0; i < chunks.length; ++i) {
-                tpl += (typeof chunks[i] === 'string') ? ' ⦙ %s' : ' ⦙ %o';
-            }
-            const style = `color:${color};font-weight:bolder`;
-            this.console[level](tpl, style, ...chunks);
-            const self = this;
-            return () => self.console.groupEnd();
-        };
-    }
-    $.$mol_log3_web_make = $mol_log3_web_make;
-    $.$mol_log3_come = $mol_log3_web_make('info', 'royalblue');
-    $.$mol_log3_done = $mol_log3_web_make('info', 'forestgreen');
-    $.$mol_log3_fail = $mol_log3_web_make('error', 'orangered');
-    $.$mol_log3_warn = $mol_log3_web_make('warn', 'goldenrod');
-    $.$mol_log3_rise = $mol_log3_web_make('log', 'magenta');
-    $.$mol_log3_area = $mol_log3_web_make('group', 'cyan');
-})($ || ($ = {}));
-//mol/log3/log3.web.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wire_log extends $mol_object2 {
-        static watch(task) {
-            return task;
-        }
-        static track(fiber) {
-            const prev = $mol_wire_probe(() => this.track(fiber));
-            let next;
-            try {
-                next = fiber.sync();
-            }
-            finally {
-                for (const pub of fiber.pub_list) {
-                    if (pub instanceof $mol_wire_fiber) {
-                        this.track(pub);
-                    }
-                }
-            }
-            if (fiber.host === this)
-                return next;
-            if ($mol_compare_deep(prev, next)) {
-                this.$.$mol_log3_rise({
-                    message: '💧 Same',
-                    place: fiber,
-                });
-            }
-            else if (prev !== undefined) {
-                this.$.$mol_log3_rise({
-                    message: '🔥 Next',
-                    place: fiber,
-                    prev,
-                });
-            }
-            return next;
-        }
-        static active() {
-            try {
-                this.watch()?.();
-            }
-            catch (error) {
-                $mol_fail_log(error);
-            }
-            finally {
-                for (const pub of $mol_wire_auto().pub_list) {
-                    if (pub instanceof $mol_wire_fiber) {
-                        this.track(pub);
-                    }
-                }
-            }
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_wire_log, "watch", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_wire_log, "track", null);
-    __decorate([
-        $mol_mem
-    ], $mol_wire_log, "active", null);
-    $.$mol_wire_log = $mol_wire_log;
-})($ || ($ = {}));
-//mol/wire/log/log.ts
-
-//# sourceMappingURL=web.js.map
-
-
-/***/ }),
-
 /***/ "../../node_modules/autobind-decorator/lib/esm/index.js":
 /*!**************************************************************!*\
   !*** ../../node_modules/autobind-decorator/lib/esm/index.js ***!
@@ -36328,22 +34409,1951 @@ var mediaLength = function (value) {
 
 /***/ }),
 
+/***/ "../../node_modules/mol_wire_lib/web.mjs":
+/*!***********************************************!*\
+  !*** ../../node_modules/mol_wire_lib/web.mjs ***!
+  \***********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+
+function require( path ){ return $node[ path ] };
+"use strict"
+
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+	var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	else for (var i = decorators.length - 1; i >= 0; i--) if ((d = decorators[i])) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var $ = ( typeof module === 'object' ) ? ( module['export'+'s'] = globalThis ) : globalThis
+$.$$ = $
+
+;
+
+var $node = $node || {}
+void function( module ) { var exports = module.exports = this; function require( id ) { return $node[ id.replace( /^.\// , "../" ) ] }; 
+;
+"use strict";
+Error.stackTraceLimit = 50;
+var $;
+(function ($) {
+})($ || ($ = {}));
+module.exports = $;
+//mam.ts
+;
+
+$node[ "../mam.ts" ] = $node[ "../mam.ts" ] = module.exports }.call( {} , {} )
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_fail(error) {
+        throw error;
+    }
+    $.$mol_fail = $mol_fail;
+})($ || ($ = {}));
+//mol/fail/fail.ts
+;
+"use strict";
+var $;
+(function ($) {
+    let $mol_wire_cursor;
+    (function ($mol_wire_cursor) {
+        $mol_wire_cursor[$mol_wire_cursor["stale"] = -1] = "stale";
+        $mol_wire_cursor[$mol_wire_cursor["doubt"] = -2] = "doubt";
+        $mol_wire_cursor[$mol_wire_cursor["fresh"] = -3] = "fresh";
+        $mol_wire_cursor[$mol_wire_cursor["final"] = -4] = "final";
+    })($mol_wire_cursor = $.$mol_wire_cursor || ($.$mol_wire_cursor = {}));
+})($ || ($ = {}));
+//mol/wire/cursor/cursor.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_pub extends Object {
+        data = [];
+        static get [Symbol.species]() {
+            return Array;
+        }
+        sub_from = 0;
+        get sub_list() {
+            const res = [];
+            for (let i = this.sub_from; i < this.data.length; i += 2) {
+                res.push(this.data[i]);
+            }
+            return res;
+        }
+        get sub_empty() {
+            return this.sub_from === this.data.length;
+        }
+        sub_on(sub, pub_pos) {
+            const pos = this.data.length;
+            this.data.push(sub, pub_pos);
+            return pos;
+        }
+        sub_off(sub_pos) {
+            if (!(sub_pos < this.data.length)) {
+                $mol_fail(new Error(`Wrong pos ${sub_pos}`));
+            }
+            const end = this.data.length - 2;
+            if (sub_pos !== end) {
+                this.peer_move(end, sub_pos);
+            }
+            this.data.pop();
+            this.data.pop();
+            if (this.data.length === this.sub_from)
+                this.reap();
+        }
+        reap() { }
+        promote() {
+            $mol_wire_auto()?.track_next(this);
+        }
+        fresh() { }
+        complete() { }
+        emit(quant = $mol_wire_cursor.stale) {
+            for (let i = this.sub_from; i < this.data.length; i += 2) {
+                ;
+                this.data[i].absorb(quant);
+            }
+        }
+        peer_move(from_pos, to_pos) {
+            const peer = this.data[from_pos];
+            const self_pos = this.data[from_pos + 1];
+            this.data[to_pos] = peer;
+            this.data[to_pos + 1] = self_pos;
+            peer.peer_repos(self_pos, to_pos);
+        }
+        peer_repos(peer_pos, self_pos) {
+            this.data[peer_pos + 1] = self_pos;
+        }
+    }
+    $.$mol_wire_pub = $mol_wire_pub;
+})($ || ($ = {}));
+//mol/wire/pub/pub.ts
+;
+"use strict";
+//mol/wire/sub/sub.ts
+;
+"use strict";
+var $;
+(function ($) {
+    let auto = null;
+    function $mol_wire_auto(next = auto) {
+        return auto = next;
+    }
+    $.$mol_wire_auto = $mol_wire_auto;
+    $.$mol_wire_affected = [];
+})($ || ($ = {}));
+//mol/wire/wire.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $['devtoolsFormatters'] = $['devtoolsFormatters'] || [];
+    function $mol_dev_format_register(config) {
+        $['devtoolsFormatters'].push(config);
+    }
+    $.$mol_dev_format_register = $mol_dev_format_register;
+    $.$mol_dev_format_head = Symbol('$mol_dev_format_head');
+    $.$mol_dev_format_body = Symbol('$mol_dev_format_body');
+    $mol_dev_format_register({
+        header: (val, config = false) => {
+            if (config)
+                return null;
+            if (!val)
+                return null;
+            if ($.$mol_dev_format_head in val) {
+                return val[$.$mol_dev_format_head]();
+            }
+            if (typeof val === 'function') {
+                return $mol_dev_format_native(val);
+            }
+            return null;
+        },
+        hasBody: val => val[$.$mol_dev_format_body],
+        body: val => val[$.$mol_dev_format_body](),
+    });
+    function $mol_dev_format_native(obj) {
+        if (typeof obj === 'undefined')
+            return $.$mol_dev_format_shade('undefined');
+        if (typeof obj !== 'object' && typeof obj !== 'function')
+            return obj;
+        return [
+            'object',
+            {
+                object: obj,
+                config: true,
+            },
+        ];
+    }
+    $.$mol_dev_format_native = $mol_dev_format_native;
+    function $mol_dev_format_auto(obj) {
+        if (obj == null)
+            return $.$mol_dev_format_shade(String(obj));
+        if (typeof obj === 'object' && $.$mol_dev_format_head in obj) {
+            return obj[$.$mol_dev_format_head]();
+        }
+        return [
+            'object',
+            {
+                object: obj,
+                config: false,
+            },
+        ];
+    }
+    $.$mol_dev_format_auto = $mol_dev_format_auto;
+    function $mol_dev_format_element(element, style, ...content) {
+        const styles = [];
+        for (let key in style)
+            styles.push(`${key} : ${style[key]}`);
+        return [
+            element,
+            {
+                style: styles.join(' ; '),
+            },
+            ...content,
+        ];
+    }
+    $.$mol_dev_format_element = $mol_dev_format_element;
+    function $mol_dev_format_span(style, ...content) {
+        return $mol_dev_format_element('span', {
+            'vertical-align': '8%',
+            ...style,
+        }, ...content);
+    }
+    $.$mol_dev_format_span = $mol_dev_format_span;
+    $.$mol_dev_format_div = $mol_dev_format_element.bind(null, 'div');
+    $.$mol_dev_format_ol = $mol_dev_format_element.bind(null, 'ol');
+    $.$mol_dev_format_li = $mol_dev_format_element.bind(null, 'li');
+    $.$mol_dev_format_table = $mol_dev_format_element.bind(null, 'table');
+    $.$mol_dev_format_tr = $mol_dev_format_element.bind(null, 'tr');
+    $.$mol_dev_format_td = $mol_dev_format_element.bind(null, 'td');
+    $.$mol_dev_format_accent = $mol_dev_format_span.bind(null, {
+        'color': 'magenta',
+    });
+    $.$mol_dev_format_strong = $mol_dev_format_span.bind(null, {
+        'font-weight': 'bold',
+    });
+    $.$mol_dev_format_string = $mol_dev_format_span.bind(null, {
+        'color': 'green',
+    });
+    $.$mol_dev_format_shade = $mol_dev_format_span.bind(null, {
+        'color': 'gray',
+    });
+    $.$mol_dev_format_indent = $.$mol_dev_format_div.bind(null, {
+        'margin-left': '13px'
+    });
+})($ || ($ = {}));
+//mol/dev/format/format.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_pub_sub extends $mol_wire_pub {
+        pub_from = 0;
+        cursor = $mol_wire_cursor.stale;
+        get pub_list() {
+            const res = [];
+            const max = this.cursor >= 0 ? this.cursor : this.sub_from;
+            for (let i = this.pub_from; i < max; i += 2) {
+                if (this.data[i])
+                    res.push(this.data[i]);
+            }
+            return res;
+        }
+        track_on() {
+            this.cursor = this.pub_from;
+            const sub = $mol_wire_auto();
+            $mol_wire_auto(this);
+            return sub;
+        }
+        promote() {
+            if (this.cursor >= this.pub_from) {
+                $mol_fail(new Error('Circular subscription'));
+            }
+            super.promote();
+        }
+        track_next(pub) {
+            if (this.cursor < 0)
+                $mol_fail(new Error('Promo to non begun sub'));
+            if (this.cursor < this.sub_from) {
+                const next = this.data[this.cursor];
+                if (pub === undefined)
+                    return next ?? null;
+                if (next === pub) {
+                    this.cursor += 2;
+                    return next;
+                }
+                if (next) {
+                    if (this.sub_from < this.data.length) {
+                        this.peer_move(this.sub_from, this.data.length);
+                    }
+                    this.peer_move(this.cursor, this.sub_from);
+                    this.sub_from += 2;
+                }
+            }
+            else {
+                if (pub === undefined)
+                    return null;
+                if (this.sub_from < this.data.length) {
+                    this.peer_move(this.sub_from, this.data.length);
+                }
+                this.sub_from += 2;
+            }
+            this.data[this.cursor] = pub;
+            this.data[this.cursor + 1] = pub.sub_on(this, this.cursor);
+            this.cursor += 2;
+            return pub;
+        }
+        track_off(sub) {
+            $mol_wire_auto(sub);
+            if (this.cursor < 0) {
+                $mol_fail(new Error('End of non begun sub'));
+            }
+            for (let cursor = this.pub_from; cursor < this.cursor; cursor += 2) {
+                const pub = this.data[cursor];
+                pub.fresh();
+            }
+            this.cursor = $mol_wire_cursor.fresh;
+        }
+        pub_off(sub_pos) {
+            this.data[sub_pos] = undefined;
+            this.data[sub_pos + 1] = undefined;
+        }
+        destructor() {
+            for (let cursor = this.data.length - 2; cursor >= this.sub_from; cursor -= 2) {
+                const sub = this.data[cursor];
+                const pos = this.data[cursor + 1];
+                sub.pub_off(pos);
+                this.data.pop();
+                this.data.pop();
+            }
+            this.cursor = this.pub_from;
+            this.track_cut();
+            this.cursor = $mol_wire_cursor.final;
+        }
+        track_cut() {
+            if (this.cursor < this.pub_from) {
+                $mol_fail(new Error('Cut of non begun sub'));
+            }
+            let tail = 0;
+            for (let cursor = this.cursor; cursor < this.sub_from; cursor += 2) {
+                const pub = this.data[cursor];
+                pub?.sub_off(this.data[cursor + 1]);
+                if (this.sub_from < this.data.length) {
+                    this.peer_move(this.data.length - 2, cursor);
+                    this.data.pop();
+                    this.data.pop();
+                }
+                else {
+                    ++tail;
+                }
+            }
+            for (; tail; --tail) {
+                this.data.pop();
+                this.data.pop();
+            }
+            this.sub_from = this.cursor;
+        }
+        complete() { }
+        complete_pubs() {
+            const limit = this.cursor < 0 ? this.sub_from : this.cursor;
+            for (let cursor = this.pub_from; cursor < limit; cursor += 2) {
+                const pub = this.data[cursor];
+                pub?.complete();
+            }
+        }
+        absorb(quant = $mol_wire_cursor.stale) {
+            if (this.cursor === $mol_wire_cursor.final)
+                return;
+            if (this.cursor >= quant)
+                return;
+            this.cursor = quant;
+            this.emit($mol_wire_cursor.doubt);
+        }
+        [$mol_dev_format_head]() {
+            return $mol_dev_format_native(this);
+        }
+        get pub_empty() {
+            return this.sub_from === this.pub_from;
+        }
+    }
+    $.$mol_wire_pub_sub = $mol_wire_pub_sub;
+})($ || ($ = {}));
+//mol/wire/pub/sub/sub.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_ambient_ref = Symbol('$mol_ambient_ref');
+    function $mol_ambient(overrides) {
+        return Object.setPrototypeOf(overrides, this || $);
+    }
+    $.$mol_ambient = $mol_ambient;
+})($ || ($ = {}));
+//mol/ambient/ambient.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const instances = new WeakSet();
+    function $mol_delegate(proto, target) {
+        const proxy = new Proxy(proto, {
+            get: (_, field) => {
+                const obj = target();
+                let val = Reflect.get(obj, field);
+                if (typeof val === 'function') {
+                    val = val.bind(obj);
+                }
+                return val;
+            },
+            has: (_, field) => Reflect.has(target(), field),
+            set: (_, field, value) => Reflect.set(target(), field, value),
+            getOwnPropertyDescriptor: (_, field) => Reflect.getOwnPropertyDescriptor(target(), field),
+            ownKeys: () => Reflect.ownKeys(target()),
+            getPrototypeOf: () => Reflect.getPrototypeOf(target()),
+            setPrototypeOf: (_, donor) => Reflect.setPrototypeOf(target(), donor),
+            isExtensible: () => Reflect.isExtensible(target()),
+            preventExtensions: () => Reflect.preventExtensions(target()),
+            apply: (_, self, args) => Reflect.apply(target(), self, args),
+            construct: (_, args, retarget) => Reflect.construct(target(), args, retarget),
+            defineProperty: (_, field, descr) => Reflect.defineProperty(target(), field, descr),
+            deleteProperty: (_, field) => Reflect.deleteProperty(target(), field),
+        });
+        instances.add(proxy);
+        return proxy;
+    }
+    $.$mol_delegate = $mol_delegate;
+    Reflect.defineProperty($mol_delegate, Symbol.hasInstance, {
+        value: (obj) => instances.has(obj),
+    });
+})($ || ($ = {}));
+//mol/delegate/delegate.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_owning_map = new WeakMap();
+    function $mol_owning_allow(having) {
+        try {
+            if (!having)
+                return false;
+            if (typeof having !== 'object')
+                return false;
+            if (having instanceof $mol_delegate)
+                return false;
+            if (typeof having['destructor'] !== 'function')
+                return false;
+            return true;
+        }
+        catch {
+            return false;
+        }
+    }
+    $.$mol_owning_allow = $mol_owning_allow;
+    function $mol_owning_get(having, Owner) {
+        if (!$mol_owning_allow(having))
+            return null;
+        while (true) {
+            const owner = $.$mol_owning_map.get(having);
+            if (!owner)
+                return owner;
+            if (!Owner)
+                return owner;
+            if (owner instanceof Owner)
+                return owner;
+            having = owner;
+        }
+    }
+    $.$mol_owning_get = $mol_owning_get;
+    function $mol_owning_check(owner, having) {
+        if (!$mol_owning_allow(having))
+            return false;
+        if ($.$mol_owning_map.get(having) !== owner)
+            return false;
+        return true;
+    }
+    $.$mol_owning_check = $mol_owning_check;
+    function $mol_owning_catch(owner, having) {
+        if (!$mol_owning_allow(having))
+            return false;
+        if ($.$mol_owning_map.get(having))
+            return false;
+        $.$mol_owning_map.set(having, owner);
+        return true;
+    }
+    $.$mol_owning_catch = $mol_owning_catch;
+})($ || ($ = {}));
+//mol/owning/owning.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_fail_hidden(error) {
+        throw error;
+    }
+    $.$mol_fail_hidden = $mol_fail_hidden;
+})($ || ($ = {}));
+//mol/fail/hidden/hidden.ts
+;
+"use strict";
+//mol/type/writable/writable.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_object2 {
+        static $ = $;
+        [$mol_ambient_ref] = null;
+        get $() {
+            if (this[$mol_ambient_ref])
+                return this[$mol_ambient_ref];
+            const owner = $mol_owning_get(this);
+            return this[$mol_ambient_ref] = owner?.$ || $mol_object2.$;
+        }
+        set $(next) {
+            if (this[$mol_ambient_ref])
+                $mol_fail_hidden(new Error('Context already defined'));
+            this[$mol_ambient_ref] = next;
+        }
+        static create(init) {
+            const obj = new this;
+            if (init)
+                init(obj);
+            return obj;
+        }
+        static [Symbol.toPrimitive]() {
+            return this.toString();
+        }
+        static toString() {
+            if (Symbol.toStringTag in this)
+                return this[Symbol.toStringTag];
+            return this.name;
+        }
+        destructor() { }
+        toString() {
+            return this[Symbol.toStringTag] || this.constructor.name + '()';
+        }
+        toJSON() {
+            return this.toString();
+        }
+    }
+    $.$mol_object2 = $mol_object2;
+})($ || ($ = {}));
+//mol/object2/object2.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_after_frame extends $mol_object2 {
+        task;
+        static _promise = null;
+        static get promise() {
+            if (this._promise)
+                return this._promise;
+            return this._promise = new Promise(done => {
+                const complete = () => {
+                    this._promise = null;
+                    done();
+                };
+                if (typeof requestAnimationFrame === 'function') {
+                    requestAnimationFrame(complete);
+                }
+                else {
+                    setTimeout(complete, 16);
+                }
+            });
+        }
+        cancelled = false;
+        promise;
+        constructor(task) {
+            super();
+            this.task = task;
+            this.promise = $mol_after_frame.promise.then(() => {
+                if (this.cancelled)
+                    return;
+                task();
+            });
+        }
+        destructor() {
+            this.cancelled = true;
+        }
+    }
+    $.$mol_after_frame = $mol_after_frame;
+})($ || ($ = {}));
+//mol/after/frame/frame.web.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const handled = new WeakSet();
+    class $mol_wire_fiber extends $mol_wire_pub_sub {
+        task;
+        host;
+        static warm = true;
+        static planning = new Set();
+        static reaping = new Set();
+        static plan_task = null;
+        static plan() {
+            if (this.plan_task)
+                return;
+            this.plan_task = new $mol_after_frame(() => {
+                try {
+                    this.sync();
+                }
+                finally {
+                    $mol_wire_fiber.plan_task = null;
+                }
+            });
+        }
+        static sync() {
+            while (this.planning.size) {
+                for (const fiber of this.planning) {
+                    this.planning.delete(fiber);
+                    if (fiber.cursor >= 0)
+                        continue;
+                    if (fiber.cursor === $mol_wire_cursor.final)
+                        continue;
+                    fiber.fresh();
+                }
+            }
+            while (this.reaping.size) {
+                const fibers = this.reaping;
+                this.reaping = new Set;
+                for (const fiber of fibers) {
+                    if (!fiber.sub_empty)
+                        continue;
+                    fiber.destructor();
+                }
+            }
+        }
+        cache = undefined;
+        get args() {
+            return this.data.slice(0, this.pub_from);
+        }
+        result() {
+            if (this.cache instanceof Promise)
+                return;
+            if (this.cache instanceof Error)
+                return;
+            return this.cache;
+        }
+        field() {
+            return this.task.name + '()';
+        }
+        constructor(id, task, host, args) {
+            super();
+            this.task = task;
+            this.host = host;
+            if (args)
+                this.data.push(...args);
+            this.pub_from = this.sub_from = args?.length ?? 0;
+            this[Symbol.toStringTag] = id;
+        }
+        plan() {
+            $mol_wire_fiber.planning.add(this);
+            $mol_wire_fiber.plan();
+        }
+        reap() {
+            $mol_wire_fiber.reaping.add(this);
+            $mol_wire_fiber.plan();
+        }
+        toString() {
+            return this[Symbol.toStringTag];
+        }
+        toJSON() {
+            return this[Symbol.toStringTag];
+        }
+        [$mol_dev_format_head]() {
+            const cursor = {
+                [$mol_wire_cursor.stale]: '🔴',
+                [$mol_wire_cursor.doubt]: '🟡',
+                [$mol_wire_cursor.fresh]: '🟢',
+                [$mol_wire_cursor.final]: '🔵',
+            }[this.cursor] ?? this.cursor.toString();
+            return $mol_dev_format_div({}, $mol_dev_format_native(this), $mol_dev_format_shade(cursor + ' '), $mol_dev_format_auto(this.cache));
+        }
+        get $() {
+            return (this.host ?? this.task)['$'];
+        }
+        emit(quant = $mol_wire_cursor.stale) {
+            if (this.sub_empty)
+                this.plan();
+            else
+                super.emit(quant);
+        }
+        fresh() {
+            if (this.cursor === $mol_wire_cursor.fresh)
+                return;
+            if (this.cursor === $mol_wire_cursor.final)
+                return;
+            check: if (this.cursor === $mol_wire_cursor.doubt) {
+                for (let i = this.pub_from; i < this.sub_from; i += 2) {
+                    ;
+                    this.data[i]?.fresh();
+                    if (this.cursor !== $mol_wire_cursor.doubt)
+                        break check;
+                }
+                this.cursor = $mol_wire_cursor.fresh;
+                return;
+            }
+            const bu = this.track_on();
+            let result;
+            try {
+                switch (this.pub_from) {
+                    case 0:
+                        result = this.task.call(this.host);
+                        break;
+                    case 1:
+                        result = this.task.call(this.host, this.data[0]);
+                        break;
+                    default:
+                        result = this.task.call(this.host, ...this.args);
+                        break;
+                }
+                if (result instanceof Promise) {
+                    const put = (res) => {
+                        if (this.cache === result)
+                            this.put(res);
+                        return res;
+                    };
+                    result = Object.assign(result.then(put, put), {
+                        destructor: result['destructor'] ?? (() => { })
+                    });
+                    handled.add(result);
+                }
+            }
+            catch (error) {
+                if (error instanceof Error || error instanceof Promise) {
+                    result = error;
+                }
+                else {
+                    result = new Error(String(error), { cause: error });
+                }
+                if (result instanceof Promise && !handled.has(result)) {
+                    result = Object.assign(result.finally(() => {
+                        if (this.cache === result)
+                            this.absorb();
+                    }), {
+                        destructor: result['destructor'] ?? (() => { })
+                    });
+                    handled.add(result);
+                }
+            }
+            if (!(result instanceof Promise)) {
+                this.track_cut();
+            }
+            this.track_off(bu);
+            this.put(result);
+        }
+        refresh() {
+            this.cursor = $mol_wire_cursor.stale;
+            this.fresh();
+        }
+        sync() {
+            if (!$mol_wire_fiber.warm) {
+                return this.result();
+            }
+            this.promote();
+            this.fresh();
+            if (this.cache instanceof Error) {
+                return $mol_fail_hidden(this.cache);
+            }
+            if (this.cache instanceof Promise) {
+                return $mol_fail_hidden(this.cache);
+            }
+            return this.cache;
+        }
+        async async() {
+            while (true) {
+                this.fresh();
+                if (this.cache instanceof Error) {
+                    $mol_fail_hidden(this.cache);
+                }
+                if (!(this.cache instanceof Promise))
+                    return this.cache;
+                await this.cache;
+                if (this.cursor === $mol_wire_cursor.final) {
+                    await new Promise(() => { });
+                }
+            }
+        }
+    }
+    $.$mol_wire_fiber = $mol_wire_fiber;
+})($ || ($ = {}));
+//mol/wire/fiber/fiber.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_compare_deep_cache = new WeakMap();
+    function $mol_compare_deep(left, right) {
+        if (Object.is(left, right))
+            return true;
+        if (left === null)
+            return false;
+        if (right === null)
+            return false;
+        if (typeof left !== 'object')
+            return false;
+        if (typeof right !== 'object')
+            return false;
+        const left_proto = Reflect.getPrototypeOf(left);
+        const right_proto = Reflect.getPrototypeOf(right);
+        if (left_proto !== right_proto)
+            return false;
+        if (left instanceof Boolean)
+            return Object.is(left.valueOf(), right['valueOf']());
+        if (left instanceof Number)
+            return Object.is(left.valueOf(), right['valueOf']());
+        if (left instanceof String)
+            return Object.is(left.valueOf(), right['valueOf']());
+        if (left instanceof Date)
+            return Object.is(left.valueOf(), right['valueOf']());
+        if (left instanceof RegExp)
+            return left.source === right['source'] && left.flags === right['flags'];
+        if (left instanceof Error)
+            return left.message === right['message'] && left.stack === right['stack'];
+        let left_cache = $.$mol_compare_deep_cache.get(left);
+        if (left_cache) {
+            const right_cache = left_cache.get(right);
+            if (typeof right_cache === 'boolean')
+                return right_cache;
+        }
+        else {
+            left_cache = new WeakMap([[right, true]]);
+            $.$mol_compare_deep_cache.set(left, left_cache);
+        }
+        let result;
+        try {
+            if (left_proto && !Reflect.getPrototypeOf(left_proto))
+                result = compare_pojo(left, right);
+            else if (Array.isArray(left))
+                result = compare_array(left, right);
+            else if (left instanceof Set)
+                result = compare_set(left, right);
+            else if (left instanceof Map)
+                result = compare_map(left, right);
+            else if (ArrayBuffer.isView(left))
+                result = compare_buffer(left, right);
+            else if (Symbol.toPrimitive in left)
+                result = compare_primitive(left, right);
+            else
+                result = false;
+        }
+        finally {
+            left_cache.set(right, result);
+        }
+        return result;
+    }
+    $.$mol_compare_deep = $mol_compare_deep;
+    function compare_array(left, right) {
+        const len = left.length;
+        if (len !== right.length)
+            return false;
+        for (let i = 0; i < len; ++i) {
+            if (!$mol_compare_deep(left[i], right[i]))
+                return false;
+        }
+        return true;
+    }
+    function compare_buffer(left, right) {
+        const len = left.byteLength;
+        if (len !== right.byteLength)
+            return false;
+        for (let i = 0; i < len; ++i) {
+            if (left[i] !== right[i])
+                return false;
+        }
+        return true;
+    }
+    function compare_iterator(left, right) {
+        while (true) {
+            const left_next = left.next();
+            const right_next = right.next();
+            if (left_next.done !== right_next.done)
+                return false;
+            if (left_next.done)
+                break;
+            if (!$mol_compare_deep(left_next.value, right_next.value))
+                return false;
+        }
+        return true;
+    }
+    function compare_set(left, right) {
+        if (left.size !== right.size)
+            return false;
+        return compare_iterator(left.values(), right.values());
+    }
+    function compare_map(left, right) {
+        if (left.size !== right.size)
+            return false;
+        return compare_iterator(left.keys(), right.keys())
+            && compare_iterator(left.values(), right.values());
+    }
+    function compare_pojo(left, right) {
+        const left_keys = Object.getOwnPropertyNames(left);
+        const right_keys = Object.getOwnPropertyNames(right);
+        if (left_keys.length !== right_keys.length)
+            return false;
+        for (let key of left_keys) {
+            if (!$mol_compare_deep(left[key], Reflect.get(right, key)))
+                return false;
+        }
+        return true;
+    }
+    function compare_primitive(left, right) {
+        return Object.is(left[Symbol.toPrimitive]('default'), right[Symbol.toPrimitive]('default'));
+    }
+})($ || ($ = {}));
+//mol/compare/deep/deep.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_task extends $mol_wire_fiber {
+        static getter(task) {
+            return function $mol_wire_task_get(host, args) {
+                const sub = $mol_wire_auto();
+                const existen = sub?.track_next();
+                reuse: if (existen) {
+                    if (!(existen instanceof $mol_wire_task))
+                        break reuse;
+                    if (existen.host !== host)
+                        break reuse;
+                    if (existen.task !== task)
+                        break reuse;
+                    if (!$mol_compare_deep(existen.args, args))
+                        break reuse;
+                    return existen;
+                }
+                return new $mol_wire_task(`${host?.[Symbol.toStringTag] ?? host}.${task.name}(#)`, task, host, args);
+            };
+        }
+        complete() {
+            if (this.cache instanceof Promise)
+                return;
+            this.destructor();
+        }
+        put(next) {
+            const prev = this.cache;
+            this.cache = next;
+            if (next instanceof Promise) {
+                this.cursor = $mol_wire_cursor.fresh;
+                if (next !== prev)
+                    this.emit();
+                return next;
+            }
+            this.cursor = $mol_wire_cursor.final;
+            if (this.sub_empty)
+                this.destructor();
+            else if (next !== prev)
+                this.emit();
+            return next;
+        }
+    }
+    $.$mol_wire_task = $mol_wire_task;
+})($ || ($ = {}));
+//mol/wire/task/task.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const named = new WeakSet();
+    function $mol_func_name(func) {
+        let name = func.name;
+        if (name?.length > 1)
+            return name;
+        if (named.has(func))
+            return name;
+        for (let key in this) {
+            try {
+                if (this[key] !== func)
+                    continue;
+                name = key;
+                Object.defineProperty(func, 'name', { value: name });
+                break;
+            }
+            catch { }
+        }
+        named.add(func);
+        return name;
+    }
+    $.$mol_func_name = $mol_func_name;
+    function $mol_func_name_from(target, source) {
+        Object.defineProperty(target, 'name', { value: source.name });
+        return target;
+    }
+    $.$mol_func_name_from = $mol_func_name_from;
+})($ || ($ = {}));
+//mol/func/name/name.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_guid(length = 8, exists = () => false) {
+        for (;;) {
+            let id = Math.random().toString(36).substring(2, length + 2).toUpperCase();
+            if (exists(id))
+                continue;
+            return id;
+        }
+    }
+    $.$mol_guid = $mol_guid;
+})($ || ($ = {}));
+//mol/guid/guid.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_key_store = new WeakMap();
+    function $mol_key(value) {
+        if (!value)
+            return JSON.stringify(value);
+        if (typeof value !== 'object' && typeof value !== 'function')
+            return JSON.stringify(value);
+        return JSON.stringify(value, (field, value) => {
+            if (!value)
+                return value;
+            if (typeof value !== 'object' && typeof value !== 'function')
+                return value;
+            if (Array.isArray(value))
+                return value;
+            const proto = Reflect.getPrototypeOf(value);
+            if (!proto)
+                return value;
+            if (Reflect.getPrototypeOf(proto) === null)
+                return value;
+            if ('toJSON' in value)
+                return value;
+            if (value instanceof RegExp)
+                return value.toString();
+            let key = $.$mol_key_store.get(value);
+            if (key)
+                return key;
+            key = $mol_guid();
+            $.$mol_key_store.set(value, key);
+            return key;
+        });
+    }
+    $.$mol_key = $mol_key;
+})($ || ($ = {}));
+//mol/key/key.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_method(host, field, descr) {
+        if (!descr)
+            descr = Reflect.getOwnPropertyDescriptor(host, field);
+        const orig = descr?.value ?? host[field];
+        const sup = Reflect.getPrototypeOf(host);
+        if (typeof sup[field] === 'function') {
+            Object.defineProperty(orig, 'name', { value: sup[field].name });
+        }
+        const temp = $mol_wire_task.getter(orig);
+        const value = function (...args) {
+            const fiber = temp(this ?? null, args);
+            return fiber.sync();
+        };
+        Object.defineProperty(value, 'name', { value: orig.name + ' ' });
+        Object.assign(value, { orig });
+        const descr2 = { ...descr, value };
+        Reflect.defineProperty(host, field, descr2);
+        return descr2;
+    }
+    $.$mol_wire_method = $mol_wire_method;
+})($ || ($ = {}));
+//mol/wire/method/method.ts
+;
+"use strict";
+//mol/type/tail/tail.ts
+;
+"use strict";
+//mol/type/foot/foot.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const catched = new WeakMap();
+    function $mol_fail_catch(error) {
+        if (typeof error !== 'object')
+            return false;
+        if (error instanceof Promise)
+            $mol_fail_hidden(error);
+        if (catched.get(error))
+            return false;
+        catched.set(error, true);
+        return true;
+    }
+    $.$mol_fail_catch = $mol_fail_catch;
+})($ || ($ = {}));
+//mol/fail/catch/catch.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_fail_log(error) {
+        if (error instanceof Promise)
+            return false;
+        if (!$mol_fail_catch(error))
+            return false;
+        console.error(error);
+        return true;
+    }
+    $.$mol_fail_log = $mol_fail_log;
+})($ || ($ = {}));
+//mol/fail/log/log.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_atom extends $mol_wire_fiber {
+        static solo(host, task) {
+            const field = task.name + '()';
+            const existen = Object.getOwnPropertyDescriptor(host ?? task, field)?.value;
+            if (existen)
+                return existen;
+            const prefix = host?.[Symbol.toStringTag] ?? (host instanceof Function ? $$.$mol_func_name(host) : host);
+            const key = `${prefix}.${field}`;
+            const fiber = new $mol_wire_atom(key, task, host, []);
+            (host ?? task)[field] = fiber;
+            return fiber;
+        }
+        static plex(host, task, key) {
+            const field = task.name + '()';
+            let dict = Object.getOwnPropertyDescriptor(host ?? task, field)?.value;
+            const prefix = host?.[Symbol.toStringTag] ?? (host instanceof Function ? $$.$mol_func_name(host) : host);
+            const id = `${prefix}.${task.name}(${$mol_key(key)})`;
+            if (dict) {
+                const existen = dict.get(id);
+                if (existen)
+                    return existen;
+            }
+            else {
+                dict = (host ?? task)[field] = new Map();
+            }
+            const fiber = new $mol_wire_atom(id, task, host, [key]);
+            dict.set(id, fiber);
+            return fiber;
+        }
+        static watching = new Set();
+        static watcher = null;
+        static watch() {
+            $mol_wire_atom.watcher = new $mol_after_frame($mol_wire_atom.watch);
+            for (const atom of $mol_wire_atom.watching) {
+                if (atom.cursor === $mol_wire_cursor.final) {
+                    $mol_wire_atom.watching.delete(atom);
+                }
+                else {
+                    atom.cursor = $mol_wire_cursor.stale;
+                    atom.fresh();
+                }
+            }
+        }
+        watch() {
+            if (!$mol_wire_atom.watcher) {
+                $mol_wire_atom.watcher = new $mol_after_frame($mol_wire_atom.watch);
+            }
+            $mol_wire_atom.watching.add(this);
+        }
+        resync(args) {
+            return this.put(this.task.call(this.host, ...args));
+        }
+        once() {
+            return this.sync();
+        }
+        channel() {
+            return Object.assign((next) => {
+                if (next !== undefined)
+                    return this.resync([...this.args, next]);
+                if (!$mol_wire_fiber.warm)
+                    return this.result();
+                if ($mol_wire_auto() instanceof $mol_wire_task) {
+                    return this.once();
+                }
+                else {
+                    return this.sync();
+                }
+            }, { atom: this });
+        }
+        destructor() {
+            super.destructor();
+            const prev = this.cache;
+            if ($mol_owning_check(this, prev)) {
+                prev.destructor();
+            }
+            if (this.pub_from === 0) {
+                ;
+                (this.host ?? this.task)[this.field()] = null;
+            }
+            else {
+                ;
+                (this.host ?? this.task)[this.field()].delete(this[Symbol.toStringTag]);
+            }
+        }
+        put(next) {
+            const prev = this.cache;
+            update: if (next !== prev) {
+                try {
+                    if ($mol_compare_deep(prev, next))
+                        break update;
+                }
+                catch (error) {
+                    $mol_fail_log(error);
+                }
+                if ($mol_owning_check(this, prev)) {
+                    prev.destructor();
+                }
+                if ($mol_owning_catch(this, next)) {
+                    try {
+                        next[Symbol.toStringTag] = this[Symbol.toStringTag];
+                    }
+                    catch {
+                        Object.defineProperty(next, Symbol.toStringTag, { value: this[Symbol.toStringTag] });
+                    }
+                }
+                if (!this.sub_empty)
+                    this.emit();
+            }
+            this.cache = next;
+            this.cursor = $mol_wire_cursor.fresh;
+            if (next instanceof Promise)
+                return next;
+            this.complete_pubs();
+            return next;
+        }
+    }
+    __decorate([
+        $mol_wire_method
+    ], $mol_wire_atom.prototype, "resync", null);
+    __decorate([
+        $mol_wire_method
+    ], $mol_wire_atom.prototype, "once", null);
+    $.$mol_wire_atom = $mol_wire_atom;
+})($ || ($ = {}));
+//mol/wire/atom/atom.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_probe(task, next) {
+        const warm = $mol_wire_fiber.warm;
+        try {
+            $mol_wire_fiber.warm = false;
+            return task();
+        }
+        finally {
+            $mol_wire_fiber.warm = warm;
+        }
+    }
+    $.$mol_wire_probe = $mol_wire_probe;
+})($ || ($ = {}));
+//mol/wire/probe/probe.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_solid() {
+        const current = $mol_wire_auto();
+        if (current.reap !== nothing) {
+            current?.sub_on(sub, sub.data.length);
+        }
+        current.reap = nothing;
+    }
+    $.$mol_wire_solid = $mol_wire_solid;
+    const nothing = () => { };
+    const sub = new $mol_wire_pub_sub;
+})($ || ($ = {}));
+//mol/wire/solid/solid.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_watch() {
+        const atom = $mol_wire_auto();
+        if (atom instanceof $mol_wire_atom) {
+            atom.watch();
+        }
+        else {
+            $mol_fail(new Error('Atom is required for watching'));
+        }
+    }
+    $.$mol_wire_watch = $mol_wire_watch;
+})($ || ($ = {}));
+//mol/wire/watch/watch.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_sync(obj) {
+        return new Proxy(obj, {
+            get(obj, field) {
+                const val = obj[field];
+                if (typeof val !== 'function')
+                    return val;
+                const temp = $mol_wire_task.getter(val);
+                return function $mol_wire_sync(...args) {
+                    const fiber = temp(obj, args);
+                    return fiber.sync();
+                };
+            },
+            apply(obj, self, args) {
+                const temp = $mol_wire_task.getter(obj);
+                const fiber = temp(self, args);
+                return fiber.sync();
+            },
+        });
+    }
+    $.$mol_wire_sync = $mol_wire_sync;
+})($ || ($ = {}));
+//mol/wire/sync/sync.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_async(obj) {
+        let fiber;
+        const temp = $mol_wire_task.getter(obj);
+        return new Proxy(obj, {
+            get(obj, field) {
+                const val = obj[field];
+                if (typeof val !== 'function')
+                    return val;
+                let fiber;
+                const temp = $mol_wire_task.getter(val);
+                return function $mol_wire_async(...args) {
+                    fiber?.destructor();
+                    fiber = temp(obj, args);
+                    return fiber.async();
+                };
+            },
+            apply(obj, self, args) {
+                fiber?.destructor();
+                fiber = temp(self, args);
+                return fiber.async();
+            },
+        });
+    }
+    $.$mol_wire_async = $mol_wire_async;
+})($ || ($ = {}));
+//mol/wire/async/async.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_race(...tasks) {
+        const results = tasks.map(task => {
+            try {
+                return task();
+            }
+            catch (error) {
+                return error;
+            }
+        });
+        const promises = results.filter(res => res instanceof Promise);
+        if (promises.length)
+            $mol_fail(Promise.race(promises));
+        const error = results.find(res => res instanceof Error);
+        if (error)
+            $mol_fail(error);
+        return results;
+    }
+    $.$mol_wire_race = $mol_wire_race;
+})($ || ($ = {}));
+//mol/wire/race/race.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_solo(host, field, descr) {
+        if (!descr)
+            descr = Reflect.getOwnPropertyDescriptor(host, field);
+        const orig = descr?.value ?? host[field];
+        const sup = Reflect.getPrototypeOf(host);
+        if (typeof sup[field] === 'function') {
+            Object.defineProperty(orig, 'name', { value: sup[field].name });
+        }
+        const descr2 = {
+            ...descr,
+            value: function (...args) {
+                let atom = $mol_wire_atom.solo(this, orig);
+                if ((args.length === 0) || (args[0] === undefined)) {
+                    if (!$mol_wire_fiber.warm)
+                        return atom.result();
+                    if ($mol_wire_auto() instanceof $mol_wire_task) {
+                        return atom.once();
+                    }
+                    else {
+                        return atom.sync();
+                    }
+                }
+                return atom.resync(args);
+            }
+        };
+        Reflect.defineProperty(descr2.value, 'name', { value: orig.name + ' ' });
+        Object.assign(descr2.value, { orig });
+        Reflect.defineProperty(host, field, descr2);
+        return descr2;
+    }
+    $.$mol_wire_solo = $mol_wire_solo;
+})($ || ($ = {}));
+//mol/wire/solo/solo.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_plex(host, field, descr) {
+        if (!descr)
+            descr = Reflect.getOwnPropertyDescriptor(host, field);
+        const orig = descr?.value ?? host[field];
+        const sup = Reflect.getPrototypeOf(host);
+        if (typeof sup[field] === 'function') {
+            Object.defineProperty(orig, 'name', { value: sup[field].name });
+        }
+        const descr2 = {
+            ...descr,
+            value: function (...args) {
+                let atom = $mol_wire_atom.plex(this, orig, args[0]);
+                if ((args.length === 1) || (args[1] === undefined)) {
+                    if (!$mol_wire_fiber.warm)
+                        return atom.result();
+                    if ($mol_wire_auto() instanceof $mol_wire_task) {
+                        return atom.once();
+                    }
+                    else {
+                        return atom.sync();
+                    }
+                }
+                return atom.resync(args);
+            }
+        };
+        Reflect.defineProperty(descr2.value, 'name', { value: orig.name + ' ' });
+        Object.assign(descr2.value, { orig });
+        Reflect.defineProperty(host, field, descr2);
+        return descr2;
+    }
+    $.$mol_wire_plex = $mol_wire_plex;
+})($ || ($ = {}));
+//mol/wire/plex/plex.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_const(value) {
+        var getter = (() => value);
+        getter['()'] = value;
+        getter[Symbol.toStringTag] = value;
+        return getter;
+    }
+    $.$mol_const = $mol_const;
+})($ || ($ = {}));
+//mol/const/const.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_field(host, field, descr) {
+        if (!descr)
+            descr = Reflect.getOwnPropertyDescriptor(host, field);
+        const _get = descr?.get || $mol_const(descr?.value);
+        const _set = descr?.set || function (next) {
+            $mol_wire_atom.solo(this, _get).put(next);
+        };
+        const sup = Reflect.getPrototypeOf(host);
+        const sup_descr = Reflect.getOwnPropertyDescriptor(sup, field);
+        Object.defineProperty(_get, 'name', { value: sup_descr?.get?.name ?? field });
+        Object.defineProperty(_set, 'name', { value: sup_descr?.set?.name ?? field });
+        function get() {
+            return $mol_wire_atom.solo(this, _get).sync();
+        }
+        const temp = $mol_wire_task.getter(_set);
+        function set(next) {
+            temp(this, [next]).sync();
+        }
+        Object.defineProperty(get, 'name', { value: _get.name + '$' });
+        Object.defineProperty(set, 'name', { value: _set.name + '@' });
+        Object.assign(get, { orig: _get });
+        Object.assign(set, { orig: _set });
+        const { value, writable, ...descr2 } = { ...descr, get, set };
+        Reflect.defineProperty(host, field, descr2);
+        return descr2;
+    }
+    $.$mol_wire_field = $mol_wire_field;
+})($ || ($ = {}));
+//mol/wire/field/field.ts
+;
+"use strict";
+var $;
+(function ($_1) {
+    let $$;
+    (function ($$) {
+        let $;
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+    $_1.$mol_object_field = Symbol('$mol_object_field');
+    class $mol_object extends $mol_object2 {
+        static make(config) {
+            return super.create(obj => {
+                for (let key in config)
+                    obj[key] = config[key];
+            });
+        }
+    }
+    $_1.$mol_object = $mol_object;
+})($ || ($ = {}));
+//mol/object/object.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_mem = $mol_wire_solo;
+    $.$mol_mem_key = $mol_wire_plex;
+})($ || ($ = {}));
+//mol/mem/mem.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_after_timeout extends $mol_object2 {
+        delay;
+        task;
+        id;
+        constructor(delay, task) {
+            super();
+            this.delay = delay;
+            this.task = task;
+            this.id = setTimeout(task, delay);
+        }
+        destructor() {
+            clearTimeout(this.id);
+        }
+    }
+    $.$mol_after_timeout = $mol_after_timeout;
+})($ || ($ = {}));
+//mol/after/timeout/timeout.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_state_time extends $mol_object {
+        static task(precision, reset) {
+            if (precision) {
+                return new $mol_after_timeout(precision, () => this.task(precision, null));
+            }
+            else {
+                return new $mol_after_frame(() => this.task(precision, null));
+            }
+        }
+        static now(precision) {
+            this.task(precision);
+            return Date.now();
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_state_time, "task", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_state_time, "now", null);
+    $.$mol_state_time = $mol_state_time;
+})($ || ($ = {}));
+//mol/state/time/time.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_easing(next) {
+        const atom = $mol_wire_auto();
+        if (!(atom instanceof $mol_wire_atom))
+            $mol_fail(new Error('Allowed only inside atom'));
+        const prev = atom.result() ?? next;
+        if (typeof prev !== 'number')
+            return next;
+        const current = (prev * 2 + next) / 3;
+        const diff = Math.abs(current - next);
+        if (diff < 1)
+            return next;
+        $mol_state_time.now(0);
+        return current;
+    }
+    $.$mol_wire_easing = $mol_wire_easing;
+})($ || ($ = {}));
+//mol/wire/easing/easing.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_patch(obj) {
+        for (const field of Reflect.ownKeys(obj)) {
+            const descr = Reflect.getOwnPropertyDescriptor(obj, field);
+            if (!descr.configurable)
+                continue;
+            if (!descr.get)
+                continue;
+            const get = descr.get ?? (() => descr.value);
+            const set = descr.set ?? (next => descr.value = next);
+            Reflect.defineProperty(obj, field, {
+                configurable: true,
+                enumerable: descr.enumerable,
+                get() {
+                    const atom = $mol_wire_atom.solo(obj, get);
+                    atom.watch();
+                    return atom.sync();
+                },
+                set(next) {
+                    const atom = $mol_wire_atom.solo(obj, get);
+                    set.call(this, next);
+                    atom.refresh();
+                },
+            });
+        }
+    }
+    $.$mol_wire_patch = $mol_wire_patch;
+})($ || ($ = {}));
+//mol/wire/patch/patch.ts
+;
+"use strict";
+//mol/type/result/result.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_let(host) {
+        for (const field of Object.keys(host)) {
+            host[field] = new $mol_wire_atom(field, host[field], host).channel();
+        }
+        return host;
+    }
+    $.$mol_wire_let = $mol_wire_let;
+})($ || ($ = {}));
+//mol/wire/let/let.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_set extends Set {
+        pub = new $mol_wire_pub;
+        has(value) {
+            this.pub.promote();
+            return super.has(value);
+        }
+        entries() {
+            this.pub.promote();
+            return super.entries();
+        }
+        keys() {
+            this.pub.promote();
+            return super.keys();
+        }
+        values() {
+            this.pub.promote();
+            return super.values();
+        }
+        forEach(task, self) {
+            this.pub.promote();
+            super.forEach(task, self);
+        }
+        [Symbol.iterator]() {
+            this.pub.promote();
+            return super[Symbol.iterator]();
+        }
+        get size() {
+            this.pub.promote();
+            return super.size;
+        }
+        add(value) {
+            if (super.has(value))
+                return this;
+            super.add(value);
+            this.pub.emit();
+            return this;
+        }
+        delete(value) {
+            const res = super.delete(value);
+            if (res)
+                this.pub.emit();
+            return res;
+        }
+        clear() {
+            if (!super.size)
+                return;
+            super.clear();
+            this.pub.emit();
+        }
+        item(val, next) {
+            if (next === undefined)
+                return this.has(val);
+            if (next)
+                this.add(val);
+            else
+                this.delete(val);
+            return next;
+        }
+    }
+    $.$mol_wire_set = $mol_wire_set;
+})($ || ($ = {}));
+//mol/wire/set/set.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_dict extends Map {
+        pub = new $mol_wire_pub;
+        has(key) {
+            this.pub.promote();
+            return super.has(key);
+        }
+        get(key) {
+            this.pub.promote();
+            return super.get(key);
+        }
+        entries() {
+            this.pub.promote();
+            return super.entries();
+        }
+        keys() {
+            this.pub.promote();
+            return super.keys();
+        }
+        values() {
+            this.pub.promote();
+            return super.values();
+        }
+        forEach(task, self) {
+            this.pub.promote();
+            super.forEach(task, self);
+        }
+        [Symbol.iterator]() {
+            this.pub.promote();
+            return super[Symbol.iterator]();
+        }
+        get size() {
+            this.pub.promote();
+            return super.size;
+        }
+        set(key, value) {
+            if (super.get(key) === value)
+                return this;
+            super.set(key, value);
+            this.pub.emit();
+            return this;
+        }
+        delete(key) {
+            const res = super.delete(key);
+            if (res)
+                this.pub.emit();
+            return res;
+        }
+        clear() {
+            if (!super.size)
+                return;
+            super.clear();
+            this.pub.emit();
+        }
+        item(key, next) {
+            if (next === undefined)
+                return this.get(key) ?? null;
+            if (next === null)
+                this.delete(key);
+            else
+                this.set(key, next);
+            return next;
+        }
+    }
+    $.$mol_wire_dict = $mol_wire_dict;
+})($ || ($ = {}));
+//mol/wire/dict/dict.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_promise() {
+        let done;
+        let fail;
+        const promise = new Promise((d, f) => {
+            done = d;
+            fail = f;
+        });
+        return Object.assign(promise, {
+            done,
+            fail,
+        });
+    }
+    $.$mol_promise = $mol_promise;
+})($ || ($ = {}));
+//mol/promise/promise.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wait_timeout_async(timeout) {
+        const promise = $mol_promise();
+        const task = new this.$mol_after_timeout(timeout, () => promise.done());
+        return Object.assign(promise, {
+            destructor: () => task.destructor()
+        });
+    }
+    $.$mol_wait_timeout_async = $mol_wait_timeout_async;
+    function $mol_wait_timeout(timeout) {
+        return this.$mol_wire_sync(this).$mol_wait_timeout_async(timeout);
+    }
+    $.$mol_wait_timeout = $mol_wait_timeout;
+})($ || ($ = {}));
+//mol/wait/timeout/timeout.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_log3_area_lazy(event) {
+        const self = this;
+        const stack = self.$mol_log3_stack;
+        const deep = stack.length;
+        let logged = false;
+        stack.push(() => {
+            logged = true;
+            self.$mol_log3_area.call(self, event);
+        });
+        return () => {
+            if (logged)
+                self.console.groupEnd();
+            if (stack.length > deep)
+                stack.length = deep;
+        };
+    }
+    $.$mol_log3_area_lazy = $mol_log3_area_lazy;
+    $.$mol_log3_stack = [];
+})($ || ($ = {}));
+//mol/log3/log3.ts
+;
+"use strict";
+//mol/type/keys/extract/extract.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_log3_web_make(level, color) {
+        return function $mol_log3_logger(event) {
+            const pending = this.$mol_log3_stack.pop();
+            if (pending)
+                pending();
+            let tpl = '%c';
+            const chunks = Object.values(event);
+            for (let i = 0; i < chunks.length; ++i) {
+                tpl += (typeof chunks[i] === 'string') ? ' ⦙ %s' : ' ⦙ %o';
+            }
+            const style = `color:${color};font-weight:bolder`;
+            this.console[level](tpl, style, ...chunks);
+            const self = this;
+            return () => self.console.groupEnd();
+        };
+    }
+    $.$mol_log3_web_make = $mol_log3_web_make;
+    $.$mol_log3_come = $mol_log3_web_make('info', 'royalblue');
+    $.$mol_log3_done = $mol_log3_web_make('info', 'forestgreen');
+    $.$mol_log3_fail = $mol_log3_web_make('error', 'orangered');
+    $.$mol_log3_warn = $mol_log3_web_make('warn', 'goldenrod');
+    $.$mol_log3_rise = $mol_log3_web_make('log', 'magenta');
+    $.$mol_log3_area = $mol_log3_web_make('group', 'cyan');
+})($ || ($ = {}));
+//mol/log3/log3.web.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_log extends $mol_object2 {
+        static watch(task) {
+            return task;
+        }
+        static track(fiber) {
+            const prev = $mol_wire_probe(() => this.track(fiber));
+            let next;
+            try {
+                next = fiber.sync();
+            }
+            finally {
+                for (const pub of fiber.pub_list) {
+                    if (pub instanceof $mol_wire_fiber) {
+                        this.track(pub);
+                    }
+                }
+            }
+            if (fiber.host === this)
+                return next;
+            if ($mol_compare_deep(prev, next)) {
+                this.$.$mol_log3_rise({
+                    message: '💧 Same',
+                    place: fiber,
+                });
+            }
+            else if (prev !== undefined) {
+                this.$.$mol_log3_rise({
+                    message: '🔥 Next',
+                    place: fiber,
+                    prev,
+                });
+            }
+            return next;
+        }
+        static active() {
+            try {
+                this.watch()?.();
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+            finally {
+                for (const pub of $mol_wire_auto().pub_list) {
+                    if (pub instanceof $mol_wire_fiber) {
+                        this.track(pub);
+                    }
+                }
+            }
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_wire_log, "watch", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_wire_log, "track", null);
+    __decorate([
+        $mol_mem
+    ], $mol_wire_log, "active", null);
+    $.$mol_wire_log = $mol_wire_log;
+})($ || ($ = {}));
+//mol/wire/log/log.ts
+;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ($);
+//# sourceMappingURL=web.mjs.map
+
+
+/***/ }),
+
 /***/ "../core/-/action/action.js":
 /*!**********************************!*\
   !*** ../core/-/action/action.js ***!
   \**********************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "action": () => (/* binding */ action)
+/* harmony export */ });
+/* harmony import */ var autobind_decorator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! autobind-decorator */ "../../node_modules/autobind-decorator/lib/esm/index.js");
+/* harmony import */ var _stub_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../stub.js */ "../core/-/stub.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.action = void 0;
-const autobind_decorator_1 = __webpack_require__(/*! autobind-decorator */ "../../node_modules/autobind-decorator/lib/esm/index.js");
-const mol_wire_lib_1 = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js");
+
 function bound(host, field, descr) {
-    return (0, autobind_decorator_1.boundMethod)(host, field, (0, mol_wire_lib_1.$mol_wire_method)(host, field, descr));
+    return (0,autobind_decorator__WEBPACK_IMPORTED_MODULE_0__.boundMethod)(host, field, (0,_stub_js__WEBPACK_IMPORTED_MODULE_1__.$mol_wire_method)(host, field, descr));
 }
-exports.action = Object.assign(mol_wire_lib_1.$mol_wire_method, { bound });
+const action = Object.assign(_stub_js__WEBPACK_IMPORTED_MODULE_1__.$mol_wire_method, { bound });
 
 
 /***/ }),
@@ -36352,18 +36362,20 @@ exports.action = Object.assign(mol_wire_lib_1.$mol_wire_method, { bound });
 /*!******************************!*\
   !*** ../core/-/atom/atom.js ***!
   \******************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolAtom": () => (/* binding */ RemolAtom),
+/* harmony export */   "remolSyncRender": () => (/* binding */ remolSyncRender)
+/* harmony export */ });
+/* harmony import */ var _stub_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stub.js */ "../core/-/stub.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolAtom = exports.remolSyncRender = void 0;
-const mol_wire_lib_1 = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js");
 function remolSyncRender() {
     RemolAtom.syncRender = true;
 }
-exports.remolSyncRender = remolSyncRender;
-class RemolAtom extends mol_wire_lib_1.$mol_wire_atom {
+class RemolAtom extends _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_atom {
     constructor() {
         super(...arguments);
         this.update = undefined;
@@ -36398,18 +36410,17 @@ class RemolAtom extends mol_wire_lib_1.$mol_wire_atom {
         var _a;
         if (!this.scheduled)
             return;
-        const prev = (0, mol_wire_lib_1.$mol_wire_auto)();
-        (0, mol_wire_lib_1.$mol_wire_auto)(null);
+        const prev = (0,_stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_auto)();
+        (0,_stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_auto)(null);
         try {
             (_a = this.update) === null || _a === void 0 ? void 0 : _a.call(this);
         }
         finally {
             this.scheduled = false;
-            (0, mol_wire_lib_1.$mol_wire_auto)(prev);
+            (0,_stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_auto)(prev);
         }
     }
 }
-exports.RemolAtom = RemolAtom;
 RemolAtom.syncRender = false;
 
 
@@ -36419,22 +36430,24 @@ RemolAtom.syncRender = false;
 /*!****************************!*\
   !*** ../core/-/box/box.js ***!
   \****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolBox": () => (/* binding */ RemolBox)
+/* harmony export */ });
+/* harmony import */ var _stub_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stub.js */ "../core/-/stub.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolBox = void 0;
-const mol_wire_lib_1 = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js");
-const solo = mol_wire_lib_1.$mol_wire_solo;
-const plex = mol_wire_lib_1.$mol_wire_plex;
-class RemolBox extends mol_wire_lib_1.$mol_object {
+
+const solo = _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_solo;
+const plex = _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_plex;
+class RemolBox extends _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_object {
     constructor(_props) {
         super();
         this._props = _props;
@@ -36503,7 +36516,6 @@ __decorate([
 __decorate([
     solo
 ], RemolBox.prototype, "propKeys", null);
-exports.RemolBox = RemolBox;
 
 
 /***/ }),
@@ -36512,17 +36524,19 @@ exports.RemolBox = RemolBox;
 /*!************************************!*\
   !*** ../core/-/context/context.js ***!
   \************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolContext": () => (/* binding */ RemolContext)
+/* harmony export */ });
+/* harmony import */ var _object_object_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../object/object.js */ "../core/-/object/object.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolContext = void 0;
-const object_1 = __webpack_require__(/*! ../object/object */ "../core/-/object/object.js");
 function isReactContext(v) {
     return typeof v === 'object' && typeof v.$$typeof === 'symbol' && typeof v.Provider === 'function';
 }
-class RemolContext extends object_1.RemolObject {
+class RemolContext extends _object_object_js__WEBPACK_IMPORTED_MODULE_0__.RemolObject {
     constructor(registry = new Map()) {
         super();
         this.registry = registry;
@@ -36555,8 +36569,7 @@ class RemolContext extends object_1.RemolObject {
         return p;
     }
 }
-exports.RemolContext = RemolContext;
-object_1.RemolObject.$ = RemolContext.single();
+_object_object_js__WEBPACK_IMPORTED_MODULE_0__.RemolObject.$ = RemolContext.single();
 
 
 /***/ }),
@@ -36565,13 +36578,15 @@ object_1.RemolObject.$ = RemolContext.single();
 /*!********************************!*\
   !*** ../core/-/error/error.js ***!
   \********************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolError": () => (/* binding */ RemolError)
+/* harmony export */ });
+/* harmony import */ var _stub_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stub.js */ "../core/-/stub.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolError = void 0;
-const mol_wire_lib_1 = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js");
 class RemolError {
     static get(e) {
         return this.errorMap.get(e);
@@ -36582,14 +36597,13 @@ class RemolError {
         }
         catch (e) {
             if (e instanceof Promise)
-                return (0, mol_wire_lib_1.$mol_fail_hidden)(e);
+                return (0,_stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_fail_hidden)(e);
             const error = e instanceof Error ? e : new Error(String(e), { cause: e });
             this.errorMap.set(error, retry);
-            return (0, mol_wire_lib_1.$mol_fail_hidden)(error);
+            return (0,_stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_fail_hidden)(error);
         }
     }
 }
-exports.RemolError = RemolError;
 RemolError.errorMap = new WeakMap();
 
 
@@ -36599,18 +36613,18 @@ RemolError.errorMap = new WeakMap();
 /*!******************************!*\
   !*** ../core/-/func/name.js ***!
   \******************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.remolFuncName = void 0;
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "remolFuncName": () => (/* binding */ remolFuncName)
+/* harmony export */ });
 function remolFuncName(fn, name) {
     Object.defineProperty(fn, 'name', { value: name, writable: false });
     fn.displayName = name;
     return fn;
 }
-exports.remolFuncName = remolFuncName;
 
 
 /***/ }),
@@ -36619,50 +36633,58 @@ exports.remolFuncName = remolFuncName;
 /*!**************************!*\
   !*** ../core/-/index.js ***!
   \**************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AfterFrame": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_after_frame),
+/* harmony export */   "AfterTimeout": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_after_timeout),
+/* harmony export */   "RemolAtom": () => (/* reexport safe */ _atom_atom_js__WEBPACK_IMPORTED_MODULE_6__.RemolAtom),
+/* harmony export */   "RemolBox": () => (/* reexport safe */ _box_box_js__WEBPACK_IMPORTED_MODULE_7__.RemolBox),
+/* harmony export */   "RemolContext": () => (/* reexport safe */ _context_context_js__WEBPACK_IMPORTED_MODULE_3__.RemolContext),
+/* harmony export */   "RemolError": () => (/* reexport safe */ _error_error_js__WEBPACK_IMPORTED_MODULE_8__.RemolError),
+/* harmony export */   "RemolObject": () => (/* reexport safe */ _object_object_js__WEBPACK_IMPORTED_MODULE_1__.RemolObject),
+/* harmony export */   "RemolQueue": () => (/* reexport safe */ _qeue_queue_js__WEBPACK_IMPORTED_MODULE_2__.RemolQueue),
+/* harmony export */   "StateTime": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_state_time),
+/* harmony export */   "action": () => (/* reexport safe */ _action_action_js__WEBPACK_IMPORTED_MODULE_9__.action),
+/* harmony export */   "compareDeep": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_compare_deep),
+/* harmony export */   "delay": () => (/* binding */ delay),
+/* harmony export */   "delayAsync": () => (/* binding */ delayAsync),
+/* harmony export */   "failHidden": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_fail_hidden),
+/* harmony export */   "field": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_field),
+/* harmony export */   "guid": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_guid),
+/* harmony export */   "plex": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_plex),
+/* harmony export */   "rAsync": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_async),
+/* harmony export */   "remolFuncName": () => (/* reexport safe */ _func_name_js__WEBPACK_IMPORTED_MODULE_4__.remolFuncName),
+/* harmony export */   "remolMiddlewareAsync": () => (/* reexport safe */ _middleware_async_js__WEBPACK_IMPORTED_MODULE_5__.remolMiddlewareAsync),
+/* harmony export */   "remolSyncRender": () => (/* reexport safe */ _atom_atom_js__WEBPACK_IMPORTED_MODULE_6__.remolSyncRender),
+/* harmony export */   "solo": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_solo),
+/* harmony export */   "sync": () => (/* reexport safe */ _stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_sync)
+/* harmony export */ });
+/* harmony import */ var _stub_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stub.js */ "../core/-/stub.js");
+/* harmony import */ var _object_object_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./object/object.js */ "../core/-/object/object.js");
+/* harmony import */ var _qeue_queue_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./qeue/queue.js */ "../core/-/qeue/queue.js");
+/* harmony import */ var _context_context_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./context/context.js */ "../core/-/context/context.js");
+/* harmony import */ var _func_name_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./func/name.js */ "../core/-/func/name.js");
+/* harmony import */ var _middleware_async_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./middleware/async.js */ "../core/-/middleware/async.js");
+/* harmony import */ var _atom_atom_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./atom/atom.js */ "../core/-/atom/atom.js");
+/* harmony import */ var _box_box_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./box/box.js */ "../core/-/box/box.js");
+/* harmony import */ var _error_error_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./error/error.js */ "../core/-/error/error.js");
+/* harmony import */ var _action_action_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./action/action.js */ "../core/-/action/action.js");
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.action = exports.RemolError = exports.RemolBox = exports.remolSyncRender = exports.RemolAtom = exports.remolMiddlewareAsync = exports.remolFuncName = exports.RemolContext = exports.RemolQueue = exports.RemolObject = exports.delayAsync = exports.delay = exports.remolCompareDeep = exports.remolAsync = exports.remolSync = exports.field = exports.plex = exports.solo = exports.remolFail = exports.ambientRef = exports.StateTime = exports.AfterTimeout = exports.AfterFrame = exports.guid = void 0;
-const mol_wire_lib_1 = __importDefault(__webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js"));
-var mol_wire_lib_2 = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js");
-Object.defineProperty(exports, "guid", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_guid; } }));
-Object.defineProperty(exports, "AfterFrame", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_after_frame; } }));
-Object.defineProperty(exports, "AfterTimeout", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_after_timeout; } }));
-Object.defineProperty(exports, "StateTime", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_state_time; } }));
-Object.defineProperty(exports, "ambientRef", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_ambient_ref; } }));
-Object.defineProperty(exports, "remolFail", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_fail_hidden; } }));
-Object.defineProperty(exports, "solo", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_wire_solo; } }));
-Object.defineProperty(exports, "plex", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_wire_plex; } }));
-Object.defineProperty(exports, "field", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_wire_field; } }));
-Object.defineProperty(exports, "remolSync", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_wire_sync; } }));
-Object.defineProperty(exports, "remolAsync", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_wire_async; } }));
-Object.defineProperty(exports, "remolCompareDeep", ({ enumerable: true, get: function () { return mol_wire_lib_2.$mol_compare_deep; } }));
-exports.delay = mol_wire_lib_1.default.$mol_wait_timeout.bind(mol_wire_lib_1.default);
-exports.delayAsync = mol_wire_lib_1.default.$mol_wait_timeout_async.bind(mol_wire_lib_1.default);
-var object_1 = __webpack_require__(/*! ./object/object */ "../core/-/object/object.js");
-Object.defineProperty(exports, "RemolObject", ({ enumerable: true, get: function () { return object_1.RemolObject; } }));
-var queue_1 = __webpack_require__(/*! ./qeue/queue */ "../core/-/qeue/queue.js");
-Object.defineProperty(exports, "RemolQueue", ({ enumerable: true, get: function () { return queue_1.RemolQueue; } }));
-var context_1 = __webpack_require__(/*! ./context/context */ "../core/-/context/context.js");
-Object.defineProperty(exports, "RemolContext", ({ enumerable: true, get: function () { return context_1.RemolContext; } }));
-var name_1 = __webpack_require__(/*! ./func/name */ "../core/-/func/name.js");
-Object.defineProperty(exports, "remolFuncName", ({ enumerable: true, get: function () { return name_1.remolFuncName; } }));
-var async_1 = __webpack_require__(/*! ./middleware/async */ "../core/-/middleware/async.js");
-Object.defineProperty(exports, "remolMiddlewareAsync", ({ enumerable: true, get: function () { return async_1.remolMiddlewareAsync; } }));
-var atom_1 = __webpack_require__(/*! ./atom/atom */ "../core/-/atom/atom.js");
-Object.defineProperty(exports, "RemolAtom", ({ enumerable: true, get: function () { return atom_1.RemolAtom; } }));
-Object.defineProperty(exports, "remolSyncRender", ({ enumerable: true, get: function () { return atom_1.remolSyncRender; } }));
-var box_1 = __webpack_require__(/*! ./box/box */ "../core/-/box/box.js");
-Object.defineProperty(exports, "RemolBox", ({ enumerable: true, get: function () { return box_1.RemolBox; } }));
-var error_1 = __webpack_require__(/*! ./error/error */ "../core/-/error/error.js");
-Object.defineProperty(exports, "RemolError", ({ enumerable: true, get: function () { return error_1.RemolError; } }));
-var action_1 = __webpack_require__(/*! ./action/action */ "../core/-/action/action.js");
-Object.defineProperty(exports, "action", ({ enumerable: true, get: function () { return action_1.action; } }));
+
+const delay = _stub_js__WEBPACK_IMPORTED_MODULE_0__.$.$mol_wait_timeout.bind(_stub_js__WEBPACK_IMPORTED_MODULE_0__.$);
+const delayAsync = _stub_js__WEBPACK_IMPORTED_MODULE_0__.$.$mol_wait_timeout_async.bind(_stub_js__WEBPACK_IMPORTED_MODULE_0__.$);
+
+
+
+
+
+
+
+
+
 
 
 /***/ }),
@@ -36671,15 +36693,17 @@ Object.defineProperty(exports, "action", ({ enumerable: true, get: function () {
 /*!*************************************!*\
   !*** ../core/-/middleware/async.js ***!
   \*************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "remolMiddlewareAsync": () => (/* binding */ remolMiddlewareAsync)
+/* harmony export */ });
+/* harmony import */ var _func_name_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../func/name.js */ "../core/-/func/name.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.remolMiddlewareAsync = void 0;
-const name_1 = __webpack_require__(/*! ../func/name */ "../core/-/func/name.js");
 function remolMiddlewareAsync(cb) {
-    return (0, name_1.remolFuncName)(async (req, res, next) => {
+    return (0,_func_name_js__WEBPACK_IMPORTED_MODULE_0__.remolFuncName)(async (req, res, next) => {
         try {
             await cb(req, res, next);
         }
@@ -36688,7 +36712,6 @@ function remolMiddlewareAsync(cb) {
         }
     }, cb.name + 'remolMiddlewareAsync');
 }
-exports.remolMiddlewareAsync = remolMiddlewareAsync;
 
 
 /***/ }),
@@ -36697,14 +36720,16 @@ exports.remolMiddlewareAsync = remolMiddlewareAsync;
 /*!**********************************!*\
   !*** ../core/-/object/object.js ***!
   \**********************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolObject": () => (/* binding */ RemolObject)
+/* harmony export */ });
+/* harmony import */ var _stub_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stub.js */ "../core/-/stub.js");
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolObject = void 0;
-const mol_wire_lib_1 = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js");
+
 const remolContextInheritedRef = Symbol('remolContextInheritedRef');
 const remolContextExplicitRef = Symbol('remolContextExplicitRef');
 const cursorMap = new WeakMap();
@@ -36712,7 +36737,7 @@ class RemolObject {
     constructor() {
         var _b, _c;
         this[_a] = undefined;
-        const atom = (0, mol_wire_lib_1.$mol_wire_auto)();
+        const atom = (0,_stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_wire_auto)();
         let id = this.constructor.name;
         if (atom) {
             let ref = cursorMap.get(atom);
@@ -36734,7 +36759,7 @@ class RemolObject {
     }
     set $(next) {
         if (this[remolContextExplicitRef])
-            (0, mol_wire_lib_1.$mol_fail_hidden)(new Error('Context already defined'));
+            (0,_stub_js__WEBPACK_IMPORTED_MODULE_0__.$mol_fail_hidden)(new Error('Context already defined'));
         this[remolContextExplicitRef] = next;
     }
     ctx(src) {
@@ -36770,7 +36795,6 @@ class RemolObject {
         return this._instance;
     }
 }
-exports.RemolObject = RemolObject;
 RemolObject._instance = undefined;
 
 
@@ -36780,30 +36804,34 @@ RemolObject._instance = undefined;
 /*!*******************************!*\
   !*** ../core/-/qeue/queue.js ***!
   \*******************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolQueue": () => (/* binding */ RemolQueue)
+/* harmony export */ });
+/* harmony import */ var _func_name_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../func/name.js */ "../core/-/func/name.js");
+/* harmony import */ var _object_object_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../object/object.js */ "../core/-/object/object.js");
+/* harmony import */ var _stub_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../stub.js */ "../core/-/stub.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolQueue = void 0;
-const mol_wire_lib_1 = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.js");
-const name_1 = __webpack_require__(/*! ../func/name */ "../core/-/func/name.js");
-const object_1 = __webpack_require__(/*! ../object/object */ "../core/-/object/object.js");
-class RemolQueue extends object_1.RemolObject {
+
+
+
+class RemolQueue extends _object_object_js__WEBPACK_IMPORTED_MODULE_1__.RemolObject {
     constructor() {
         super(...arguments);
         this.tasks = [];
         this.task = undefined;
     }
     run(calculate) {
-        const current = (0, mol_wire_lib_1.$mol_wire_auto)();
-        this.tasks.push((0, name_1.remolFuncName)(calculate, current[Symbol.toStringTag] + '#task'));
+        const current = (0,_stub_js__WEBPACK_IMPORTED_MODULE_2__.$mol_wire_auto)();
+        this.tasks.push((0,_func_name_js__WEBPACK_IMPORTED_MODULE_0__.remolFuncName)(calculate, current[Symbol.toStringTag] + '#task'));
         this.continue();
     }
     status(next) {
@@ -36824,7 +36852,7 @@ class RemolQueue extends object_1.RemolObject {
             return;
         if (this.task)
             return;
-        this.task = new mol_wire_lib_1.$mol_wire_task(this[Symbol.toStringTag] + '.up()', this.up, this);
+        this.task = new _stub_js__WEBPACK_IMPORTED_MODULE_2__.$mol_wire_task(this[Symbol.toStringTag] + '.up()', this.up, this);
         await Promise.resolve();
         try {
             await this.task.async();
@@ -36848,12 +36876,12 @@ class RemolQueue extends object_1.RemolObject {
         catch (err) {
             if (err instanceof Promise) {
                 this.status(true);
-                return (0, mol_wire_lib_1.$mol_fail_hidden)(err);
+                return (0,_stub_js__WEBPACK_IMPORTED_MODULE_2__.$mol_fail_hidden)(err);
             }
             this.task = undefined;
             const error = err instanceof Error ? err : new Error(String(err), { cause: err });
             this.status([error]);
-            (0, mol_wire_lib_1.$mol_fail_hidden)(error);
+            (0,_stub_js__WEBPACK_IMPORTED_MODULE_2__.$mol_fail_hidden)(error);
         }
     }
     destructor() {
@@ -36864,47 +36892,56 @@ class RemolQueue extends object_1.RemolObject {
     }
 }
 __decorate([
-    mol_wire_lib_1.$mol_wire_solo
+    _stub_js__WEBPACK_IMPORTED_MODULE_2__.$mol_wire_solo
 ], RemolQueue.prototype, "status", null);
-exports.RemolQueue = RemolQueue;
 
 
 /***/ }),
 
-/***/ "./-/browser.js":
-/*!**********************!*\
-  !*** ./-/browser.js ***!
-  \**********************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ "../core/-/stub.js":
+/*!*************************!*\
+  !*** ../core/-/stub.js ***!
+  \*************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "$": () => (/* reexport safe */ mol_wire_lib__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   "$mol_after_frame": () => (/* binding */ $mol_after_frame),
+/* harmony export */   "$mol_after_timeout": () => (/* binding */ $mol_after_timeout),
+/* harmony export */   "$mol_ambient": () => (/* binding */ $mol_ambient),
+/* harmony export */   "$mol_compare_deep": () => (/* binding */ $mol_compare_deep),
+/* harmony export */   "$mol_fail_hidden": () => (/* binding */ $mol_fail_hidden),
+/* harmony export */   "$mol_guid": () => (/* binding */ $mol_guid),
+/* harmony export */   "$mol_log3_area": () => (/* binding */ $mol_log3_area),
+/* harmony export */   "$mol_log3_area_lazy": () => (/* binding */ $mol_log3_area_lazy),
+/* harmony export */   "$mol_log3_come": () => (/* binding */ $mol_log3_come),
+/* harmony export */   "$mol_log3_done": () => (/* binding */ $mol_log3_done),
+/* harmony export */   "$mol_log3_fail": () => (/* binding */ $mol_log3_fail),
+/* harmony export */   "$mol_log3_rise": () => (/* binding */ $mol_log3_rise),
+/* harmony export */   "$mol_log3_stack": () => (/* binding */ $mol_log3_stack),
+/* harmony export */   "$mol_log3_warn": () => (/* binding */ $mol_log3_warn),
+/* harmony export */   "$mol_object": () => (/* binding */ $mol_object),
+/* harmony export */   "$mol_state_time": () => (/* binding */ $mol_state_time),
+/* harmony export */   "$mol_wait_timeout": () => (/* binding */ $mol_wait_timeout),
+/* harmony export */   "$mol_wait_timeout_async": () => (/* binding */ $mol_wait_timeout_async),
+/* harmony export */   "$mol_wire_async": () => (/* binding */ $mol_wire_async),
+/* harmony export */   "$mol_wire_atom": () => (/* binding */ $mol_wire_atom),
+/* harmony export */   "$mol_wire_auto": () => (/* binding */ $mol_wire_auto),
+/* harmony export */   "$mol_wire_cursor": () => (/* binding */ $mol_wire_cursor),
+/* harmony export */   "$mol_wire_field": () => (/* binding */ $mol_wire_field),
+/* harmony export */   "$mol_wire_method": () => (/* binding */ $mol_wire_method),
+/* harmony export */   "$mol_wire_plex": () => (/* binding */ $mol_wire_plex),
+/* harmony export */   "$mol_wire_solo": () => (/* binding */ $mol_wire_solo),
+/* harmony export */   "$mol_wire_sync": () => (/* binding */ $mol_wire_sync),
+/* harmony export */   "$mol_wire_task": () => (/* binding */ $mol_wire_task)
+/* harmony export */ });
+/* harmony import */ var mol_wire_lib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mol_wire_lib */ "../../node_modules/mol_wire_lib/web.mjs");
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const client_1 = __webpack_require__(/*! react-dom/client */ "../../node_modules/react-dom/client.js");
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const react_2 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-const fetch_1 = __webpack_require__(/*! ./fetch/fetch */ "./-/fetch/fetch.js");
-const mock_1 = __webpack_require__(/*! ./fetch/mock */ "./-/fetch/mock.js");
-const page_1 = __webpack_require__(/*! ./page/page */ "./-/page/page.js");
-const mock_2 = __webpack_require__(/*! ./todo/store/mock */ "./-/todo/store/mock.js");
-const id = 'remol_demo';
-const el = document.getElementById(id + '_main');
-const root = (0, client_1.createRoot)(el);
-class RemolDemoFetchMockApp extends mock_1.RemolDemoFetchMock {
-    static data(pathname, method, body) {
-        return this.todos.data(pathname, method, body);
-    }
-}
-_a = Symbol.toStringTag;
-RemolDemoFetchMockApp[_a] = id + '-mock';
-RemolDemoFetchMockApp.todos = new mock_2.RemolDemoTodoStoreMock();
-const $ = new core_1.RemolContext().set(fetch_1.RemolDemoFetch, RemolDemoFetchMockApp);
-root.render(react_1.default.createElement(react_2.RemolContextProvide, { value: $, children: react_1.default.createElement(page_1.RemolDemoPage.view, { id: () => id }) }));
+
+const { $mol_after_frame, $mol_after_timeout, $mol_ambient, $mol_compare_deep, $mol_fail_hidden, $mol_guid, $mol_log3_area_lazy, $mol_log3_area, $mol_log3_come, $mol_log3_done, $mol_log3_fail, $mol_log3_rise, $mol_log3_stack, $mol_log3_warn, $mol_object, $mol_state_time, $mol_wait_timeout_async, $mol_wait_timeout, $mol_wire_async, $mol_wire_atom, $mol_wire_auto, $mol_wire_cursor, $mol_wire_field, $mol_wire_method, $mol_wire_plex, $mol_wire_solo, $mol_wire_sync, $mol_wire_task, } = mol_wire_lib__WEBPACK_IMPORTED_MODULE_0__["default"];
+ // from 'mol_wire_lib'
 
 
 /***/ }),
@@ -36913,26 +36950,27 @@ root.render(react_1.default.createElement(react_2.RemolContextProvide, { value: 
 /*!******************************!*\
   !*** ./-/counter/counter.js ***!
   \******************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoCounter": () => (/* binding */ RemolDemoCounter)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoCounter = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const react_2 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-class RemolDemoCounter extends react_2.RemolView {
+
+
+
+class RemolDemoCounter extends _remol_react__WEBPACK_IMPORTED_MODULE_2__.RemolView {
     value(next) {
         return next !== null && next !== void 0 ? next : 0;
     }
@@ -36943,23 +36981,22 @@ class RemolDemoCounter extends react_2.RemolView {
         this.value(this.value() + 1);
     }
     render() {
-        return (react_1.default.createElement("div", { id: this.id() },
-            react_1.default.createElement("div", null, this.computed()),
-            react_1.default.createElement("button", { id: `${this.id()}_add`, onClick: this.add }, "Add")));
+        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { id: this.id() },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, this.computed()),
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { id: `${this.id()}_add`, onClick: this.add }, "Add")));
     }
 }
 _a = RemolDemoCounter;
 RemolDemoCounter.view = (props) => _a.render(props);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.solo
 ], RemolDemoCounter.prototype, "value", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.solo
 ], RemolDemoCounter.prototype, "computed", null);
 __decorate([
-    core_1.action.bound
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action.bound
 ], RemolDemoCounter.prototype, "add", null);
-exports.RemolDemoCounter = RemolDemoCounter;
 
 
 /***/ }),
@@ -36968,12 +37005,14 @@ exports.RemolDemoCounter = RemolDemoCounter;
 /*!**************************!*\
   !*** ./-/fetch/batch.js ***!
   \**************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemoDemoFetchBatch = exports.RemoDemoFetchBatchError = void 0;
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemoDemoFetchBatch": () => (/* binding */ RemoDemoFetchBatch),
+/* harmony export */   "RemoDemoFetchBatchError": () => (/* binding */ RemoDemoFetchBatchError)
+/* harmony export */ });
 class RemoDemoFetchBatchError extends Error {
     constructor(p) {
         var _a;
@@ -36985,7 +37024,6 @@ class RemoDemoFetchBatchError extends Error {
         return (_a = this.dto) === null || _a === void 0 ? void 0 : _a.code;
     }
 }
-exports.RemoDemoFetchBatchError = RemoDemoFetchBatchError;
 class RemoDemoFetchBatch extends Object {
     constructor(input, errors) {
         super();
@@ -37002,7 +37040,6 @@ class RemoDemoFetchBatch extends Object {
         throw new RemoDemoFetchBatchError({ id, dto: error, input: this.input });
     }
 }
-exports.RemoDemoFetchBatch = RemoDemoFetchBatch;
 
 
 /***/ }),
@@ -37011,20 +37048,23 @@ exports.RemoDemoFetchBatch = RemoDemoFetchBatch;
 /*!**************************!*\
   !*** ./-/fetch/fetch.js ***!
   \**************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoFetch": () => (/* binding */ RemolDemoFetch)
+/* harmony export */ });
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _batch_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./batch.js */ "./-/fetch/batch.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoFetch = void 0;
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const batch_1 = __webpack_require__(/*! ./batch */ "./-/fetch/batch.js");
+
+
 class RemolDemoFetch {
     static fetch(input, init = {}) {
         return window.fetch(input, init);
@@ -37044,22 +37084,21 @@ class RemolDemoFetch {
         });
     }
     static response(input, init) {
-        const response = (0, core_1.remolSync)(this).request(input, init);
+        const response = (0,_remol_core__WEBPACK_IMPORTED_MODULE_0__.sync)(this).request(input, init);
         if (Math.floor(response.status / 100) === 2)
-            return (0, core_1.remolSync)(response);
+            return (0,_remol_core__WEBPACK_IMPORTED_MODULE_0__.sync)(response);
         throw new Error(response.statusText || `HTTP Error ${response.status}`);
     }
     static batch(input, init) {
-        return batch_1.RemoDemoFetchBatch.response(input, this.response(input, init).json());
+        return _batch_js__WEBPACK_IMPORTED_MODULE_1__.RemoDemoFetchBatch.response(input, this.response(input, init).json());
     }
 }
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
 ], RemolDemoFetch, "response", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
 ], RemolDemoFetch, "batch", null);
-exports.RemolDemoFetch = RemolDemoFetch;
 
 
 /***/ }),
@@ -37068,14 +37107,16 @@ exports.RemolDemoFetch = RemolDemoFetch;
 /*!*************************!*\
   !*** ./-/fetch/mock.js ***!
   \*************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoFetchMock": () => (/* binding */ RemolDemoFetchMock)
+/* harmony export */ });
+/* harmony import */ var _fetch_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fetch.js */ "./-/fetch/fetch.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoFetchMock = void 0;
-const fetch_1 = __webpack_require__(/*! ./fetch */ "./-/fetch/fetch.js");
-class RemolDemoFetchMock extends fetch_1.RemolDemoFetch {
+class RemolDemoFetchMock extends _fetch_js__WEBPACK_IMPORTED_MODULE_0__.RemolDemoFetch {
     static timeout() {
         return 700;
     }
@@ -37106,7 +37147,6 @@ class RemolDemoFetchMock extends fetch_1.RemolDemoFetch {
         return res2;
     }
 }
-exports.RemolDemoFetchMock = RemolDemoFetchMock;
 
 
 /***/ }),
@@ -37115,21 +37155,24 @@ exports.RemolDemoFetchMock = RemolDemoFetchMock;
 /*!********************************!*\
   !*** ./-/location/location.js ***!
   \********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoLocation": () => (/* binding */ RemolDemoLocation)
+/* harmony export */ });
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoLocation = void 0;
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const react_1 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-class RemolDemoLocation extends react_1.RemolViewObject {
+
+
+class RemolDemoLocation extends _remol_react__WEBPACK_IMPORTED_MODULE_1__.RemolViewObject {
     get history() {
         return this.ctx(globalThis.history);
     }
@@ -37175,9 +37218,8 @@ class RemolDemoLocation extends react_1.RemolViewObject {
     }
 }
 __decorate([
-    core_1.plex
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.plex
 ], RemolDemoLocation.prototype, "value", null);
-exports.RemolDemoLocation = RemolDemoLocation;
 
 
 /***/ }),
@@ -37186,12 +37228,13 @@ exports.RemolDemoLocation = RemolDemoLocation;
 /*!*************************!*\
   !*** ./-/model/mock.js ***!
   \*************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoStoreMock = void 0;
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoStoreMock": () => (/* binding */ RemolDemoStoreMock)
+/* harmony export */ });
 class RemolDemoStoreMock extends Object {
     constructor() {
         super(...arguments);
@@ -37211,7 +37254,7 @@ class RemolDemoStoreMock extends Object {
         return cache;
     }
     list(filter) {
-        return { data: { ids: Object.keys(this.items) } };
+        return { ids: Object.keys(this.items) };
     }
     get(ids) {
         const data = {};
@@ -37236,7 +37279,6 @@ class RemolDemoStoreMock extends Object {
         return { data };
     }
 }
-exports.RemolDemoStoreMock = RemolDemoStoreMock;
 
 
 /***/ }),
@@ -37245,26 +37287,29 @@ exports.RemolDemoStoreMock = RemolDemoStoreMock;
 /*!**************************!*\
   !*** ./-/model/model.js ***!
   \**************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolModel": () => (/* binding */ RemolModel)
+/* harmony export */ });
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _fetch_fetch_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../fetch/fetch.js */ "./-/fetch/fetch.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolModel = void 0;
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const fetch_1 = __webpack_require__(/*! ../fetch/fetch */ "./-/fetch/fetch.js");
-class RemolModel extends core_1.RemolObject {
+
+
+class RemolModel extends _remol_core__WEBPACK_IMPORTED_MODULE_0__.RemolObject {
     static createId() {
-        return crypto.randomUUID() || (0, core_1.remolFail)(new Error('Crypto.randomUUID() not supported, update your browser'));
+        return crypto.randomUUID() || (0,_remol_core__WEBPACK_IMPORTED_MODULE_0__.failHidden)(new Error('Crypto.randomUUID() not supported, update your browser'));
     }
     get fetcher() {
-        return this.ctx(fetch_1.RemolDemoFetch);
+        return this.ctx(_fetch_fetch_js__WEBPACK_IMPORTED_MODULE_1__.RemolDemoFetch);
     }
     id(next) {
         return next !== null && next !== void 0 ? next : RemolModel.createId();
@@ -37292,26 +37337,93 @@ class RemolModel extends core_1.RemolObject {
         }
         catch (error) {
             this.patching(error);
-            (0, core_1.remolFail)(error);
+            (0,_remol_core__WEBPACK_IMPORTED_MODULE_0__.failHidden)(error);
         }
     }
 }
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolModel.prototype, "id", null);
 __decorate([
-    core_1.plex
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.plex
 ], RemolModel.prototype, "dto_pick", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolModel.prototype, "patching", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
 ], RemolModel.prototype, "remove", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
 ], RemolModel, "createId", null);
-exports.RemolModel = RemolModel;
+
+
+/***/ }),
+
+/***/ "./-/model/repo.js":
+/*!*************************!*\
+  !*** ./-/model/repo.js ***!
+  \*************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoModelRepo": () => (/* binding */ RemolDemoModelRepo)
+/* harmony export */ });
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _fetch_fetch_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../fetch/fetch.js */ "./-/fetch/fetch.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+class RemolDemoModelRepo extends _remol_core__WEBPACK_IMPORTED_MODULE_0__.RemolObject {
+    get fetcher() {
+        return this.ctx(_fetch_fetch_js__WEBPACK_IMPORTED_MODULE_1__.RemolDemoFetch);
+    }
+    prefetch(ids) {
+        const ids_to_fetch = ids.filter(id => !this.dto_prefetched(id));
+        if (!ids_to_fetch.length)
+            return;
+        const items = this.get(ids_to_fetch);
+        Object.keys(items).forEach(id => this.dto_prefetched(id, items[id]));
+    }
+    get(ids) {
+        return {};
+    }
+    patch(rec) {
+        return {};
+    }
+    dto_prefetched(id, next) {
+        return next;
+    }
+    dto(id, next) {
+        var _a, _b;
+        if (next || next === null)
+            return (_a = this.patch({ [id]: next })[id]) !== null && _a !== void 0 ? _a : {};
+        const dto = (_b = this.dto_prefetched(id)) !== null && _b !== void 0 ? _b : this.dto_prefetched(id, this.get([id])[id]);
+        if (!dto)
+            throw new Error('Cant prefetch todo id=' + id);
+        return dto;
+    }
+    fetch(url, init) {
+        const res = this.fetcher.response(url, init).json();
+        return res;
+    }
+}
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
+], RemolDemoModelRepo.prototype, "prefetch", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.plex
+], RemolDemoModelRepo.prototype, "dto_prefetched", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.plex
+], RemolDemoModelRepo.prototype, "dto", null);
 
 
 /***/ }),
@@ -37320,46 +37432,50 @@ exports.RemolModel = RemolModel;
 /*!************************!*\
   !*** ./-/page/page.js ***!
   \************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoPage": () => (/* binding */ RemolDemoPage)
+/* harmony export */ });
+/* harmony import */ var _remol_react_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @remol/react/css */ "../react/-/css.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var typestyle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+/* harmony import */ var _counter_counter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../counter/counter.js */ "./-/counter/counter.js");
+/* harmony import */ var _pomodoro_pomodoro_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../pomodoro/pomodoro.js */ "./-/pomodoro/pomodoro.js");
+/* harmony import */ var _todo_page_page_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../todo/page/page.js */ "./-/todo/page/page.js");
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoPage = void 0;
-__webpack_require__(/*! @remol/react/css */ "../react/-/css.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const typestyle_1 = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
-const react_2 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-const counter_1 = __webpack_require__(/*! ../counter/counter */ "./-/counter/counter.js");
-const pomodoro_1 = __webpack_require__(/*! ../pomodoro/pomodoro */ "./-/pomodoro/pomodoro.js");
-const page_1 = __webpack_require__(/*! ../todo/page/page */ "./-/todo/page/page.js");
-const css = (0, typestyle_1.stylesheet)({
+
+
+
+
+
+
+
+const css = (0,typestyle__WEBPACK_IMPORTED_MODULE_2__.stylesheet)({
     app: {
         display: 'flex',
         gap: '2rem',
         flexDirection: 'column',
     },
 });
-class RemolDemoPage extends react_2.RemolView {
+class RemolDemoPage extends _remol_react__WEBPACK_IMPORTED_MODULE_3__.RemolView {
     render() {
         const id = this.id();
-        return (react_1.default.createElement("div", { id: id, className: css.app },
-            react_1.default.createElement("div", null,
-                react_1.default.createElement("h3", null, "Counter"),
-                react_1.default.createElement(counter_1.RemolDemoCounter.view, { id: () => `${id}_counter` })),
-            react_1.default.createElement("div", null,
-                react_1.default.createElement("h3", null, "Pomodoro"),
-                react_1.default.createElement(pomodoro_1.RemolDemoPomodoro.view, { id: () => `${id}_pomodoro` })),
-            react_1.default.createElement("div", null,
-                react_1.default.createElement("h3", null, "Todomvc with \"server\" sync"),
-                react_1.default.createElement(page_1.RemolDemoTodoPage.view, { id: () => `${id}_todo` }))));
+        return (react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", { id: id, className: css.app },
+            react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null,
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement("h3", null, "Counter"),
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement(_counter_counter_js__WEBPACK_IMPORTED_MODULE_4__.RemolDemoCounter.view, { id: () => `${id}_counter` })),
+            react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null,
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement("h3", null, "Pomodoro"),
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement(_pomodoro_pomodoro_js__WEBPACK_IMPORTED_MODULE_5__.RemolDemoPomodoro.view, { id: () => `${id}_pomodoro` })),
+            react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null,
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement("h3", null, "Todomvc with \"server\" sync"),
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement(_todo_page_page_js__WEBPACK_IMPORTED_MODULE_6__.RemolDemoTodoPage.view, { id: () => `${id}_todo` }))));
     }
 }
-exports.RemolDemoPage = RemolDemoPage;
 _a = RemolDemoPage;
 RemolDemoPage.view = (props) => _a.render(props);
 
@@ -37370,27 +37486,27 @@ RemolDemoPage.view = (props) => _a.render(props);
 /*!****************************!*\
   !*** ./-/pomodoro/beep.js ***!
   \****************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.beep = void 0;
-function beep(freq = 660, duration = 90, vol = 50) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "beep": () => (/* binding */ beep)
+/* harmony export */ });
+async function beep(freq = 660, duration = 90) {
     var context = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = context.createOscillator();
     const gain = context.createGain();
     gain.gain.setValueAtTime(0, context.currentTime);
     gain.gain.linearRampToValueAtTime(1, context.currentTime + 0.002);
     oscillator.connect(gain);
-    oscillator.frequency.value = freq;
     oscillator.type = 'square';
     gain.connect(context.destination);
+    oscillator.frequency.value = freq;
     oscillator.start(context.currentTime);
     oscillator.stop(context.currentTime + duration * 0.001);
     oscillator.onended = () => context.close();
 }
-exports.beep = beep;
 
 
 /***/ }),
@@ -37399,21 +37515,31 @@ exports.beep = beep;
 /*!************************************!*\
   !*** ./-/pomodoro/pomodoro.css.js ***!
   \************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-(0, react_1.css)(`
+(0,_remol_react__WEBPACK_IMPORTED_MODULE_0__.css)(`
 .remol_demo_pomodoro {
   background: gray;
-  border: 1px solid #777;
+  color: white;
+  border-radius: 0.25rem;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   max-width: 400px;
+  font-size: 18px;
+}
+
+.remol_demo_pomodoro[data-status="work"] {
+  background: rgb(186, 73, 73);
+}
+
+.remol_demo_pomodoro[data-status="break"] {
+  background: rgb(56, 133, 138);
 }
 
 .remol_demo_pomodoro_time {
@@ -37424,15 +37550,54 @@ const react_1 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
   margin: 0;
 }
 
-.remol_demo_interval_controls,
+.remol_demo_pomodoro_controls > label > input {
+  font-size: 1rem;
+  padding: .25rem;
+  border: none;
+  border-radius: 0.25rem;
+}
+
+.remol_demo_pomodoro_controls,
 .remol_demo_pomodoro_buttons {
   display: flex;
   gap: 1rem;
+  align-items: baseline;
   justify-content: space-between;
 }
-.remol_demo_pomodoro_buttons > button {
-  padding: 1rem;
+
+.remol_demo_pomodoro_controls > label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
 }
+
+.remol_demo_pomodoro_total {
+  font-size: 48px;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.remol_demo_pomodoro_buttons > button {
+  padding: .5rem .75rem;
+  font-size: 1rem;
+  border: none;
+  width: 100%;
+  border-radius: 0.25rem;
+  background: lightgray;
+}
+
+.remol_demo_pomodoro_buttons > button[data-status="break"],
+.remol_demo_pomodoro_buttons > button[data-status="work"] {
+  background-color: white;
+}
+
+.remol_demo_pomodoro_buttons > button:hover {
+  background-color: white;
+  cursor: pointer;
+}
+
 `);
 
 
@@ -37442,139 +37607,194 @@ const react_1 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
 /*!********************************!*\
   !*** ./-/pomodoro/pomodoro.js ***!
   \********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoPomodoro": () => (/* binding */ RemolDemoPomodoro)
+/* harmony export */ });
+/* harmony import */ var _pomodoro_css_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pomodoro.css.js */ "./-/pomodoro/pomodoro.css.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+/* harmony import */ var _beep_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./beep.js */ "./-/pomodoro/beep.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoPomodoro = void 0;
-__webpack_require__(/*! ./pomodoro.css */ "./-/pomodoro/pomodoro.css.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const react_2 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-const beep_1 = __webpack_require__(/*! ./beep */ "./-/pomodoro/beep.js");
+
+
+
+
+
 function leadZero(val) {
     return val < 10 ? `0${val}` : val;
 }
-class RemolDemoPomodoro extends react_2.RemolView {
+class RemolDemoPomodoro extends _remol_react__WEBPACK_IMPORTED_MODULE_3__.RemolView {
     status(next = 'work') {
         return next;
     }
     paused(next = true) {
-        this.work_minutes();
-        this.break_minutes(); // set pause to true if interval changed
+        this.work_limit_min();
+        this.break_limit_min(); // set pause to true if interval changed
         return next;
     }
-    work_minutes(val = 25) {
+    work_limit_min(val = 25) {
         return val;
     }
-    break_minutes(val = 5) {
+    break_limit_min(val = 5) {
         return val;
     }
     limit_sec() {
-        const val = this.status() === 'work' ? this.work_minutes() : this.break_minutes();
+        const val = this.status() === 'work' ? this.work_limit_min() : this.break_limit_min();
         return val * 60;
     }
-    pause_toggle() {
-        this.paused(!this.paused());
+    elapsed_sec(next = 0) {
+        return next;
     }
-    decrement() {
+    left_sec() {
+        return this.limit_sec() - this.elapsed_sec();
+    }
+    elapsed_increment() {
         if (this.paused())
             return;
-        const next = Math.max(0, this.remain_sec() - 1);
-        this.remain_sec(next === 0 ? null : next);
-        if (next > 0)
+        const next = this.elapsed_sec() + 1;
+        this.elapsed_sec(next);
+        let left_sec = this.left_sec();
+        if (left_sec > 0)
             return;
-        (0, beep_1.beep)(this.status() === 'work' ? 1000 : 600);
-        this.to_next_status();
+        if (this.muted())
+            return;
+        if (left_sec === 0) {
+            return this.status() === 'work' ? this.remind_work_end() : this.remind_break_end();
+        }
+        if (!(left_sec % 60))
+            this.remind_overdue();
     }
-    remain_sec(next) {
-        return next !== null && next !== void 0 ? next : this.limit_sec();
+    muted(next = true) {
+        return next;
     }
-    time() {
-        const sec = this.remain_sec();
-        const timer = this.paused() ? undefined : new core_1.AfterTimeout(1000, this.decrement);
-        return { min: Math.floor(sec / 60), sec: Math.floor(sec % 60), destructor: () => timer === null || timer === void 0 ? void 0 : timer.destructor() };
+    remind_overdue() {
+        (0,_beep_js__WEBPACK_IMPORTED_MODULE_4__.beep)(440);
     }
-    to_next_status() {
-        this.status(this.status() === 'work' ? 'break' : 'work');
+    remind_work_end() {
+        (0,_beep_js__WEBPACK_IMPORTED_MODULE_4__.beep)(2000);
+        (0,_remol_core__WEBPACK_IMPORTED_MODULE_2__.delay)(500);
+        (0,_beep_js__WEBPACK_IMPORTED_MODULE_4__.beep)(2000);
     }
-    next() {
-        this.to_next_status();
-        this.paused(true);
+    remind_break_end() {
+        (0,_beep_js__WEBPACK_IMPORTED_MODULE_4__.beep)(600);
+        (0,_remol_core__WEBPACK_IMPORTED_MODULE_2__.delay)(500);
+        (0,_beep_js__WEBPACK_IMPORTED_MODULE_4__.beep)(600);
+    }
+    left_time() {
+        let sec = this.left_sec();
+        const negative = sec < 0;
+        if (negative)
+            sec = Math.abs(sec);
+        const timer = this.paused() ? undefined : new _remol_core__WEBPACK_IMPORTED_MODULE_2__.AfterTimeout(1000, this.elapsed_increment);
+        return {
+            negative,
+            min: Math.floor(sec / 60),
+            sec: Math.floor(sec % 60),
+            destructor: () => timer === null || timer === void 0 ? void 0 : timer.destructor(),
+        };
+    }
+    pomodoro_total(next = 0) {
+        return next;
+    }
+    break() {
+        this.status('break');
+        this.elapsed_sec(0);
+        this.paused(false);
+    }
+    work() {
+        if (!this.paused())
+            this.pomodoro_total(this.pomodoro_total() + 1);
+        this.status('work');
+        this.elapsed_sec(0);
+        this.paused(false);
     }
     render() {
         const id = this.id();
-        const time = this.time();
+        const time = this.left_time();
         const status = this.status();
-        return (react_1.default.createElement("div", { id: this.id(), className: "remol_demo_pomodoro", style: {
-                backgroundColor: status === 'break' ? 'rgb(56, 133, 138)' : 'rgb(186, 73, 73)',
-            } },
-            react_1.default.createElement("h2", { id: `${id}_time`, className: "remol_demo_pomodoro_time" },
+        return (react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", { id: this.id(), className: "remol_demo_pomodoro", "data-status": this.paused() ? undefined : status },
+            react__WEBPACK_IMPORTED_MODULE_1__.createElement("h2", { id: `${id}_time`, className: "remol_demo_pomodoro_time" },
+                time.negative ? '-' : '',
+                " ",
                 leadZero(time.min),
                 ":",
                 leadZero(time.sec)),
-            react_1.default.createElement("div", { className: "remol_demo_pomodoro_buttons" },
-                react_1.default.createElement("button", { id: `${id}_button_work`, onClick: this.next }, status === 'break' ? 'Work' : 'Break'),
-                react_1.default.createElement("button", { id: `${id}_button_pause`, onClick: this.pause_toggle }, this.paused() ? 'Continue' : 'Pause')),
-            react_1.default.createElement("div", { className: "remol_demo_interval_controls" },
-                react_1.default.createElement("label", null,
-                    "Work",
+            react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", { className: "remol_demo_pomodoro_total" },
+                this.pomodoro_total(),
+                " completed"),
+            react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", { className: "remol_demo_pomodoro_buttons" },
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", { id: `${id}_button_work`, onClick: this.work, "data-status": status === 'work' ? status : undefined }, "Work"),
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", { id: `${id}_button_break`, onClick: this.break, "data-status": status === 'break' ? status : undefined }, "Break")),
+            react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", { className: "remol_demo_pomodoro_controls" },
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement("label", null,
+                    react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", { type: "number", id: `${id}_control_work`, min: "1", max: "300", step: "10", value: this.work_limit_min(), onChange: e => this.work_limit_min(e.currentTarget.valueAsNumber || 1) })),
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement("label", null,
+                    react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", { id: `${id}_control_break`, type: "number", placeholder: "Break, min", min: "1", max: "60", step: "5", value: this.break_limit_min(), onChange: e => this.break_limit_min(e.currentTarget.valueAsNumber || 1) }))),
+            react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null,
+                react__WEBPACK_IMPORTED_MODULE_1__.createElement("label", null,
+                    react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", { id: `${id}_control_break_long`, type: "checkbox", checked: this.muted(), onChange: e => this.muted(!this.muted()) }),
                     ' ',
-                    react_1.default.createElement("input", { type: "number", id: `${id}_control_work`, min: "1", max: "300", step: "10", value: this.work_minutes(), onChange: e => this.work_minutes(e.currentTarget.valueAsNumber || 1) }),
-                    ' ',
-                    "min"),
-                react_1.default.createElement("label", null,
-                    "Break",
-                    ' ',
-                    react_1.default.createElement("input", { id: `${id}_control_break`, type: "number", min: "1", max: "60", step: "5", value: this.break_minutes(), onChange: e => this.break_minutes(e.currentTarget.valueAsNumber || 1) }),
-                    ' ',
-                    "min"))));
+                    "Mute"))));
     }
 }
 _a = RemolDemoPomodoro;
 RemolDemoPomodoro.view = (props) => _a.render(props);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
 ], RemolDemoPomodoro.prototype, "status", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
 ], RemolDemoPomodoro.prototype, "paused", null);
 __decorate([
-    core_1.solo
-], RemolDemoPomodoro.prototype, "work_minutes", null);
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
+], RemolDemoPomodoro.prototype, "work_limit_min", null);
 __decorate([
-    core_1.solo
-], RemolDemoPomodoro.prototype, "break_minutes", null);
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
+], RemolDemoPomodoro.prototype, "break_limit_min", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
 ], RemolDemoPomodoro.prototype, "limit_sec", null);
 __decorate([
-    core_1.action.bound
-], RemolDemoPomodoro.prototype, "pause_toggle", null);
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
+], RemolDemoPomodoro.prototype, "elapsed_sec", null);
 __decorate([
-    core_1.action.bound
-], RemolDemoPomodoro.prototype, "decrement", null);
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.action.bound
+], RemolDemoPomodoro.prototype, "elapsed_increment", null);
 __decorate([
-    core_1.solo
-], RemolDemoPomodoro.prototype, "remain_sec", null);
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
+], RemolDemoPomodoro.prototype, "muted", null);
 __decorate([
-    core_1.solo
-], RemolDemoPomodoro.prototype, "time", null);
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.action
+], RemolDemoPomodoro.prototype, "remind_overdue", null);
 __decorate([
-    core_1.action.bound
-], RemolDemoPomodoro.prototype, "next", null);
-exports.RemolDemoPomodoro = RemolDemoPomodoro;
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.action
+], RemolDemoPomodoro.prototype, "remind_work_end", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.action
+], RemolDemoPomodoro.prototype, "remind_break_end", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
+], RemolDemoPomodoro.prototype, "left_time", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
+], RemolDemoPomodoro.prototype, "pomodoro_total", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.action.bound
+], RemolDemoPomodoro.prototype, "break", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.action.bound
+], RemolDemoPomodoro.prototype, "work", null);
 
 
 /***/ }),
@@ -37583,61 +37803,45 @@ exports.RemolDemoPomodoro = RemolDemoPomodoro;
 /*!*********************************!*\
   !*** ./-/todo/footer/footer.js ***!
   \*********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoFooter": () => (/* binding */ RemolDemoTodoFooter)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+/* harmony import */ var _location_location_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../location/location.js */ "./-/location/location.js");
+/* harmony import */ var _store_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../store/store.js */ "./-/todo/store/store.js");
+/* harmony import */ var _theme_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./theme.js */ "./-/todo/footer/theme.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoFooter = void 0;
-const React = __importStar(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const react_1 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-const location_1 = __webpack_require__(/*! ../../location/location */ "./-/location/location.js");
-const store_1 = __webpack_require__(/*! ../store/store */ "./-/todo/store/store.js");
-const theme_1 = __webpack_require__(/*! ./theme */ "./-/todo/footer/theme.js");
-class RemolDemoTodoFooter extends react_1.RemolView {
+
+
+
+
+
+
+class RemolDemoTodoFooter extends _remol_react__WEBPACK_IMPORTED_MODULE_2__.RemolView {
     constructor() {
         super(...arguments);
-        this.css = theme_1.RemolTodoFooterTheme.css;
+        this.css = _theme_js__WEBPACK_IMPORTED_MODULE_5__.RemolTodoFooterTheme.css;
     }
     linkCss(isSelected) {
         return isSelected ? this.css.linkSelected : this.css.linkRegular;
     }
     get store() {
-        return this.ctx(store_1.RemolDemoTodoStore.single());
+        return this.ctx(_store_store_js__WEBPACK_IMPORTED_MODULE_4__.RemolDemoTodoStore.single());
     }
     get location() {
-        return this.ctx(location_1.RemolDemoLocation.single());
+        return this.ctx(_location_location_js__WEBPACK_IMPORTED_MODULE_3__.RemolDemoLocation.single());
     }
     filterLink(id) {
         return this.location.url({ todo_filter: id });
@@ -37651,7 +37855,7 @@ class RemolDemoTodoFooter extends react_1.RemolView {
         this.store.filter(linkid);
     }
     get clearCompletedStatus() {
-        return new core_1.RemolQueue();
+        return new _remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolQueue();
     }
     clearCompleted(e) {
         this.clearCompletedStatus.run(() => {
@@ -37663,41 +37867,40 @@ class RemolDemoTodoFooter extends react_1.RemolView {
         const store = this.store;
         if (store.activeTodoCount() === 0 && store.completedCount === 0)
             return null;
-        return (React.createElement("footer", { id: id, className: this.css.footer },
-            React.createElement("span", { className: this.css.todoCount, id: `${id}_count` },
-                React.createElement("strong", { id: `${id}_number` }, store.activeTodoCount()),
+        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("footer", { id: id, className: this.css.footer },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", { className: this.css.todoCount, id: `${id}_count` },
+                react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", { id: `${id}_number` }, store.activeTodoCount()),
                 " item(s) left"),
-            React.createElement("ul", { className: this.css.filters, id: `${id}_filters` }, RemolDemoTodoFooter.links.map(link => (React.createElement("li", { key: link.id, className: this.css.filterItem, id: `${id}_link["${link.id}"]` },
-                React.createElement("a", { id: `${id}_link["${link.id}"].href`, className: this.linkCss(store.filter() === link.id), href: this.filterLink(link.id), "data-linkid": link.id, onClick: e => this.clickLink(e) }, link.title))))),
-            store.completedCount !== 0 && (React.createElement("button", { id: `${id}_clear`, className: this.css.clearCompleted, disabled: this.clearCompletedStatus.pending, onClick: e => this.clearCompleted(e) }, "Clear completed"))));
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", { className: this.css.filters, id: `${id}_filters` }, RemolDemoTodoFooter.links.map(link => (react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", { key: link.id, className: this.css.filterItem, id: `${id}_link["${link.id}"]` },
+                react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", { id: `${id}_link["${link.id}"].href`, className: this.linkCss(store.filter() === link.id), href: this.filterLink(link.id), "data-linkid": link.id, onClick: e => this.clickLink(e) }, link.title))))),
+            store.completedCount !== 0 && (react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { id: `${id}_clear`, className: this.css.clearCompleted, disabled: this.clearCompletedStatus.pending, onClick: e => this.clearCompleted(e) }, "Clear completed"))));
     }
 }
 _a = RemolDemoTodoFooter;
 RemolDemoTodoFooter.view = (p) => _a.render(p);
 RemolDemoTodoFooter.links = [
     {
-        id: store_1.TODO_FILTER.ALL,
+        id: _store_store_js__WEBPACK_IMPORTED_MODULE_4__.TODO_FILTER.ALL,
         title: 'All',
     },
     {
-        id: store_1.TODO_FILTER.ACTIVE,
+        id: _store_store_js__WEBPACK_IMPORTED_MODULE_4__.TODO_FILTER.ACTIVE,
         title: 'Active',
     },
     {
-        id: store_1.TODO_FILTER.COMPLETE,
+        id: _store_store_js__WEBPACK_IMPORTED_MODULE_4__.TODO_FILTER.COMPLETE,
         title: 'Completed',
     },
 ];
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoFooter.prototype, "clickLink", null);
 __decorate([
-    core_1.field
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.field
 ], RemolDemoTodoFooter.prototype, "clearCompletedStatus", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoFooter.prototype, "clearCompleted", null);
-exports.RemolDemoTodoFooter = RemolDemoTodoFooter;
 
 
 /***/ }),
@@ -37706,14 +37909,16 @@ exports.RemolDemoTodoFooter = RemolDemoTodoFooter;
 /*!********************************!*\
   !*** ./-/todo/footer/theme.js ***!
   \********************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolTodoFooterTheme": () => (/* binding */ RemolTodoFooterTheme)
+/* harmony export */ });
+/* harmony import */ var typestyle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolTodoFooterTheme = void 0;
-const typestyle_1 = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
+
 class RemolTodoFooterTheme {
     static getCss() {
         const linkBase = {
@@ -37729,7 +37934,7 @@ class RemolTodoFooterTheme {
                 },
             },
         };
-        return (0, typestyle_1.stylesheet)({
+        return (0,typestyle__WEBPACK_IMPORTED_MODULE_0__.stylesheet)({
             footer: {
                 color: '#777',
                 padding: '10px 15px',
@@ -37770,7 +37975,6 @@ class RemolTodoFooterTheme {
         });
     }
 }
-exports.RemolTodoFooterTheme = RemolTodoFooterTheme;
 _a = RemolTodoFooterTheme;
 RemolTodoFooterTheme.css = _a.getCss();
 
@@ -37781,55 +37985,63 @@ RemolTodoFooterTheme.css = _a.getCss();
 /*!*********************************!*\
   !*** ./-/todo/header/header.js ***!
   \*********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoHeader": () => (/* binding */ RemolDemoTodoHeader)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+/* harmony import */ var _model_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../model/model.js */ "./-/model/model.js");
+/* harmony import */ var _store_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../store/store.js */ "./-/todo/store/store.js");
+/* harmony import */ var _theme_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./theme.js */ "./-/todo/header/theme.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoHeader = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const react_2 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-const model_1 = __webpack_require__(/*! ../../model/model */ "./-/model/model.js");
-const store_1 = __webpack_require__(/*! ../store/store */ "./-/todo/store/store.js");
-const theme_1 = __webpack_require__(/*! ./theme */ "./-/todo/header/theme.js");
-class RemolDemoTodoHeader extends react_2.RemolView {
+
+
+
+
+
+
+class RemolDemoTodoHeader extends _remol_react__WEBPACK_IMPORTED_MODULE_2__.RemolView {
     get store() {
-        return this.ctx(store_1.RemolDemoTodoStore.single());
+        return this.ctx(_store_store_js__WEBPACK_IMPORTED_MODULE_4__.RemolDemoTodoStore.single());
     }
     title(next) {
         return next !== null && next !== void 0 ? next : '';
     }
     setTitle(e) {
-        (0, core_1.remolSyncRender)();
+        (0,_remol_core__WEBPACK_IMPORTED_MODULE_1__.remolSyncRender)();
         this.title(e.target.value);
     }
     setRef(ref) {
         ref === null || ref === void 0 ? void 0 : ref.focus();
     }
     get submitStatus() {
-        return new core_1.RemolQueue();
+        return new _remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolQueue();
     }
     submit(e) {
         if (e.key !== 'Enter' || !this.title())
             return;
         this.submitStatus.run(() => {
-            this.store.item(model_1.RemolModel.createId()).title(this.title());
+            this.store.add({
+                id: _model_model_js__WEBPACK_IMPORTED_MODULE_3__.RemolModel.createId(),
+                title: this.title(),
+                checked: false,
+            });
             this.title('');
         });
     }
     get toggleAllStatus() {
-        return new core_1.RemolQueue();
+        return new _remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolQueue();
     }
     toggleAll() {
         this.toggleAllStatus.run(() => {
@@ -37839,35 +38051,34 @@ class RemolDemoTodoHeader extends react_2.RemolView {
     render() {
         const id = this.id();
         const checked = this.store.activeTodoCount() === 0;
-        return (react_1.default.createElement("header", { id: id, className: theme_1.remolDemoTodoTheme.header },
-            react_1.default.createElement("input", { id: `${id}_toggleAll`, className: theme_1.remolDemoTodoTheme.toggleAll, disabled: this.toggleAllStatus.pending, type: "checkbox", onChange: () => this.toggleAll(), checked: checked }),
-            react_1.default.createElement("input", { id: `${id}_input`, className: theme_1.remolDemoTodoTheme.newTodo, placeholder: "What needs to be done?", onInput: e => this.setTitle(e), ref: r => this.setRef(r), disabled: this.submitStatus.pending, value: this.title(), onKeyDown: e => this.submit(e) })));
+        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", { id: id, className: _theme_js__WEBPACK_IMPORTED_MODULE_5__.remolDemoTodoTheme.header },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", { id: `${id}_toggleAll`, className: _theme_js__WEBPACK_IMPORTED_MODULE_5__.remolDemoTodoTheme.toggleAll, disabled: this.toggleAllStatus.pending, type: "checkbox", onChange: () => this.toggleAll(), checked: checked }),
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", { id: `${id}_input`, className: _theme_js__WEBPACK_IMPORTED_MODULE_5__.remolDemoTodoTheme.newTodo, placeholder: "What needs to be done?", onInput: e => this.setTitle(e), ref: r => this.setRef(r), disabled: this.submitStatus.pending, value: this.title(), onKeyDown: e => this.submit(e) })));
     }
 }
 _a = RemolDemoTodoHeader;
 RemolDemoTodoHeader.view = (p) => _a.render(p);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.solo
 ], RemolDemoTodoHeader.prototype, "title", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoHeader.prototype, "setTitle", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoHeader.prototype, "setRef", null);
 __decorate([
-    core_1.field
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.field
 ], RemolDemoTodoHeader.prototype, "submitStatus", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoHeader.prototype, "submit", null);
 __decorate([
-    core_1.field
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.field
 ], RemolDemoTodoHeader.prototype, "toggleAllStatus", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoHeader.prototype, "toggleAll", null);
-exports.RemolDemoTodoHeader = RemolDemoTodoHeader;
 
 
 /***/ }),
@@ -37876,14 +38087,16 @@ exports.RemolDemoTodoHeader = RemolDemoTodoHeader;
 /*!********************************!*\
   !*** ./-/todo/header/theme.js ***!
   \********************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "remolDemoTodoTheme": () => (/* binding */ remolDemoTodoTheme)
+/* harmony export */ });
+/* harmony import */ var typestyle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.remolDemoTodoTheme = void 0;
-const typestyle_1 = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
-exports.remolDemoTodoTheme = (0, typestyle_1.stylesheet)({
+const remolDemoTodoTheme = (0,typestyle__WEBPACK_IMPORTED_MODULE_0__.stylesheet)({
     header: {
         alignItems: 'center',
         display: 'flex',
@@ -37922,35 +38135,37 @@ exports.remolDemoTodoTheme = (0, typestyle_1.stylesheet)({
 /*!*****************************!*\
   !*** ./-/todo/list/list.js ***!
   \*****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoList": () => (/* binding */ RemolDemoTodoList)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var typestyle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+/* harmony import */ var _snippet_snippet_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../snippet/snippet.js */ "./-/todo/snippet/snippet.js");
+/* harmony import */ var _store_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../store/store.js */ "./-/todo/store/store.js");
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoList = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const typestyle_1 = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
-const react_2 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-const snippet_1 = __webpack_require__(/*! ../snippet/snippet */ "./-/todo/snippet/snippet.js");
-const store_1 = __webpack_require__(/*! ../store/store */ "./-/todo/store/store.js");
-const css = (0, typestyle_1.stylesheet)({
+
+
+
+
+
+const css = (0,typestyle__WEBPACK_IMPORTED_MODULE_1__.stylesheet)({
     todoList: {
         margin: 0,
         padding: 0,
         listStyle: 'none',
     },
 });
-class RemolDemoTodoList extends react_2.RemolView {
-    render(store = this.ctx(store_1.RemolDemoTodoStore.single())) {
+class RemolDemoTodoList extends _remol_react__WEBPACK_IMPORTED_MODULE_2__.RemolView {
+    render(store = this.ctx(_store_store_js__WEBPACK_IMPORTED_MODULE_4__.RemolDemoTodoStore.single())) {
         const id = this.id();
-        return (react_1.default.createElement("ul", { id: id, className: css.todoList }, store.filteredTodos.map(todo => (react_1.default.createElement(snippet_1.RemolDemoTodoSnippet.view, { id: () => `${id}_todo["${todo.id()}"]`, key: todo.id(), todo: () => todo })))));
+        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", { id: id, className: css.todoList }, store.filteredTodos.map(todo => (react__WEBPACK_IMPORTED_MODULE_0__.createElement(_snippet_snippet_js__WEBPACK_IMPORTED_MODULE_3__.RemolDemoTodoSnippet.view, { id: () => `${id}_todo["${todo.id()}"]`, key: todo.id(), todo: () => todo })))));
     }
 }
-exports.RemolDemoTodoList = RemolDemoTodoList;
 _a = RemolDemoTodoList;
 RemolDemoTodoList.view = (props) => _a.render(props);
 
@@ -37961,61 +38176,66 @@ RemolDemoTodoList.view = (props) => _a.render(props);
 /*!*****************************!*\
   !*** ./-/todo/page/page.js ***!
   \*****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoPage": () => (/* binding */ RemolDemoTodoPage)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var typestyle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+/* harmony import */ var _footer_footer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../footer/footer.js */ "./-/todo/footer/footer.js");
+/* harmony import */ var _header_header_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../header/header.js */ "./-/todo/header/header.js");
+/* harmony import */ var _list_list_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../list/list.js */ "./-/todo/list/list.js");
+/* harmony import */ var _store_store_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../store/store.js */ "./-/todo/store/store.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoPage = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const typestyle_1 = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const react_2 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-const footer_1 = __webpack_require__(/*! ../footer/footer */ "./-/todo/footer/footer.js");
-const header_1 = __webpack_require__(/*! ../header/header */ "./-/todo/header/header.js");
-const list_1 = __webpack_require__(/*! ../list/list */ "./-/todo/list/list.js");
-const store_1 = __webpack_require__(/*! ../store/store */ "./-/todo/store/store.js");
-const css = (0, typestyle_1.stylesheet)({
+
+
+
+
+
+
+
+
+const css = (0,typestyle__WEBPACK_IMPORTED_MODULE_1__.stylesheet)({
     todoapp: {
         background: '#fff',
         border: '1px solid #ededed',
         boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1)',
     },
 });
-class RemolDemoTodoPage extends react_2.RemolView {
+class RemolDemoTodoPage extends _remol_react__WEBPACK_IMPORTED_MODULE_3__.RemolView {
     store() {
-        return new store_1.RemolDemoTodoStore();
+        return new _store_store_js__WEBPACK_IMPORTED_MODULE_7__.RemolDemoTodoStore();
     }
     get $() {
-        return super.$.clone().set(store_1.RemolDemoTodoStore.single(), this.store());
+        return super.$.clone().set(_store_store_js__WEBPACK_IMPORTED_MODULE_7__.RemolDemoTodoStore.single(), this.store());
     }
     render() {
         const id = this.id();
-        return (react_1.default.createElement("div", { id: id, className: css.todoapp },
-            react_1.default.createElement(header_1.RemolDemoTodoHeader.view, { id: () => `${id}_header` }),
-            this.store().filteredTodos.length > 0 ? react_1.default.createElement(list_1.RemolDemoTodoList.view, { id: () => `${id}_list` }) : null,
-            react_1.default.createElement(footer_1.RemolDemoTodoFooter.view, { id: () => `${id}_footer` })));
+        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { id: id, className: css.todoapp },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement(_header_header_js__WEBPACK_IMPORTED_MODULE_5__.RemolDemoTodoHeader.view, { id: () => `${id}_header` }),
+            this.store().filteredTodos.length > 0 ? react__WEBPACK_IMPORTED_MODULE_0__.createElement(_list_list_js__WEBPACK_IMPORTED_MODULE_6__.RemolDemoTodoList.view, { id: () => `${id}_list` }) : null,
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement(_footer_footer_js__WEBPACK_IMPORTED_MODULE_4__.RemolDemoTodoFooter.view, { id: () => `${id}_footer` })));
     }
 }
 _a = RemolDemoTodoPage;
 RemolDemoTodoPage.view = (p) => _a.render(p);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.solo
 ], RemolDemoTodoPage.prototype, "store", null);
 __decorate([
-    core_1.field
+    _remol_core__WEBPACK_IMPORTED_MODULE_2__.field
 ], RemolDemoTodoPage.prototype, "$", null);
-exports.RemolDemoTodoPage = RemolDemoTodoPage;
 
 
 /***/ }),
@@ -38024,51 +38244,34 @@ exports.RemolDemoTodoPage = RemolDemoTodoPage;
 /*!***********************************!*\
   !*** ./-/todo/snippet/snippet.js ***!
   \***********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoSnippet": () => (/* binding */ RemolDemoTodoSnippet)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+/* harmony import */ var _store_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../store/model.js */ "./-/todo/store/model.js");
+/* harmony import */ var _theme_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./theme.js */ "./-/todo/snippet/theme.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoSnippet = void 0;
-const React = __importStar(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const react_1 = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
-const model_1 = __webpack_require__(/*! ../store/model */ "./-/todo/store/model.js");
-const theme_1 = __webpack_require__(/*! ./theme */ "./-/todo/snippet/theme.js");
-const theme = new theme_1.RemolDemoTodoSnippetTheme();
-class RemolDemoTodoSnippet extends react_1.RemolView {
+
+
+
+
+
+const theme = new _theme_js__WEBPACK_IMPORTED_MODULE_4__.RemolDemoTodoSnippetTheme();
+class RemolDemoTodoSnippet extends _remol_react__WEBPACK_IMPORTED_MODULE_2__.RemolView {
     todo() {
-        return new model_1.RemolDemoTodoModel();
+        return new _store_model_js__WEBPACK_IMPORTED_MODULE_3__.RemolDemoTodoModel();
     }
     toggle() {
         this.todo().toggle();
@@ -38085,7 +38288,7 @@ class RemolDemoTodoSnippet extends react_1.RemolView {
             return;
         if (todo.pending)
             return;
-        const draft = new model_1.RemolDemoTodoModel();
+        const draft = new _store_model_js__WEBPACK_IMPORTED_MODULE_3__.RemolDemoTodoModel();
         draft.id = () => `${this.id()}.draft()`;
         draft.dto(todo.dto());
         this.draft(draft);
@@ -38117,7 +38320,7 @@ class RemolDemoTodoSnippet extends react_1.RemolView {
     }
     setTitle(e) {
         var _b, _c, _d;
-        (0, core_1.remolSyncRender)();
+        (0,_remol_core__WEBPACK_IMPORTED_MODULE_1__.remolSyncRender)();
         (_b = this.draft()) === null || _b === void 0 ? void 0 : _b.title((_d = (_c = e.target.value) === null || _c === void 0 ? void 0 : _c.trim()) !== null && _d !== void 0 ? _d : '');
     }
     Form() {
@@ -38127,15 +38330,15 @@ class RemolDemoTodoSnippet extends react_1.RemolView {
         const draft = this.draft();
         if (!draft)
             return null;
-        return (React.createElement("li", { id: id, className: css.editing },
-            React.createElement("input", { id: `${id}_editing`, ref: r => this.setFocusRef(r), className: css.edit, disabled: todo.pending, value: draft.title(), onBlur: () => this.submit(), onInput: e => this.setTitle(e), onKeyDown: e => this.submitOrRestore(e) })));
+        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", { id: id, className: css.editing },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", { id: `${id}_editing`, ref: r => this.setFocusRef(r), className: css.edit, disabled: todo.pending, value: draft.title(), onBlur: () => this.submit(), onInput: e => this.setTitle(e), onKeyDown: e => this.submitOrRestore(e) })));
     }
     View(id = this.id(), todo = this.todo(), css = theme.css) {
         console.log('render, todo is pending=', todo.pending);
-        return (React.createElement("li", { id: id, className: css.regular },
-            React.createElement("input", { id: `${id}_toggle`, className: css.toggle, type: "checkbox", disabled: todo.pending, checked: todo.checked(), onChange: () => this.toggle() }),
-            React.createElement("label", { id: `${id}_beginEdit`, className: theme.label(todo.checked(), todo.pending), onDoubleClick: () => this.beginEdit() }, todo.title()),
-            React.createElement("button", { id: `${id}_destroy`, className: css.destroy, disabled: todo.pending, onClick: () => this.remove() })));
+        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", { id: id, className: css.regular },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", { id: `${id}_toggle`, className: css.toggle, type: "checkbox", disabled: todo.pending, checked: todo.checked(), onChange: () => this.toggle() }),
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", { id: `${id}_beginEdit`, className: theme.label(todo.checked(), todo.pending), onDoubleClick: () => this.beginEdit() }, todo.title()),
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { id: `${id}_destroy`, className: css.destroy, disabled: todo.pending, onClick: () => this.remove() })));
     }
     render() {
         if (this.draft())
@@ -38146,33 +38349,32 @@ class RemolDemoTodoSnippet extends react_1.RemolView {
 _a = RemolDemoTodoSnippet;
 RemolDemoTodoSnippet.view = (props) => _a.render(props);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.solo
 ], RemolDemoTodoSnippet.prototype, "todo", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoSnippet.prototype, "toggle", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoSnippet.prototype, "remove", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.solo
 ], RemolDemoTodoSnippet.prototype, "draft", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoSnippet.prototype, "beginEdit", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoSnippet.prototype, "submit", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoSnippet.prototype, "submitOrRestore", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoSnippet.prototype, "setFocusRef", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_1__.action
 ], RemolDemoTodoSnippet.prototype, "setTitle", null);
-exports.RemolDemoTodoSnippet = RemolDemoTodoSnippet;
 
 
 /***/ }),
@@ -38181,19 +38383,21 @@ exports.RemolDemoTodoSnippet = RemolDemoTodoSnippet;
 /*!*********************************!*\
   !*** ./-/todo/snippet/theme.js ***!
   \*********************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoSnippetTheme": () => (/* binding */ RemolDemoTodoSnippetTheme)
+/* harmony export */ });
+/* harmony import */ var typestyle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoSnippetTheme = void 0;
-const typestyle_1 = __webpack_require__(/*! typestyle */ "../../node_modules/typestyle/lib.es2015/index.js");
 class RemolDemoTodoSnippetTheme {
     constructor() {
         this.css = this.getCss();
     }
     getCss() {
-        const destroy = (0, typestyle_1.style)({
+        const destroy = (0,typestyle__WEBPACK_IMPORTED_MODULE_0__.style)({
             padding: 0,
             border: 0,
             background: 'none',
@@ -38226,7 +38430,7 @@ class RemolDemoTodoSnippetTheme {
             lineHeight: '1.2',
             transition: 'color 0.4s',
         };
-        const result = (0, typestyle_1.stylesheet)({
+        const result = (0,typestyle__WEBPACK_IMPORTED_MODULE_0__.stylesheet)({
             regular: {
                 position: 'relative',
                 fontSize: '24px',
@@ -38309,7 +38513,6 @@ class RemolDemoTodoSnippetTheme {
         return css.viewLabelRegular;
     }
 }
-exports.RemolDemoTodoSnippetTheme = RemolDemoTodoSnippetTheme;
 
 
 /***/ }),
@@ -38318,14 +38521,16 @@ exports.RemolDemoTodoSnippetTheme = RemolDemoTodoSnippetTheme;
 /*!******************************!*\
   !*** ./-/todo/store/mock.js ***!
   \******************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoStoreMock": () => (/* binding */ RemolDemoTodoStoreMock)
+/* harmony export */ });
+/* harmony import */ var _model_mock_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../model/mock.js */ "./-/model/mock.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoStoreMock = void 0;
-const mock_1 = __webpack_require__(/*! ../../model/mock */ "./-/model/mock.js");
-class RemolDemoTodoStoreMock extends mock_1.RemolDemoStoreMock {
+class RemolDemoTodoStoreMock extends _model_mock_js__WEBPACK_IMPORTED_MODULE_0__.RemolDemoStoreMock {
     max() {
         return 1;
     }
@@ -38359,11 +38564,9 @@ class RemolDemoTodoStoreMock extends mock_1.RemolDemoStoreMock {
             activeCount += todo.checked ? 0 : 1;
         }
         return {
-            data: {
-                ids,
-                activeCount,
-                completedCount: todos.length - activeCount,
-            },
+            ids,
+            activeCount,
+            completedCount: todos.length - activeCount,
         };
     }
     toggleAll() {
@@ -38402,7 +38605,6 @@ class RemolDemoTodoStoreMock extends mock_1.RemolDemoStoreMock {
         };
     }
 }
-exports.RemolDemoTodoStoreMock = RemolDemoTodoStoreMock;
 
 
 /***/ }),
@@ -38411,26 +38613,28 @@ exports.RemolDemoTodoStoreMock = RemolDemoTodoStoreMock;
 /*!*******************************!*\
   !*** ./-/todo/store/model.js ***!
   \*******************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoModel": () => (/* binding */ RemolDemoTodoModel)
+/* harmony export */ });
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoModel = void 0;
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-class RemolDemoTodoModel extends core_1.RemolObject {
+
+class RemolDemoTodoModel extends _remol_core__WEBPACK_IMPORTED_MODULE_0__.RemolObject {
     title(next) {
         var _a;
         return (_a = this.dto_pick('title', next)) !== null && _a !== void 0 ? _a : 'test';
     }
     pipe() {
-        return new core_1.RemolQueue();
+        return new _remol_core__WEBPACK_IMPORTED_MODULE_0__.RemolQueue();
     }
     toggle() {
         const next = !this.checked();
@@ -38479,32 +38683,31 @@ class RemolDemoTodoModel extends core_1.RemolObject {
         }
         catch (error) {
             this.status(error instanceof Promise ? true : error);
-            (0, core_1.remolFail)(error);
+            (0,_remol_core__WEBPACK_IMPORTED_MODULE_0__.failHidden)(error);
         }
     }
 }
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolDemoTodoModel.prototype, "pipe", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
 ], RemolDemoTodoModel.prototype, "toggle", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolDemoTodoModel.prototype, "id", null);
 __decorate([
-    core_1.plex
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.plex
 ], RemolDemoTodoModel.prototype, "dto_pick", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolDemoTodoModel.prototype, "dto", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolDemoTodoModel.prototype, "status", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolDemoTodoModel.prototype, "dto_safe", null);
-exports.RemolDemoTodoModel = RemolDemoTodoModel;
 
 
 /***/ }),
@@ -38513,92 +38716,80 @@ exports.RemolDemoTodoModel = RemolDemoTodoModel;
 /*!*******************************!*\
   !*** ./-/todo/store/store.js ***!
   \*******************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolDemoTodoStore": () => (/* binding */ RemolDemoTodoStore),
+/* harmony export */   "TODO_FILTER": () => (/* binding */ TODO_FILTER)
+/* harmony export */ });
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _location_location_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../location/location.js */ "./-/location/location.js");
+/* harmony import */ var _model_repo_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../model/repo.js */ "./-/model/repo.js");
+/* harmony import */ var _model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./model.js */ "./-/todo/store/model.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolDemoTodoStore = exports.TODO_FILTER = void 0;
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const fetch_1 = __webpack_require__(/*! ../../fetch/fetch */ "./-/fetch/fetch.js");
-const location_1 = __webpack_require__(/*! ../../location/location */ "./-/location/location.js");
-const model_1 = __webpack_require__(/*! ./model */ "./-/todo/store/model.js");
+
+
+
+
 var TODO_FILTER;
 (function (TODO_FILTER) {
     TODO_FILTER["ALL"] = "all";
     TODO_FILTER["COMPLETE"] = "complete";
     TODO_FILTER["ACTIVE"] = "active";
-})(TODO_FILTER = exports.TODO_FILTER || (exports.TODO_FILTER = {}));
-class RemolDemoTodoStore extends core_1.RemolObject {
-    get fetcher() {
-        return this.ctx(fetch_1.RemolDemoFetch);
-    }
-    reset(next) {
-        return new Date().getTime();
-    }
-    list() {
-        this.reset();
-        const list = this.fetcher.response('/todos').json();
-        return list;
-    }
-    ids() {
-        return this.list().data.ids;
-    }
-    prefetched() {
-        const ids = this.ids();
-        this.reset();
+})(TODO_FILTER = TODO_FILTER || (TODO_FILTER = {}));
+class RemolDemoTodoStore extends _model_repo_js__WEBPACK_IMPORTED_MODULE_2__.RemolDemoModelRepo {
+    get(ids) {
         return this.fetcher.batch('/todo?id=' + ids.join(','));
     }
-    dto(id, next) {
-        var _a;
-        if (next !== undefined) {
-            // throw new Error('test')
-            const updated = this.fetcher.batch('/todo', {
-                method: 'PATCH',
-                body: JSON.stringify({ [id]: next }),
-            })[id];
-            this.reset(null);
-            return updated !== null && updated !== void 0 ? updated : {};
-        }
-        return ((_a = this.prefetched()[id]) !== null && _a !== void 0 ? _a : {
-            id,
-            title: '',
-            checked: false,
+    patch(rec) {
+        return this.fetcher.batch('/todo', {
+            method: 'PATCH',
+            body: JSON.stringify(rec),
         });
     }
+    summary(next) {
+        const list = next !== null && next !== void 0 ? next : this.fetcher.response('/todos').json();
+        this.prefetch(list.ids);
+        return list;
+    }
+    items() {
+        return this.summary().ids.map(id => this.item(id));
+    }
     item(id) {
-        const todo = new model_1.RemolDemoTodoModel();
+        const todo = new _model_js__WEBPACK_IMPORTED_MODULE_3__.RemolDemoTodoModel();
         todo.id = () => `${this[Symbol.toStringTag]}.item("${id}")`;
         todo.dto = this.dto.bind(this, id);
         return todo;
     }
-    items() {
-        return this.ids().map(id => this.item(id));
-    }
-    fetch(url, init) {
-        const res = this.fetcher.response(url, init).json();
-        this.reset(null);
-        return res;
+    add(dto) {
+        this.dto(dto.id, dto);
+        const prev = this.summary();
+        this.summary({
+            ...prev,
+            activeCount: prev.activeCount + 1,
+            ids: [dto.id, ...prev.ids],
+        });
     }
     get location() {
-        return this.ctx(location_1.RemolDemoLocation.single());
+        return this.ctx(_location_location_js__WEBPACK_IMPORTED_MODULE_1__.RemolDemoLocation.single());
     }
     get activeTodoCount2() {
-        const count = this.list().data.activeCount;
+        const count = this.summary().activeCount;
         return count;
     }
     activeTodoCount() {
-        const count = this.list().data.activeCount;
+        const count = this.summary().activeCount;
         return count;
     }
     get completedCount() {
-        return this.list().data.completedCount;
+        return this.summary().completedCount;
     }
     filter(next) {
         var _a;
@@ -38626,48 +38817,38 @@ class RemolDemoTodoStore extends core_1.RemolObject {
     }
 }
 __decorate([
-    core_1.solo
-], RemolDemoTodoStore.prototype, "reset", null);
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
+], RemolDemoTodoStore.prototype, "summary", null);
 __decorate([
-    core_1.solo
-], RemolDemoTodoStore.prototype, "list", null);
-__decorate([
-    core_1.solo
-], RemolDemoTodoStore.prototype, "ids", null);
-__decorate([
-    core_1.solo
-], RemolDemoTodoStore.prototype, "prefetched", null);
-__decorate([
-    core_1.plex
-], RemolDemoTodoStore.prototype, "dto", null);
-__decorate([
-    core_1.plex
-], RemolDemoTodoStore.prototype, "item", null);
-__decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolDemoTodoStore.prototype, "items", null);
 __decorate([
-    core_1.field
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.plex
+], RemolDemoTodoStore.prototype, "item", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
+], RemolDemoTodoStore.prototype, "add", null);
+__decorate([
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.field
 ], RemolDemoTodoStore.prototype, "activeTodoCount2", null);
 __decorate([
-    core_1.solo
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.solo
 ], RemolDemoTodoStore.prototype, "activeTodoCount", null);
 __decorate([
-    core_1.field
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.field
 ], RemolDemoTodoStore.prototype, "completedCount", null);
 __decorate([
-    core_1.field
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.field
 ], RemolDemoTodoStore.prototype, "filteredTodos", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
 ], RemolDemoTodoStore.prototype, "toggleAll", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
 ], RemolDemoTodoStore.prototype, "completeAll", null);
 __decorate([
-    core_1.action
+    _remol_core__WEBPACK_IMPORTED_MODULE_0__.action
 ], RemolDemoTodoStore.prototype, "clearCompleted", null);
-exports.RemolDemoTodoStore = RemolDemoTodoStore;
 
 
 /***/ }),
@@ -38676,26 +38857,25 @@ exports.RemolDemoTodoStore = RemolDemoTodoStore;
 /*!*****************************!*\
   !*** ../react/-/box/box.js ***!
   \*****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolViewBox": () => (/* binding */ RemolViewBox)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolViewBox = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-class RemolViewBox extends core_1.RemolBox {
+
+class RemolViewBox extends _remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolBox {
     static use(ctx) {
         // eslint-disable-next-line
-        const wireCtx = react_1.default.useMemo(() => new core_1.RemolBox(ctx), []);
+        const wireCtx = react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => new _remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolBox(ctx), []);
         wireCtx.update(ctx);
         return wireCtx.propsProxy;
     }
 }
-exports.RemolViewBox = RemolViewBox;
 
 
 /***/ }),
@@ -38704,21 +38884,21 @@ exports.RemolViewBox = RemolViewBox;
 /*!*************************************!*\
   !*** ../react/-/context/context.js ***!
   \*************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolContextProvide": () => (/* binding */ RemolContextProvide),
+/* harmony export */   "useRemolContext": () => (/* binding */ useRemolContext)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.useRemolContext = exports.RemolContextProvide = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const RemolReactContext = react_1.default.createContext(core_1.RemolContext.single());
-exports.RemolContextProvide = RemolReactContext.Provider;
-const useRemolContext = () => react_1.default.useContext(RemolReactContext);
-exports.useRemolContext = useRemolContext;
+
+const RemolReactContext = react__WEBPACK_IMPORTED_MODULE_0__.createContext(_remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolContext.single());
+const RemolContextProvide = RemolReactContext.Provider;
+const useRemolContext = () => react__WEBPACK_IMPORTED_MODULE_0__.useContext(RemolReactContext);
 
 
 /***/ }),
@@ -38727,12 +38907,12 @@ exports.useRemolContext = useRemolContext;
 /*!*************************!*\
   !*** ../react/-/css.js ***!
   \*************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _css_fallback_css_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./css/fallback.css.js */ "../react/-/css/fallback.css.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__webpack_require__(/*! ./css/fallback.css */ "../react/-/css/fallback.css.js");
 
 
 /***/ }),
@@ -38741,18 +38921,18 @@ __webpack_require__(/*! ./css/fallback.css */ "../react/-/css/fallback.css.js");
 /*!*****************************!*\
   !*** ../react/-/css/css.js ***!
   \*****************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.css = void 0;
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "css": () => (/* binding */ css)
+/* harmony export */ });
 function css(tpl) {
     const styles = document.createElement("style");
     styles.innerHTML = tpl;
     document.head.append(styles);
 }
-exports.css = css;
 
 
 /***/ }),
@@ -38761,13 +38941,13 @@ exports.css = css;
 /*!**************************************!*\
   !*** ../react/-/css/fallback.css.js ***!
   \**************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _css_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./css.js */ "../react/-/css/css.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const css_1 = __webpack_require__(/*! ./css */ "../react/-/css/css.js");
-(0, css_1.css)(`
+(0,_css_js__WEBPACK_IMPORTED_MODULE_0__.css)(`
 [wire_view_error]:not([wire_view_error="Promise"]) {
 	background-image: repeating-linear-gradient(
 		-45deg,
@@ -38818,25 +38998,31 @@ const css_1 = __webpack_require__(/*! ./css */ "../react/-/css/css.js");
 /*!***************************!*\
   !*** ../react/-/index.js ***!
   \***************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolContextProvide": () => (/* reexport safe */ _context_context_js__WEBPACK_IMPORTED_MODULE_4__.RemolContextProvide),
+/* harmony export */   "RemolView": () => (/* reexport safe */ _view_view_js__WEBPACK_IMPORTED_MODULE_0__.RemolView),
+/* harmony export */   "RemolViewBox": () => (/* reexport safe */ _box_box_js__WEBPACK_IMPORTED_MODULE_3__.RemolViewBox),
+/* harmony export */   "RemolViewError": () => (/* reexport safe */ _view_error_js__WEBPACK_IMPORTED_MODULE_1__.RemolViewError),
+/* harmony export */   "RemolViewObject": () => (/* reexport safe */ _object_object_js__WEBPACK_IMPORTED_MODULE_2__.RemolViewObject),
+/* harmony export */   "css": () => (/* reexport safe */ _css_css_js__WEBPACK_IMPORTED_MODULE_5__.css),
+/* harmony export */   "useRemolContext": () => (/* reexport safe */ _context_context_js__WEBPACK_IMPORTED_MODULE_4__.useRemolContext)
+/* harmony export */ });
+/* harmony import */ var _view_view_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./view/view.js */ "../react/-/view/view.js");
+/* harmony import */ var _view_error_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./view/error.js */ "../react/-/view/error.js");
+/* harmony import */ var _object_object_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./object/object.js */ "../react/-/object/object.js");
+/* harmony import */ var _box_box_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./box/box.js */ "../react/-/box/box.js");
+/* harmony import */ var _context_context_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./context/context.js */ "../react/-/context/context.js");
+/* harmony import */ var _css_css_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./css/css.js */ "../react/-/css/css.js");
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.css = exports.RemolContextProvide = exports.useRemolContext = exports.RemolViewBox = exports.RemolViewObject = exports.RemolViewError = exports.RemolView = void 0;
-var view_1 = __webpack_require__(/*! ./view/view */ "../react/-/view/view.js");
-Object.defineProperty(exports, "RemolView", ({ enumerable: true, get: function () { return view_1.RemolView; } }));
-var error_1 = __webpack_require__(/*! ./view/error */ "../react/-/view/error.js");
-Object.defineProperty(exports, "RemolViewError", ({ enumerable: true, get: function () { return error_1.RemolViewError; } }));
-var object_1 = __webpack_require__(/*! ./object/object */ "../react/-/object/object.js");
-Object.defineProperty(exports, "RemolViewObject", ({ enumerable: true, get: function () { return object_1.RemolViewObject; } }));
-var box_1 = __webpack_require__(/*! ./box/box */ "../react/-/box/box.js");
-Object.defineProperty(exports, "RemolViewBox", ({ enumerable: true, get: function () { return box_1.RemolViewBox; } }));
-var context_1 = __webpack_require__(/*! ./context/context */ "../react/-/context/context.js");
-Object.defineProperty(exports, "useRemolContext", ({ enumerable: true, get: function () { return context_1.useRemolContext; } }));
-Object.defineProperty(exports, "RemolContextProvide", ({ enumerable: true, get: function () { return context_1.RemolContextProvide; } }));
-var css_1 = __webpack_require__(/*! ./css/css */ "../react/-/css/css.js");
-Object.defineProperty(exports, "css", ({ enumerable: true, get: function () { return css_1.css; } }));
+
+
+
+
+
 
 
 /***/ }),
@@ -38845,24 +39031,25 @@ Object.defineProperty(exports, "css", ({ enumerable: true, get: function () { re
 /*!***********************************!*\
   !*** ../react/-/object/object.js ***!
   \***********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolViewObject": () => (/* binding */ RemolViewObject)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _context_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../context/context.js */ "../react/-/context/context.js");
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolViewObject = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const context_1 = __webpack_require__(/*! ../context/context */ "../react/-/context/context.js");
-class RemolViewObject extends core_1.RemolObject {
+
+
+class RemolViewObject extends _remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolObject {
     static use(config) {
         // eslint-disable-next-line
-        const $ = (0, context_1.useRemolContext)();
+        const $ = (0,_context_context_js__WEBPACK_IMPORTED_MODULE_2__.useRemolContext)();
         // eslint-disable-next-line
-        return react_1.default.useMemo(() => {
+        return react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => {
             const obj = this.make(config);
             obj.$ = $;
             return obj;
@@ -38871,7 +39058,6 @@ class RemolViewObject extends core_1.RemolObject {
         []);
     }
 }
-exports.RemolViewObject = RemolViewObject;
 
 
 /***/ }),
@@ -38880,49 +39066,36 @@ exports.RemolViewObject = RemolViewObject;
 /*!********************************!*\
   !*** ../react/-/view/error.js ***!
   \********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolViewError": () => (/* binding */ RemolViewError)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolViewError = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-class RemolViewError extends react_1.default.Component {
+class RemolViewError extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     constructor(props) {
         super(props);
-        this.refresh = () => this.setState({ error: undefined });
-        this.state = { error: undefined };
+        this.state = { ref: { error: undefined } };
     }
     static getDerivedStateFromError(error) {
         if (!(error instanceof Error))
             error = new Error(String(error), { cause: error });
-        return { error };
+        return { ref: { error } };
     }
     componentDidCatch(error, errorInfo) { }
-    static attach(e, view) {
-        this.errorMap.set(e, view);
-    }
-    static getRefresh(e) {
-        return this.errorMap.get(e);
-    }
-    static refresh(e) {
-        var _a;
-        (_a = this.getRefresh(e)) === null || _a === void 0 ? void 0 : _a.refresh();
-    }
     render() {
-        const error = this.state.error;
+        const error = this.state.ref.error;
         if (error) {
-            RemolViewError.attach(error, this);
-            return this.props.fallback(this.state);
+            // eslint-disable-next-line
+            this.state.ref.error = undefined;
+            return this.props.fallback({ error });
         }
         return this.props.children;
     }
 }
-exports.RemolViewError = RemolViewError;
-RemolViewError.errorMap = new WeakMap();
 
 
 /***/ }),
@@ -38931,26 +39104,30 @@ RemolViewError.errorMap = new WeakMap();
 /*!*******************************!*\
   !*** ../react/-/view/view.js ***!
   \*******************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RemolView = void 0;
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemolView": () => (/* binding */ RemolView)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _box_box_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../box/box.js */ "../react/-/box/box.js");
+/* harmony import */ var _context_context_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../context/context.js */ "../react/-/context/context.js");
+/* harmony import */ var _object_object_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../object/object.js */ "../react/-/object/object.js");
+/* harmony import */ var _error_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./error.js */ "../react/-/view/error.js");
 /* @global document */
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../../node_modules/react/index.js"));
-const core_1 = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
-const box_1 = __webpack_require__(/*! ../box/box */ "../react/-/box/box.js");
-const context_1 = __webpack_require__(/*! ../context/context */ "../react/-/context/context.js");
-const object_1 = __webpack_require__(/*! ../object/object */ "../react/-/object/object.js");
-const error_1 = __webpack_require__(/*! ./error */ "../react/-/view/error.js");
+
+
+
+
+
+
 function normalizeName(name) {
     return name.trim().replace(/(-\w)/g, (_, part) => part.substring(1).toUpperCase());
 }
-class RemolView extends object_1.RemolViewObject {
+class RemolView extends _object_object_js__WEBPACK_IMPORTED_MODULE_4__.RemolViewObject {
     constructor() {
         super(...arguments);
         this._atom = undefined;
@@ -38964,7 +39141,7 @@ class RemolView extends object_1.RemolViewObject {
     get atom() {
         if (this._atom)
             return this._atom;
-        const atom = new core_1.RemolAtom(this.id(), this.render, this);
+        const atom = new _remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolAtom(this.id(), this.render, this);
         this._atom = atom;
         return atom;
     }
@@ -38983,11 +39160,11 @@ class RemolView extends object_1.RemolViewObject {
     snapshot() {
         const { Component, Fallback } = this;
         const h = RemolView.h;
-        const children = h(error_1.RemolViewError, {
+        const children = h(_error_js__WEBPACK_IMPORTED_MODULE_5__.RemolViewError, {
             fallback: Fallback,
-            children: h(react_1.default.Suspense, { fallback: h(Fallback), children: h(Component) }),
+            children: h(react__WEBPACK_IMPORTED_MODULE_0__.Suspense, { fallback: h(Fallback), children: h(Component) }),
         });
-        return this.$changed ? h(context_1.RemolContextProvide, { value: this.$, children }) : children;
+        return this.$changed ? h(_context_context_js__WEBPACK_IMPORTED_MODULE_3__.RemolContextProvide, { value: this.$, children }) : children;
     }
     component() {
         this.errorFromDidCatch = undefined;
@@ -38996,7 +39173,7 @@ class RemolView extends object_1.RemolViewObject {
     get Component() {
         if (this._Component)
             return this._Component;
-        return (this._Component = (0, core_1.remolFuncName)(() => this.component(), this.id()));
+        return (this._Component = (0,_remol_core__WEBPACK_IMPORTED_MODULE_1__.remolFuncName)(() => this.component(), this.id()));
     }
     get dom() {
         var _a;
@@ -39045,7 +39222,7 @@ class RemolView extends object_1.RemolViewObject {
         return this.error ? this.error.message + (this.errorRetry ? ', click to retry' : '') : undefined;
     }
     get errorRetry() {
-        return this.error ? core_1.RemolError.get(this.error) : undefined;
+        return this.error ? _remol_core__WEBPACK_IMPORTED_MODULE_1__.RemolError.get(this.error) : undefined;
     }
     fallbackProps() {
         return {
@@ -39079,7 +39256,7 @@ class RemolView extends object_1.RemolViewObject {
     get Fallback() {
         if (this._Fallback)
             return this._Fallback;
-        const fallback = (0, core_1.remolFuncName)(props => this.fallback(props), `${this.id()}.Fallback`);
+        const fallback = (0,_remol_core__WEBPACK_IMPORTED_MODULE_1__.remolFuncName)(props => this.fallback(props), `${this.id()}.Fallback`);
         return (this._Fallback = fallback);
     }
     static render(config) {
@@ -39093,17 +39270,16 @@ class RemolView extends object_1.RemolViewObject {
         return vdom;
     }
     static use(config) {
-        const boxed = box_1.RemolViewBox.use(config);
+        const boxed = _box_box_js__WEBPACK_IMPORTED_MODULE_2__.RemolViewBox.use(config);
         const view = super.use.call(this, boxed);
         // eslint-disable-next-line
-        const [, emit] = react_1.default.useState([]);
+        const [, emit] = react__WEBPACK_IMPORTED_MODULE_0__.useState([]);
         // eslint-disable-next-line
-        react_1.default.useEffect(() => view.subscribe(() => emit([])), [view]);
+        react__WEBPACK_IMPORTED_MODULE_0__.useEffect(() => view.subscribe(() => emit([])), [view]);
         return view;
     }
 }
-exports.RemolView = RemolView;
-RemolView.h = react_1.default.createElement;
+RemolView.h = react__WEBPACK_IMPORTED_MODULE_0__.createElement;
 RemolView.doc = typeof document !== 'undefined' ? document : undefined;
 
 
@@ -39129,7 +39305,7 @@ RemolView.doc = typeof document !== 'undefined' ? document : undefined;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
@@ -39189,12 +39365,47 @@ RemolView.doc = typeof document !== 'undefined' ? document : undefined;
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./-/browser.js");
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+/*!**********************!*\
+  !*** ./-/browser.js ***!
+  \**********************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/react/index.js");
+/* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom/client */ "../../node_modules/react-dom/client.js");
+/* harmony import */ var _remol_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @remol/core */ "../core/-/index.js");
+/* harmony import */ var _remol_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @remol/react */ "../react/-/index.js");
+/* harmony import */ var _fetch_fetch_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./fetch/fetch.js */ "./-/fetch/fetch.js");
+/* harmony import */ var _fetch_mock_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./fetch/mock.js */ "./-/fetch/mock.js");
+/* harmony import */ var _page_page_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./page/page.js */ "./-/page/page.js");
+/* harmony import */ var _todo_store_mock_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./todo/store/mock.js */ "./-/todo/store/mock.js");
+var _a;
+
+
+
+
+
+
+
+
+const id = 'remol_demo';
+const el = document.getElementById(id + '_main');
+const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_1__.createRoot)(el);
+class RemolDemoFetchMockApp extends _fetch_mock_js__WEBPACK_IMPORTED_MODULE_5__.RemolDemoFetchMock {
+    static data(pathname, method, body) {
+        return this.todos.data(pathname, method, body);
+    }
+}
+_a = Symbol.toStringTag;
+RemolDemoFetchMockApp[_a] = id + '-mock';
+RemolDemoFetchMockApp.todos = new _todo_store_mock_js__WEBPACK_IMPORTED_MODULE_7__.RemolDemoTodoStoreMock();
+const $ = new _remol_core__WEBPACK_IMPORTED_MODULE_2__.RemolContext().set(_fetch_fetch_js__WEBPACK_IMPORTED_MODULE_4__.RemolDemoFetch, RemolDemoFetchMockApp);
+root.render(react__WEBPACK_IMPORTED_MODULE_0__.createElement(_remol_react__WEBPACK_IMPORTED_MODULE_3__.RemolContextProvide, { value: $, children: react__WEBPACK_IMPORTED_MODULE_0__.createElement(_page_page_js__WEBPACK_IMPORTED_MODULE_6__.RemolDemoPage.view, { id: () => id }) }));
+
+})();
+
 /******/ })()
 ;
 //# sourceMappingURL=remol_demo.js.map
